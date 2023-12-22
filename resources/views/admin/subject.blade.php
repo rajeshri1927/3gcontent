@@ -27,9 +27,9 @@
 <div class="col-xl-12">
   <div class="card">
     <div class="card-header text-right">
-      <button type="button" class="btn  btn-primary" data-toggle="modal" data-target="#exampleModal" > <i class="fa-solid fa-plus"></i> Add New Class </button>
+      <button type="button" class="btn  btn-primary" data-toggle="modal" data-target="#subjectModal" > <i class="fa-solid fa-plus"></i> Add New Class </button>
     </div>
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="subjectModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
