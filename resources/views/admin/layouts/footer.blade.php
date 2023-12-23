@@ -7,5 +7,3 @@
 <!-- custom-chart js -->
 <script src="{{ asset('/assets/js/pages/dashboard-main.js')}}"  type="text/javascript"></script>
 
-</body>
-</html>
