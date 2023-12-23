@@ -11,6 +11,14 @@
       <meta name="author" content="Phoenixcoded" />
       <!-- Favicon icon -->
       <script src="{{ asset('assets/js/pcoded.min.js')}}"></script>
+      <script src="{{ asset('assets/js/jquery.min.js')}}"></script>
+      <script src="{{ asset('assets/js/common.js')}}"></script>
+      <script src="{{ asset('assets/js/Crypto.js')}}"></script>
+      <script src="{{ asset('assets/js/Encryption.js')}}"></script>
+      <script>
+         var base_url = "{{url('/')}}";
+         var _accessToken = "{{csrf_token()}}";
+      </script>
 
       <link rel="icon" href="{{ asset('assets/images/favicon.ico')}}" type="image/x-icon">
       <!-- prism css -->

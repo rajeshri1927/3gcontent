@@ -17,7 +17,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('admin/login', function () {
+include_once('admin/admin.php');
+
+/* Route::get('admin/login', function () {
     return view('admin.login');
 });
 
@@ -43,5 +45,5 @@ Route::get('admin/class', function () {
 
 Route::get('admin/subject', function () {
 	return view('admin.subject');
-});
+}); */
 

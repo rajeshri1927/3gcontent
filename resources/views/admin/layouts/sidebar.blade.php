@@ -21,7 +21,7 @@
 				<ul class="list-unstyled">
 					<li class="list-group-item"><a href="#"><i class="feather icon-user m-r-5"></i>View Profile</a></li>
 					<li class="list-group-item"><a href="#!"><i class="feather icon-settings m-r-5"></i>Settings</a></li>
-					<li class="list-group-item"><a href="#"><i class="feather icon-log-out m-r-5"></i>Logout</a></li>
+					<li class="list-group-item"><a href="{{ url('/admin') }}"><i class="feather icon-log-out m-r-5"></i>Logout</a></li>
 				</ul>
 			</div>
 		</div>
