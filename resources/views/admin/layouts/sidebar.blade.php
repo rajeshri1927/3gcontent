@@ -30,16 +30,16 @@
 			<!-- <li class="nav-item pcoded-menu-caption">
 				<label>Dashboard</label>
 			</li> -->
-			<li class="nav-item">
+			<!-- <li class="nav-item">
 			    <a href="index.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
-			</li>
-			<li class="nav-item pcoded-hasmenu">
+			</li> -->
+			<!-- <li class="nav-item pcoded-hasmenu">
 			    <a href="#!" class="nav-link "><span class="pcoded-micon"><i class="feather icon-layout"></i></span><span class="pcoded-mtext">View layouts </span></a>
 			    <ul class="pcoded-submenu">
 			        <li><a href="layout-vertical.php" target="_blank">Vertical</a></li>
 			        <li><a href="layout-horizontal.php" target="_blank">Horizontal</a></li>
 			    </ul>
-			</li>
+			</li> -->
 			<li class="nav-item pcoded-menu-caption">
 				<label>Academic</label>
 			</li>
@@ -49,15 +49,15 @@
 					<li><a href="board">Board List</a></li>
 					<li><a href="medium">Medium List</a></li>
 					<li><a href="class">Class List</a></li>
-					<li><a href="subject">Subject List</a></li>
+					<!-- <li><a href="subject">Subject List</a></li>
 					<li><a href="chapters">Chapters List</a></li>
 					<li><a href="topics">Topics List</a></li>
 					<li><a href="questionType.php">Question Type</a></li>
-					<li><a href="questionBank.php">Question Bank </a></li>
+					<li><a href="questionBank.php">Question Bank </a></li> -->
 				</ul>
 			</li>
 			<!-- Class Managment Here -->
-			<li class="nav-item pcoded-hasmenu">	
+			<!-- <li class="nav-item pcoded-hasmenu">	
 			<a href="#!" class="nav-link "><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext"> Class Management</span></a>
 				<ul class="pcoded-submenu">
 					<li><a href="student_details.php">Student List</a></li>
@@ -65,20 +65,20 @@
 					<li><a href="test_details.php">Test List</a></li>
 					<li><a href="chapters_details.php">Attandance List</a></li>
 				</ul>
-			</li>
+			</li> -->
 			<!-- End Class Managment -->
 			<!-- Test Managment Here -->
-			<li class="nav-item pcoded-hasmenu">	
+			<!-- <li class="nav-item pcoded-hasmenu">	
 			<a href="#!" class="nav-link "><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext"> Test Management</span></a>
 				<ul class="pcoded-submenu">
 					<li><a href="#">MCQ (CBSE) List</a></li>
 					<li><a href="#">Objective (MHSB) List</a></li>
 					<li><a href="#">Premlims List</a></li>
 				</ul>
-			</li>
+			</li> -->
 			<!-- End Test Managment -->
 			<!-- Test Managment Here -->
-			<li class="nav-item pcoded-hasmenu">	
+			<!-- <li class="nav-item pcoded-hasmenu">	
 			<a href="#!" class="nav-link "><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext"> Report Management</span></a>
 				<ul class="pcoded-submenu">
 					<li><a href="#">Daily Reports List</a></li>
@@ -88,7 +88,7 @@
 					<li><a href="#">Unit II  List</a></li>
 					<li><a href="#">Final List</a></li>
 				</ul>
-			</li>
+			</li> -->
 			<!-- End Test Managment -->
 		</ul>		
 	</div>
