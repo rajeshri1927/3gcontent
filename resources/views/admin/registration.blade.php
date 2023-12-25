@@ -89,19 +89,19 @@
 					let jsonString = JSON.stringify(serializedFormData);            
 					let form_data = encryption.encrypt(jsonString, nonceValue); */
 					
-					// $.ajax({
-					// 	cache: false,
-					// 	contentType: false,
-					// 	processData: false,
-					// 	url: base_url + "/admin/storeuser",
-					// 	type: 'post',
-					// 	data: formData,
-					// 	success: function (result) {
-					// 		if (result){
-					// 			window.location.href = base_url+'/admin';
-					// 		}
-					// 	}
-					// });
+					/* $.ajax({
+						cache: false,
+						contentType: false,
+						processData: false,
+						url: base_url + "/admin/storeuser",
+						type: 'post',
+						data: formData,
+						success: function (result) {
+							if (result){
+								window.location.href = base_url+'/admin';
+							}
+						}
+					}); */
 				}
 			}
 		});
@@ -113,8 +113,7 @@
 	});
 
 	function IsEmail(email) {
-            const regex =
-/^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+            const regex =/^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
             if (!regex.test(email)) {
                 return false;
             }
