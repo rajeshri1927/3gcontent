@@ -20,7 +20,6 @@ class AuthController extends Controller{
     }
 
     public function login(Request $request){
-        //dd("Login page");
         return view($this->module_view_folder.'.login', $this->arr_view_data);
     }
 
