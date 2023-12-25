@@ -1,6 +1,6 @@
 <?php
-
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
+use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use App\Models\Medium;
@@ -10,11 +10,16 @@ use Validator;
 
 class ClassController extends Controller
 {
+    public function __construct(){
+        $this->arr_view_data = [];
+        $this->module_view_folder = 'admin';
+    }
+
     public function index()
     {
         $data['BoardList'] = Board::get(["board_name", "board_id"]);
         $data['BoardList'] = $data['BoardList'] ?? collect();
-        return view('admin.class',$data);
+        return view($this->module_view_folder.'.class', $this->arr_view_data,$data);
     }
 
     public function getMedium(Request $request){

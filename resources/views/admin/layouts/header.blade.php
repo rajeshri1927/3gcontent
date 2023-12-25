@@ -9,6 +9,8 @@
       <meta name="description" content="" />
       <meta name="keywords" content="">
       <meta name="author" content="Phoenixcoded" />
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="{{ asset('public/assets/js/pcoded.min.js')}}"></script>
       <!-- Favicon icon -->
       <script src="{{ asset('public/assets/js/pcoded.min.js')}}"></script>
       <script src="{{ asset('public/assets/js/jquery.min.js')}}"></script>

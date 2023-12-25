@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Models\Board;
 use Validator;
@@ -9,6 +11,16 @@ use Validator;
 class BoardController extends Controller
 {
     
+    public function __construct(){
+        $this->arr_view_data = [];
+        $this->module_view_folder = 'admin';
+    }
+
+    public function index()
+    {     
+        return view($this->module_view_folder.'.board', $this->arr_view_data);
+    }
+
     public function getBoarddata(){
         $boards = Board::select('*')->orderBy('board_id','asc')->get();
         echo json_encode($boards);

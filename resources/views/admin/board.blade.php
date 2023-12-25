@@ -119,7 +119,7 @@
    function fetchBoardData()
    {
     $.ajax({
-     url:"{{ route('getBoarddata') }}",
+     url: base_url + "/admin/getBoarddata",
      dataType:"json",
      success:function(data)
      {
@@ -144,26 +144,12 @@
      }
     });
    }
-   
-   // $('#Board_table').DataTable({
-   //         "processing": true,
-   //         "serverSide": true,
-   //         "ajax": "{{ route('getBoarddata') }}",
-   //         "columns":[
-   //             { "data": "board_id" },
-   //             { "data": "board_name" },
-   //             { "data": "board_description" },
-   //             { "data": "board_status" },
-   //             { "data": "created_at" },
-   //             { "data": "action", orderable:false, searchable: false}
-   //         ]
-   // });
-   
+
     $('#addBoard').on('submit', function(event){ 
        event.preventDefault();
        var form_data = $(this).serialize();
        $.ajax({ 
-           url:"{{ route('addBoard') }}",
+           url: base_url + "/admin/addBoard",
            method:"POST",
            data:form_data,
            dataType:"json",
@@ -199,13 +185,13 @@
      if(confirm("Are you sure you want to delete this records?"))
      {
       $.ajax({
-       url:"{{ route('deleteBoarddata') }}",
+       url: base_url + "/admin/deleteBoarddata",
        method:"delete",
        data:{board_id:board_id, _token:_token},
        success:function(data)
        {
         $('#form_output').html(data);
-        fetch_board_data();
+        fetchBoardData();
        }
       });
      }
@@ -215,7 +201,7 @@
          var board_id = $(this).attr("data-id");
          $('#form_output').html('');
          $.ajax({
-            url:"{{route('fetchBoardData')}}",
+            url: base_url + "/admin/fetchBoardData",
             method:'get',
             data:{board_id:board_id},
             dataType:'json',

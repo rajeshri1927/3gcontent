@@ -11,7 +11,7 @@
 	<div class="navbar-content scroll-div">			
 		<div class="">
 			<div class="main-menu-header">
-				<img class="img-radius" src="{{asset('assets/images/user/avatar-2.jpg')}}" alt="User-Profile-Image">
+				<img class="img-radius" src="{{asset('public/assets/images/user/avatar-2.jpg')}}" alt="User-Profile-Image">
 				<div class="user-details">
 					<span></span>
 					<div id="more-details">Kriushna Chari<i class="fa fa-chevron-down m-l-5"></i></div>
@@ -49,8 +49,8 @@
 					<li><a href="board">Board List</a></li>
 					<li><a href="medium">Medium List</a></li>
 					<li><a href="class">Class List</a></li>
-					<!-- <li><a href="subject">Subject List</a></li>
-					<li><a href="chapters">Chapters List</a></li>
+					<li><a href="subject">Subject List</a></li>
+					<!-- <li><a href="chapters">Chapters List</a></li>
 					<li><a href="topics">Topics List</a></li>
 					<li><a href="questionType.php">Question Type</a></li>
 					<li><a href="questionBank.php">Question Bank </a></li> -->
@@ -100,7 +100,7 @@
       <a class="mobile-menu" id="mobile-collapse" href="#!"><span></span></a>
       <a href="#!" class="b-brand">
          <!-- ========   change your logo hear   ============ -->
-         <img src="{{ asset('assets/images/logo.png') }}" alt="" class="logo" style="width: 240px;height: 290px;">
+         <img src="{{ asset('public/assets/images/logo.png') }}" alt="" class="logo" style="width: 240px;height: 290px;">
          <!-- <img src="{{ asset('assets/images/logo-icon.png')}}" alt="" class="logo-thumb"> -->
       </a>
       <a href="#!" class="mob-toggler">
@@ -205,7 +205,7 @@
                </a>
                <div class="dropdown-menu dropdown-menu-right profile-notification">
                   <div class="pro-head">
-                     <img src="{{asset('assets/images/user/avatar-1.jpg')}}" class="img-radius" alt="User-Profile-Image">
+                     <img src="{{asset('public/assets/images/user/avatar-1.jpg')}}" class="img-radius" alt="User-Profile-Image">
                      <span>John Doe</span>
                      <a href="logout" class="dud-logout" title="Logout">
                      <i class="feather icon-log-out"></i>

@@ -51,14 +51,7 @@
                         </div>
                         <div class="col-md-6 form-group">
                             <label for="recipient-name" class="col-form-label">Select Medium </label>
-                            <!-- <input type="text" class="form-control" id="recipient-name"> -->
-                            <select class="form-control" name="medium_id" id="medium_id">
-                                <!-- <option value="">--Select Medium--</option>
-                                <option value="Medium_BF9351DAA">English</option>
-                                <option value="Medium_D50BE3EF0">Science</option>
-                                <option value="Medium_0040B44E3">Commerce</option>
-                                <option value="Medium_F5DED60D5">हिंदी</option> -->
-                            </select>
+                            <select class="form-control" name="medium_id" id="medium_id"></select>
                         </div>
                         </div>
                         <div class="row">
@@ -176,14 +169,15 @@ $(document).ready(function() {
         event.preventDefault();
         var board_id = this.value;
         $.ajax({
-            url:"{{ route('getMediums') }}",
+            url: base_url + "/admin/getMediums",
             method:"GET",
             data:{board_id:board_id},
             success:function(result)
             {
                 if(result)
                 {
-                  $('#medium_id').html(result);
+                  $('#medium_id').html('<option value="">Select Medium</option>');
+                  $('#medium_id').append(result);
                 }else{
                   $('#medium_id').html('<option value="">No Medium</option>');
                 }
@@ -196,7 +190,7 @@ $(document).ready(function() {
    function fetchClassData()
    {
     $.ajax({
-     url:"{{ route('getClassAllData') }}",
+     url: base_url + "/admin/getClassAllData",
      dataType:"json",
      success:function(data)
     {
@@ -225,7 +219,7 @@ $(document).ready(function() {
         event.preventDefault();
         var form_data = $(this).serialize();
         $.ajax({ 
-            url:"{{ route('addClass') }}",
+            url: base_url + "/admin/addClass",
             method:"POST",
             data:form_data,
             dataType:"json",
@@ -261,7 +255,7 @@ $(document).ready(function() {
          var class_id = $(this).attr("data-id");
          $('#form_output').html('');
          $.ajax({
-            url:"{{route('updateGetClassData')}}",
+            url: base_url + "/admin/updateGetClassData",
             method:'get',
             data:{class_id:class_id},
             dataType:'json',
@@ -288,7 +282,7 @@ $(document).ready(function() {
         if(confirm("Are you sure you want to delete this records?"))
         {
         $.ajax({
-        url:"{{ route('deleteClassData') }}",
+        url: base_url + "/admin/deleteClassData",
         method:"delete",
         data:{class_id:class_id, _token:_token},
         success:function(data)

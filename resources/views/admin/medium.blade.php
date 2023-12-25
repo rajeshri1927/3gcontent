@@ -158,7 +158,7 @@ $(document).ready(function() {
    function fetchMediumData()
    {
     $.ajax({
-     url:"{{ route('getMediumAllData') }}",
+     url: base_url + "/admin/getMediumAllData",
      dataType:"json",
      success:function(data)
     {
@@ -187,7 +187,7 @@ $(document).ready(function() {
         event.preventDefault();
         var form_data = $(this).serialize();
         $.ajax({ 
-            url:"{{ route('addMedium') }}",
+            url: base_url + "/admin/addMedium",
             method:"POST",
             data:form_data,
             dataType:"json",
@@ -223,7 +223,7 @@ $(document).ready(function() {
          var medium_id = $(this).attr("data-id");
          $('#form_output').html('');
          $.ajax({
-            url:"{{route('updateGetMediumData')}}",
+            url: base_url + "/admin/updateGetMediumData",
             method:'get',
             data:{medium_id:medium_id},
             dataType:'json',
@@ -249,7 +249,7 @@ $(document).ready(function() {
         if(confirm("Are you sure you want to delete this records?"))
         {
         $.ajax({
-        url:"{{ route('deleteMediumData') }}",
+        url: base_url + "/admin/deleteMediumData",
         method:"delete",
         data:{medium_id:medium_id, _token:_token},
         success:function(data)

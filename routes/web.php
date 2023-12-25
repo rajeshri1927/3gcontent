@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Controllers\BoardController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -47,33 +46,37 @@ Route::get('admin/board', function () {
 Route::get('admin/subject', function () {
 	return view('admin.subject');
 }); */
+// Route::get('admin/board', function () {
+// 	return view('admin.board');
+// });
 
-Route::group(['namespace' => 'App\Http\Controllers'], function () {
-    Route::post('addBoard', ['as' => 'addBoard', 'uses' => 'BoardController@addBoard']);
-	Route::get('getBoarddata',['as' => 'getBoarddata', 'uses' => 'BoardController@getBoarddata']);
-	Route::delete('deleteBoarddata',['as' => 'deleteBoarddata', 'uses' => 'BoardController@deleteBoarddata']);
-	Route::get('fetchBoardData',['as' => 'fetchBoardData', 'uses' => 'BoardController@fetchBoardData']);
-});
-
-
-Route::group(['namespace' => 'App\Http\Controllers'], function () {
-	Route::get('admin/medium',['as' => 'medium', 'uses' => 'MediumController@index']);
-	Route::post('addMedium', ['as' => 'addMedium', 'uses' => 'MediumController@addMedium']);
-	Route::get('getMediumAllData', ['as' => 'getMediumAllData', 'uses' => 'MediumController@getMediumAllData']);
-	Route::delete('deleteMediumData',['as' => 'deleteMediumData', 'uses' => 'MediumController@deleteMediumData']);
-	Route::get('updateGetMediumData',['as' => 'updateGetMediumData', 'uses' => 'MediumController@updateGetMediumData']);
-});
+// Route::group(['namespace' => 'App\Http\Controllers'], function () {
+// 	Route::get('admin/board',['as' => 'board', 'uses' => 'BoardController@index']);
+//     Route::post('addBoard', ['as' => 'addBoard', 'uses' => 'BoardController@addBoard']);
+// 	Route::get('getBoarddata',['as' => 'getBoarddata', 'uses' => 'BoardController@getBoarddata']);
+// 	Route::delete('deleteBoarddata',['as' => 'deleteBoarddata', 'uses' => 'BoardController@deleteBoarddata']);
+// 	Route::get('fetchBoardData',['as' => 'fetchBoardData', 'uses' => 'BoardController@fetchBoardData']);
+// });
 
 
-Route::group(['namespace' => 'App\Http\Controllers'], function () {
-	Route::get('admin/class',['as' => 'class', 'uses' => 'ClassController@index']);
-	Route::get('admin/getMediums',['as' => 'getMediums', 'uses' => 'ClassController@getMedium']);
-	Route::post('admin/addClass',['as' => 'addClass', 'uses' => 'ClassController@addClass']);
-	Route::get('getClassAllData', ['as' => 'getClassAllData', 'uses' => 'ClassController@getClassAllData']);
-	Route::get('updateGetClassData', ['as' => 'updateGetClassData', 'uses' => 'ClassController@updateGetClassData']);
-	Route::delete('deleteClassData',['as' => 'deleteClassData', 'uses' => 'ClassController@deleteClassData']);
-	// Route::get('updateGetMediumData',['as' => 'updateGetMediumData', 'uses' => 'MediumController@updateGetMediumData']);
-});
+// Route::group(['namespace' => 'App\Http\Controllers'], function () {
+// 	Route::get('admin/medium',['as' => 'medium', 'uses' => 'MediumController@index']);
+// 	Route::post('addMedium', ['as' => 'addMedium', 'uses' => 'MediumController@addMedium']);
+// 	Route::get('getMediumAllData', ['as' => 'getMediumAllData', 'uses' => 'MediumController@getMediumAllData']);
+// 	Route::delete('deleteMediumData',['as' => 'deleteMediumData', 'uses' => 'MediumController@deleteMediumData']);
+// 	Route::get('updateGetMediumData',['as' => 'updateGetMediumData', 'uses' => 'MediumController@updateGetMediumData']);
+// });
+
+
+// Route::group(['namespace' => 'App\Http\Controllers'], function () {
+// 	Route::get('admin/class',['as' => 'class', 'uses' => 'ClassController@index']);
+// 	Route::get('admin/getMediums',['as' => 'getMediums', 'uses' => 'ClassController@getMedium']);
+// 	Route::post('admin/addClass',['as' => 'addClass', 'uses' => 'ClassController@addClass']);
+// 	Route::get('getClassAllData', ['as' => 'getClassAllData', 'uses' => 'ClassController@getClassAllData']);
+// 	Route::get('updateGetClassData', ['as' => 'updateGetClassData', 'uses' => 'ClassController@updateGetClassData']);
+// 	Route::delete('deleteClassData',['as' => 'deleteClassData', 'uses' => 'ClassController@deleteClassData']);
+// 	// Route::get('updateGetMediumData',['as' => 'updateGetMediumData', 'uses' => 'MediumController@updateGetMediumData']);
+// });
 
 
 

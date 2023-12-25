@@ -31,10 +31,10 @@
                                 	<span class="text-danger">{{ $errors->first('password') }}</span>
                                 @endif
 							</div>
-							<div class="custom-control custom-checkbox  text-left mb-4 mt-2">
-								<input type="checkbox" class="custom-control-input" id="customCheck1">
-								<label class="custom-control-label" for="customCheck1">Send me the <a href="#!"> Newsletter</a> weekly.</label>
-							</div>
+							<!-- <div class="custom-control custom-checkbox  text-left mb-4 mt-2">
+								<input type="checkbox" class="custom-control-input" id="customCheck1"> -->
+								<!-- <label class="custom-control-label" for="customCheck1">Send me the <a href="#!"> Newsletter</a> weekly.</label> -->
+							<!-- </div> -->
 							<button type="button" id="signup" class="btn btn-primary btn-block mb-4">Sign up</button>
 						</form>
 						<hr>
@@ -89,19 +89,19 @@
 					let jsonString = JSON.stringify(serializedFormData);            
 					let form_data = encryption.encrypt(jsonString, nonceValue); */
 					
-					$.ajax({
-						cache: false,
-						contentType: false,
-						processData: false,
-						url: base_url + "/admin/storeuser",
-						type: 'post',
-						data: formData,
-						success: function (result) {
-							if (result){
-								window.location.href = base_url+'/admin';
-							}
-						}
-					});
+					// $.ajax({
+					// 	cache: false,
+					// 	contentType: false,
+					// 	processData: false,
+					// 	url: base_url + "/admin/storeuser",
+					// 	type: 'post',
+					// 	data: formData,
+					// 	success: function (result) {
+					// 		if (result){
+					// 			window.location.href = base_url+'/admin';
+					// 		}
+					// 	}
+					// });
 				}
 			}
 		});

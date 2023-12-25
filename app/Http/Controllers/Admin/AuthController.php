@@ -20,6 +20,7 @@ class AuthController extends Controller{
     }
 
     public function login(Request $request){
+        //dd("Login page");
         return view($this->module_view_folder.'.login', $this->arr_view_data);
     }
 
@@ -92,7 +93,7 @@ class AuthController extends Controller{
         ]);
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return Redirect('/admin/dashboard')->withSuccess('Signed in');
+            return redirect('/admin/dashboard')->withSuccess('Signed in');
         } else {
             return back()->withErrors([
                 'password' => 'Login details are not valid.',

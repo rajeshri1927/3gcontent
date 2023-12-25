@@ -1,7 +1,8 @@
 <?php
+namespace App\Http\Controllers\Admin;
 
-namespace App\Http\Controllers;
-
+use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Models\Medium;
 use App\Models\Board;
@@ -10,11 +11,17 @@ use Validator;
 class MediumController extends Controller
 {
 
+    public function __construct(){
+        $this->arr_view_data = [];
+        $this->module_view_folder = 'admin';
+    }
+
     public function index()
     {
         $data['BoardList'] = Board::get(["board_name", "board_id"]);
         $data['BoardList'] = $data['BoardList'] ?? collect();
-        return view('admin.medium', $data);
+        return view($this->module_view_folder.'.medium', $this->arr_view_data,$data);
+        //return view('admin.medium', $data);
     }
 
     public function getMediumAllData(){
