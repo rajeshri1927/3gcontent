@@ -89,7 +89,7 @@
 					let jsonString = JSON.stringify(serializedFormData);            
 					let form_data = encryption.encrypt(jsonString, nonceValue); */
 					
-					$.ajax({
+					/* $.ajax({
 						cache: false,
 						contentType: false,
 						processData: false,
@@ -101,7 +101,7 @@
 								window.location.href = base_url+'/admin';
 							}
 						}
-					});
+					}); */
 				}
 			}
 		});
