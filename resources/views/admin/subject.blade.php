@@ -11,7 +11,7 @@
     <div class="row align-items-center">
       <div class="col-md-12">
         <div class="page-header-title">
-          <h5 class="m-b-10">Class Here</h5>
+          <h5 class="m-b-10">Subject Here</h5>
         </div>
         <ul class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
@@ -38,7 +38,8 @@
           </div>
           <div class="modal-body">
             <form role="form" id="addSubject" name="addSubject" method="post" enctype="multipart/form-data">
-              <div class="card-body">
+            {{ csrf_field() }}  
+            <div class="card-body">
                 <div class="row">
                   <div class="col-sm-6">
                     <div class="form-group">
@@ -95,8 +96,10 @@
                 <div class="row">
                   <div class="col-sm-4"></div>
                   <div class="col-sm-4">
-                    <button class="btn btn-primary btn-secondary" data-dismiss="modal" type="button" name="addSubjectBtn" id="addSubjectBtn">Cancel</button>
-                    <button class="btn btn-primary" type="button" name="addSubjectBtn" id="addSubjectBtn">Add Subject</button>
+                      <input type="hidden" name="subject_id" id="subject_id" value="" />
+                      <input type="hidden" name="button_action" id="button_action" value="insert" />
+                      <button type="button" class="btn  btn-secondary" data-dismiss="modal">Close</button>
+                      <input type="submit"  name="submit" id="action" class="btn  btn-primary" value="Add Subject">
                   </div>
                   <div class="col-sm-4"></div>
                 </div>
@@ -112,122 +115,25 @@
     </div>
     <div class="card-body table-border-style">
       <div class="table-responsive">
+      <span id="form_output"></span>
         <table class="table table-striped table-bordered ">
           <thead>
             <tr>
-              <th>#</th>
+              <th>Sr.No</th>
+              <th>Board Name</th>
+              <th>Medium Name</th>
               <th>Class Name</th>
-              <th>Class Name</th>
+              <th>Subject Name</th>
+              <th>Subject Description</th>
+              <th>Subject Status</th>
               <th>Created Date / Time</th>
               <th>Action</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>Mark</td>
-              <td>Otto</td>
-              <td>18 Dec 2023 11.30 PM</td>
-              <td>
-                <button class="btn btn-sm btn-warning mt-1" data-id="MED_DB20C156D75" onclick="editClassDetail(this);" data-toggle="modal" data-target="#editModal" title="Change Class Details" fdprocessedid="9o67l"><i class="fas fa-edit"></i></button>
-                <button class="btn btn-sm btn-danger mt-1" data-id="MED_DB20C156D75" data-toggle="modal" data-target="#deleteModal" onclick="deleteClassDetail(this);" title="Delete Class Details" fdprocessedid="33khcl"><i class="fas fa-trash-alt"></i></button>
-              </td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>Jacob</td>
-              <td>Thornton</td>
-              <td>18 Dec 2023 11.30 PM</td>
-              <td>
-                <button class="btn btn-sm btn-warning mt-1" data-toggle="modal" data-target="#editModal" data-id="MED_DB20C156D75" onclick="editClassDetail(this);" title="Change Class Details" fdprocessedid="9o67l"><i class="fas fa-edit"></i></button>
-                <button class="btn btn-sm btn-danger mt-1" data-id="MED_DB20C156D75" data-toggle="modal" data-target="#deleteModal" onclick="deleteClassDetail(this);" title="Delete Class Details" fdprocessedid="33khcl"><i class="fas fa-trash-alt"></i></button>
-              </td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>Larry</td>
-              <td>the Bird</td>
-              <td>18 Dec 2023 11.30 PM</td>
-              <td>
-                <button class="btn btn-sm btn-warning mt-1" data-toggle="modal" data-target="#editModal" data-id="MED_DB20C156D75" onclick="editClassDetail(this);" title="Change Class Details" fdprocessedid="9o67l"><i class="fas fa-edit"></i></button>
-                <button class="btn btn-sm btn-danger mt-1" data-id="MED_DB20C156D75" onclick="deleteClassDetail(this);" data-toggle="modal" data-target="#deleteModal" title="Delete Class Details" fdprocessedid="33khcl"><i class="fas fa-trash-alt"></i></button>
-              </td>
-            </tr>
-          </tbody>
+          <tbody></tbody>
         </table>
       </div>
     </div>
-    <!-- Edit Class Modal -->
-    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Edit Subject</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          </div>
-          <div class="modal-body">
-            <form role="form" id="addSubjectFrm" name="addSubjectFrm" method="post" enctype="multipart/form-data">
-              <div class="card-body">
-                <div class="row">
-                  <div class="col-sm-6">
-                    <div class="form-group">
-                      <label for="boardname">Select Board</label>
-                      <select class="form-control" name="boardname" id="boardname">
-                        <option value="">--Select Board--</option>
-                        <option value="BOARD_BF9351DAA">CBSE</option>
-                        <option value="BOARD_D50BE3EF0">ICSE</option>
-                        <option value="BOARD_0040B44E3">JEE</option>
-                        <option value="BOARD_F5DED60D5">MHCET</option>
-                        <option value="BOARD_33E77AEF9">MHSB</option>
-                        <option value="BOARD_2F32AB5FF">NEET</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="col-sm-6">
-                    <div class="form-group">
-                      <label for="medium">Medium</label>
-                      <select class="form-control" id="medium" name="medium">
-                        <option value="">--Select Medium--</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="col-sm-6">
-                    <div class="form-group">
-                      <label for="classname">Select Class</label>
-                      <select class="form-control" id="classname" name="classname">
-                        <option value="">--Select Class--</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="col-sm-6">
-                    <div class="form-group">
-                      <label for="subjectname">Subject Name</label>
-                      <input type="text" name="subjectname" id="subjectname" class="form-control" placeholder="Enter subject name. *">
-                    </div>
-                  </div>
-                  <div class="col-sm-3"></div>
-                </div>
-              </div>
-              <div class="card-footer">
-                <div class="row">
-                  <div class="col-sm-4"></div>
-                  <div class="col-sm-4">
-                    <button class="btn btn-primary btn-secondary" data-dismiss="modal" type="button" name="addSubjectBtn" id="addSubjectBtn">Cancel</button>
-                    <button class="btn btn-primary" type="button" name="addSubjectBtn" id="addSubjectBtn">Add Subject</button>
-                  </div>
-                  <div class="col-sm-4"></div>
-                </div>
-              </div>
-            </form>
-          </div>
-          <!-- <div class="modal-footer">
-            <button type="button" class="btn  btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn  btn-primary">Send message</button>
-            </div> -->
-        </div>
-      </div>
-    </div>
-    <!-- End Class Modal -->
     <!-- Delete Class Modal -->
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
@@ -298,6 +204,139 @@ $(document).ready(function() {
                 }
             }
         });
+    });
+
+        //View/Get data in html format Here//
+   fetchSubjectData();
+   function fetchSubjectData()
+   {
+    $.ajax({
+     url: base_url + "/admin/getSubjectAllData",
+     dataType:"json",
+     success:function(data)
+    {
+      var html = '';
+    for(var count=0; count < data.length; count++)
+      {
+        html +='<tr>';
+        html +='<td contenteditable class="column_name" data-column_name="subject_id" data-id="'+data[count].subject_id+'">'+data[count].subject_id+'</td>';
+        html +='<td contenteditable class="column_name" data-column_name="board_id" data-id="'+data[count].subject_id+'">'+data[count].board_name+'</td>';
+        html += '<td contenteditable class="column_name" data-column_name="medium_id" data-id="'+data[count].subject_id+'">'+data[count].medium_name+'</td>';
+        html +='<td contenteditable class="column_name" data-column_name="class_id" data-id="'+data[count].subject_id+'">'+data[count].class_name+'</td>';
+        html += '<td contenteditable class="column_name" data-column_name="subject_name" data-id="'+data[count].subject_id+'">'+data[count].subject_name+'</td>';
+        html += '<td contenteditable class="column_name" data-column_name="subject_description" data-id="'+data[count].subject_id+'">'+data[count].subject_description+'</td>';
+        html += '<td contenteditable class="column_name" data-column_name="subject_status" data-id="'+data[count].subject_id+'">'+data[count].subject_status+'</td>';
+        html += '<td contenteditable class="column_name" data-column_name="created_at" data-id="'+data[count].subject_id+'">'+data[count].created_at+'</td>';
+        html += '<td>';
+        html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].subject_id+'" data-toggle="modal"  title="Update Class Details"><i class="fas fa-edit"></i></button>';
+        html += '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button"  data-id="'+data[count].subject_id+'" data-toggle="modal"  title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
+        html += '</td></tr>';
+    }
+      $('tbody').html(html);
+    }
+    });
+   }
+    //Add Subject Using Ajax //
+    $('#addSubject').on('submit', function(event){ 
+        event.preventDefault();
+        var form_data = $(this).serialize();
+        $.ajax({ 
+            url: base_url + "/admin/addSubject",
+            method:"POST",
+            data:form_data,
+            dataType:"json",
+            success:function(data)
+                {
+                    if(data.error.length > 0)
+                    {
+                        var error_html = '';
+                        for(var count = 0; count < data.error.length; count++)
+                        {
+                            error_html += '<div class="alert alert-danger">'+data.error[count]+'</div>';
+                        }
+                        $('#form_output').html(error_html);
+                    }
+                    else
+                    {
+                        $('#form_output').html(data.success);
+                        $('#addSubject')[0].reset();
+                        $('#action').val('Add');
+                        $('.modal-title').text('Add Data');
+                        $('#button_action').val('insert');
+                        $("#subjectModal").modal("hide");
+                        setInterval('location.reload()', 4000);   
+                         //window.location.reload();
+                    }
+                }
+    
+        });
+    });
+
+    //Update data fetch Here//
+  $(document).on('click', '.update', function(){
+         var subject_id = $(this).attr("data-id");
+         var board_id = $(this).attr("data-board-id");
+         var medium_id = $(this).attr("data-medium-id");
+         var class_id = $(this).attr("data-class-id");
+         $('#form_output').html('');
+         $.ajax({
+            url: base_url + "/admin/updateGetSubjectData",
+            method:'get',
+            data:{subject_id:subject_id,board_id:board_id,medium_id:medium_id,class_id:class_id},
+            dataType:'json',
+            success:function(data)
+            {
+              //Medium Data//
+              var htmlString = data.medium_id;
+              var options = $(htmlString);
+                // Iterate over the options
+                options.each(function(index, option) {
+                  options.filter(':contains("2")').prop('selected', true);
+                });
+                $('#medium_id').html(options);
+              //class Data//
+              console.log(data.class_id);
+              var htmlclassString = data.class_id;
+              var optionsClass = $(htmlclassString);
+              console.log(optionsClass);
+                // Iterate over the options
+                optionsClass.each(function(index, optionclass) {
+                  optionsClass.filter(':contains("2")').prop('selected', true);
+                });
+                $('#class_id').html(optionsClass);
+              
+                $('#board_id').val(data.board_id);
+                //$('#medium_id').val(data.medium_id);
+                //$('#class_id').val(data.class_id);
+                $('#subject_name').val(data.subject_name);
+                $('#subject_description').val(data.subject_description);
+                $('#subject_status').val(data.subject_status);
+                $('#subject_id').val(subject_id);
+                $('#subjectModal').modal('show');
+                $('#action').val('Update');
+                $('.modal-title').text('Update Subject Data');
+                $('#button_action').val('update');
+            }
+         })
+   });
+
+  //Delete subject Here//
+  var _token = $('input[name="_token"]').val();
+  $(document).on('click', '#delete', function(){
+        var subject_id = $(this).attr("data-id");
+        if(confirm("Are you sure you want to delete this records?"))
+        {
+        $.ajax({
+        url: base_url + "/admin/deleteSubjectData",
+        method:"delete",
+        data:{subject_id:subject_id, _token:_token},
+        success:function(data)
+        {
+            $('#form_output').html(data);
+            fetchSubjectData();
+        }
+        });
+        }
     });
 
   });

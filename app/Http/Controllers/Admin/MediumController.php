@@ -21,7 +21,6 @@ class MediumController extends Controller
         $data['BoardList'] = Board::get(["board_name", "board_id"]);
         $data['BoardList'] = $data['BoardList'] ?? collect();
         return view($this->module_view_folder.'.medium', $this->arr_view_data,$data);
-        //return view('admin.medium', $data);
     }
 
     public function getMediumAllData(){
@@ -30,7 +29,6 @@ class MediumController extends Controller
             ->orderBy('mediums.medium_id', 'asc')
             ->get();
         echo json_encode($mediums);
-        //return response()->json($mediums);
     }
 
     public function addMedium(Request $request){

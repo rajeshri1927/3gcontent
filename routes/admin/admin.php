@@ -1,7 +1,7 @@
 <?php
 use Illuminate\Support\Facades\Route;
 
-// Authentication
+//Authentication//
 Route::group(array('prefix' => '/admin'), function(){
     $module_controller = "App\Http\Controllers\Admin\AuthController@";
     Route::any('/',['as'=>'','uses'=>$module_controller.'login']);
@@ -44,6 +44,10 @@ Route::group(array('prefix' => '/admin','middleware' => ['web','admin']), functi
     $module_controller = "App\Http\Controllers\Admin\SubjectController@";
     Route::any('/subject',['as'=>'','uses'=>$module_controller.'index']);
     Route::any('/getClass',['as'=>'','uses'=>$module_controller.'getClass']);
+    Route::any('/addSubject',['as'=>'','uses'=>$module_controller.'addSubject']);
+    Route::any('/getSubjectAllData',['as'=>'','uses'=>$module_controller.'getSubjectAllData']);
+    Route::any('/updateGetSubjectData',['as'=>'','uses'=>$module_controller.'updateGetSubjectData']);
+    Route::any('/deleteSubjectData',['as'=>'','uses'=>$module_controller.'deleteSubjectData']);  
     
     $module_controller = "App\Http\Controllers\Admin\TopicController@";
     Route::any('/topics',['as'=>'','uses'=>$module_controller.'index']);

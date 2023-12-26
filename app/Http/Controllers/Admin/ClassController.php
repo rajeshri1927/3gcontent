@@ -96,11 +96,19 @@ class ClassController extends Controller
 
     function updateGetClassData(Request $request)
     {
-        $class_id  = $request->input('class_id');
-        $standard  = Standard::find($class_id);
+        $medium_id  = $request->input('medium_id');
+        $selectedBoardId  = $request->input('board_id');
+        $mediumList = Medium::where('board_id',$selectedBoardId)->get();
+        $html = '';
+        foreach ($mediumList as $mediumDet) {
+            $isSelected = ($mediumDet->medium_id == $medium_id) ? 'selected' : '';
+            $html .= '<option value="' . $mediumDet->medium_id . '" ' . $isSelected . '>' . $mediumDet->medium_name . '</option>';
+        } 
+        $selectedClassId  = $request->input('class_id');     
+        $standard  = Standard::find($selectedClassId);
         $output    = array(
             'board_id'       =>  $standard->board_id,
-            'medium_id'      =>  $standard->medium_id,
+            'medium_id'      =>  $html,
             'class_name'     =>  $standard->class_name,
             'class_description' =>  $standard->class_description,
             'class_status' => $standard->class_status
