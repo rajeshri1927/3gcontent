@@ -47,6 +47,23 @@ Route::group(array('prefix' => '/admin','middleware' => ['web','admin']), functi
     Route::any('/addSubject',['as'=>'','uses'=>$module_controller.'addSubject']);
     Route::any('/getSubjectAllData',['as'=>'','uses'=>$module_controller.'getSubjectAllData']);
     Route::any('/updateGetSubjectData',['as'=>'','uses'=>$module_controller.'updateGetSubjectData']);
-    Route::any('/deleteSubjectData',['as'=>'','uses'=>$module_controller.'deleteSubjectData']);  
+    Route::any('/deleteSubjectData',['as'=>'','uses'=>$module_controller.'deleteSubjectData']);
+    
+    //Chapter Route Here//
+    $module_controller = "App\Http\Controllers\Admin\ChapterController@";
+    Route::any('/chapter',['as'=>'','uses'=>$module_controller.'index']);
+    Route::any('/getSubject',['as'=>'','uses'=>$module_controller.'getSubject']);
+    Route::any('/addChapter',['as'=>'','uses'=>$module_controller.'addchapter']);
+    Route::any('/getChapterAllData',['as'=>'','uses'=>$module_controller.'getChapterAllData']);
+    Route::any('/updateGetChaptertData',['as'=>'','uses'=>$module_controller.'updateGetChaptertData']);
+    Route::any('/deleteChapterData',['as'=>'','uses'=>$module_controller.'deleteChapterData']);
+
+     //Question Types Route Here//
+     $module_controller = "App\Http\Controllers\Admin\QuestionTypeController@";
+     Route::any('/questionType',['as'=>'','uses'=>$module_controller.'index']);
+     Route::any('/addQuestionType',['as'=>'','uses'=>$module_controller.'addQuestionType']);
+     Route::any('/getQuestionTypeData',['as'=>'','uses'=>$module_controller.'getQuestionTypeData']);
+     Route::any('/updateQuestionTypeData',['as'=>'','uses'=>$module_controller.'updateQuestionTypeData']);
+     Route::any('/deleteQuestionTypeData',['as'=>'','uses'=>$module_controller.'deleteQuestionTypeData']);
     
 });

@@ -44,16 +44,16 @@
 				<label>Academic</label>
 			</li>
 			<li class="nav-item pcoded-hasmenu">
-				<a href="#!" class="nav-link "><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext">Board</span></a>
+				<a href="#!" class="nav-link "><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext">Academic List</span></a>
 				<ul class="pcoded-submenu">
-					<li><a href="board">Board List</a></li>
-					<li><a href="medium">Medium List</a></li>
-					<li><a href="class">Class List</a></li>
-					<li><a href="subject">Subject List</a></li>
-					<!-- <li><a href="chapters">Chapters List</a></li>
-					<li><a href="topics">Topics List</a></li>
-					<li><a href="questionType.php">Question Type</a></li>
-					<li><a href="questionBank.php">Question Bank </a></li> -->
+					<li><a href="board">Board</a></li>
+					<li><a href="medium">Medium </a></li>
+					<li><a href="class">Class</a></li>
+					<li><a href="subject">Subject</a></li>
+					 <li><a href="chapter">Chapters</a></li>
+					<!--<li><a href="topics">Topics List</a></li> -->
+					<li><a href="questionType">Question Type</a></li>
+					<!--<li><a href="questionBank.php">Question Bank </a></li> -->
 				</ul>
 			</li>
 			<!-- Class Managment Here -->
