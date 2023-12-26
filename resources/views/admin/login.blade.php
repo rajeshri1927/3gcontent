@@ -31,7 +31,7 @@
                             <button type="submit" id="signin" class="btn btn-block btn-primary mb-4">Sign in</button>
                         </form>
                         <hr>
-                        <!-- <p class="mb-2 text-muted">Forgot password? <a href="#" class="f-w-400">Reset</a></p> -->
+                        <p class="mb-2 text-muted">Forgot password? <a href="#" class="f-w-400">Reset</a></p>
                         <p class="mb-0 text-muted">Don’t have an account? <a href="{{ url('/admin/registration') }}" class="f-w-400">Sign up</a></p>
                     </div>
                 </div>

@@ -51,7 +51,7 @@
 					<li><a href="class">Class</a></li>
 					<li><a href="subject">Subject</a></li>
 					 <li><a href="chapter">Chapters</a></li>
-					<!--<li><a href="topics">Topics List</a></li> -->
+					<li><a href="topics">Topics List</a></li>
 					<li><a href="questionType">Question Type</a></li>
 					<!--<li><a href="questionBank.php">Question Bank </a></li> -->
 				</ul>
