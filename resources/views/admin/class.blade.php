@@ -185,6 +185,7 @@ $(document).ready(function() {
         });
 
     });
+
     //View/Get data in html format Here//
    fetchClassData();
    function fetchClassData()
@@ -205,7 +206,7 @@ $(document).ready(function() {
         html += '<td contenteditable class="column_name" data-column_name="class_status" data-id="'+data[count].class_id+'">'+data[count].class_status+'</td>';
         html += '<td contenteditable class="column_name" data-column_name="created_at" data-id="'+data[count].class_id+'">'+data[count].created_at+'</td>';
         html += '<td>';
-        html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-id="'+data[count].class_id+'" data-toggle="modal"  title="Update Class Details"><i class="fas fa-edit"></i></button>';
+        html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-medium-id="'+data[count].medium_id+'" data-board-id="'+data[count].board_id+'" data-id="'+data[count].class_id+'" data-toggle="modal"  title="Update Class Details"><i class="fas fa-edit"></i></button>';
         html += '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].class_id+'" data-toggle="modal"  title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
         html += '</td></tr>';
     }
@@ -253,16 +254,25 @@ $(document).ready(function() {
     //Update data fetch Here//
     $(document).on('click', '.update', function(){
          var class_id = $(this).attr("data-id");
+         var medium_id = $(this).attr('data-medium-id');
+         var board_id = $(this).attr("data-board-id");
          $('#form_output').html('');
          $.ajax({
             url: base_url + "/admin/updateGetClassData",
             method:'get',
-            data:{class_id:class_id},
+            data:{class_id:class_id,board_id:board_id,medium_id:medium_id},
             dataType:'json',
             success:function(data)
             {
+                var htmlString = data.medium_id;
+                var options = $(htmlString);
+
+                // Iterate over the options
+                options.each(function(index, option) {
+                    options.filter(':contains("2")').prop('selected', true);
+                });
+                $('#medium_id').html(options);
                 $('#board_id').val(data.board_id);
-                $('#medium_id').val(data.medium_id);
                 $('#class_name').val(data.class_name);
                 $('#class_description').val(data.class_description);
                 $('#class_status').val(data.class_status);
