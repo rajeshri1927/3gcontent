@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Support\Facades\Route;
 
+//Authentication//
 Route::group(array('prefix' => '/admin'), function(){
     $module_controller = "App\Http\Controllers\Admin\AuthController@";
     Route::any('/',['as'=>'','uses'=>$module_controller.'login']);
@@ -23,11 +24,12 @@ Route::group(array('prefix' => '/admin','middleware' => ['web','admin']), functi
     Route::delete('/deleteBoarddata',['as'=>'','uses'=>$module_controller.'deleteBoarddata']);
 
     //Medium Controller Route//
-    Route::any('/medium', [MediumController::class, 'index']);
-    Route::post('/addMedium', [MediumController::class,'addMedium']);
-    Route::get('/getMediumAllData',[MediumController::class,'getMediumAllData']);
-    Route::get('/updateGetMediumData',[MediumController::class,'updateGetMediumData']);
-    Route::delete('/deleteMediumData',[MediumController::class,'deleteMediumData']);
+    $module_controller = "App\Http\Controllers\Admin\MediumController@";
+    Route::any('/medium',['as'=>'','uses'=>$module_controller.'index']);
+    Route::post('/addMedium',['as'=>'','uses'=>$module_controller.'addMedium']);
+    Route::get('/getMediumAllData',['as'=>'','uses'=>$module_controller.'getMediumAllData']);
+    Route::get('/updateGetMediumData',['as'=>'','uses'=>$module_controller.'updateGetMediumData']);
+    Route::delete('/deleteMediumData',['as'=>'','uses'=>$module_controller.'deleteMediumData']);
 
     //Class Controller Route//
     $module_controller = "App\Http\Controllers\Admin\ClassController@";
@@ -46,4 +48,5 @@ Route::group(array('prefix' => '/admin','middleware' => ['web','admin']), functi
     Route::any('/getSubjectAllData',['as'=>'','uses'=>$module_controller.'getSubjectAllData']);
     Route::any('/updateGetSubjectData',['as'=>'','uses'=>$module_controller.'updateGetSubjectData']);
     Route::any('/deleteSubjectData',['as'=>'','uses'=>$module_controller.'deleteSubjectData']);  
+    
 });
