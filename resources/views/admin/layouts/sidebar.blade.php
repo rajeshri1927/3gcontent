@@ -50,9 +50,9 @@
 					<li><a href="medium">Medium List</a></li>
 					<li><a href="class">Class List</a></li>
 					<li><a href="subject">Subject List</a></li>
-					<!-- <li><a href="chapters">Chapters List</a></li>
+					<li><a href="chapters">Chapters List</a></li>
 					<li><a href="topics">Topics List</a></li>
-					<li><a href="questionType.php">Question Type</a></li>
+					<!-- <li><a href="questionType.php">Question Type</a></li>
 					<li><a href="questionBank.php">Question Bank </a></li> -->
 				</ul>
 			</li>

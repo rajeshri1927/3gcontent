@@ -3,7 +3,7 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
-class Subject extends Model
+class Chapter extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -11,17 +11,19 @@ class Subject extends Model
      * @var array
      */
 
-    protected $table   =  'subject_details';
+    protected $table   =  'chapter_details';
 
 
     protected $fillable = [
-        'subject_id',
-        'subject_name',
+        'chapter_id',
+        'chapter_name',
+        'chapter_no',
+        'chapter_description',
+        'chapter_status',
         'board_id',
         'medium_id',
         'class_id',
-        'subject_description',
-        'subject_status',
+        'subject_id',
         'created_by',
         'creation_ip',
         'modified_by',
