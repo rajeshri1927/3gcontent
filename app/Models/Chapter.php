@@ -10,5 +10,9 @@ class Chapter extends Model
     use HasFactory;
     protected $table = 'chapters';
     protected $primaryKey = 'chapter_id';
-    protected $fillable = ['board_id','medium_id','class_id','subject_id','chapter_no','chapter_name','chapter_description','chapter_status'];
+    protected $fillable = ['board_id','medium_id','class_id','subject_id','chapter_no','chapter_name','chapter_description','chapter_status',
+    'created_by',
+    'creation_ip',
+    'modified_by',
+    'modified_ip'];
 }

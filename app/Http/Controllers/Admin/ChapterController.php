@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Http\Request;
 use App\Models\Medium;
@@ -35,6 +36,7 @@ class ChapterController extends Controller
     }
 
     public function addChapter(Request $request){
+        $user = Auth::user();
         $validation = Validator::make($request->all(), [
             'chapter_name'  => 'required'
         ]);
@@ -59,7 +61,9 @@ class ChapterController extends Controller
                     'chapter_no'    => $request->get('chapter_no'),
                     'chapter_name'  => $request->get('chapter_name'),
                     'chapter_description' => $request->get('chapter_description'),
-                    'chapter_status' => $request->get('chapter_status')
+                    'chapter_status' => $request->get('chapter_status'),
+                    'created_by' => $user->name,
+                    'creation_ip' => $_SERVER['REMOTE_ADDR']
                 ]);
                 $chapter->save();
                 $success_output = '<div class="alert alert-success">Chapter Data Added Successfully!! </div>';
@@ -75,9 +79,11 @@ class ChapterController extends Controller
                         'chapter_no'    => $request->get('chapter_no'),
                         'chapter_name' => $request->get('chapter_name'),
                         'chapter_description' => $request->get('chapter_description'),
-                        'chapter_status' => $request->get('chapter_status')
+                        'chapter_status' => $request->get('chapter_status'),
+                        'modified_by' => $user->name,
+                        'modified_ip' => $_SERVER['REMOTE_ADDR']
                     ]);
-                    $id = $chapter->chapter_id;
+                    //$id = $chapter->chapter_id;
                     $success_output = '<div class="alert alert-success">Chapter Data Updated !!!</div>';
                 } else {
                     // Handle the case when the board is not found
@@ -89,7 +95,7 @@ class ChapterController extends Controller
             'error'     =>  $error_array,
             'success'   =>  $success_output
         );
-        echo json_encode($output,$id);
+        echo json_encode($output);
     }
 
     public function getChapterAllData(){

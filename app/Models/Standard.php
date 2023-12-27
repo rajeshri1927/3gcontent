@@ -10,5 +10,14 @@ class Standard extends Model
     use HasFactory;
     protected $table = 'class';
     protected $primaryKey = 'class_id';
-    protected $fillable = ['board_id','medium_id','class_name','class_description','class_status'];
+    protected $fillable = [
+    'board_id',
+    'medium_id',
+    'class_name',
+    'class_description',
+    'class_status',        
+    'created_by',
+    'creation_ip',
+    'modified_by',
+    'modified_ip',];
 }

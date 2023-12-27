@@ -131,7 +131,7 @@
     <div class="card-body table-border-style">
       <div class="table-responsive">
       <span id="form_output"></span>
-        <table class="table table-striped table-bordered ">
+        <table class="table table-striped table-bordered data-table">
           <thead>
             <tr>
               <th>Sr.No</th>
@@ -257,6 +257,12 @@ $(document).ready(function() {
     for(var count=0; count < data.length; count++)
       {
         html +='<tr>';
+        var createdAtDate = new Date(data[count].created_at);
+          var formattedCreatedAt = createdAtDate.toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric'
+          });
         html +='<td contenteditable class="column_name" data-column_name="chapter_id" data-id="'+data[count].chapter_id+'">'+data[count].chapter_id+'</td>';
         html +='<td contenteditable class="column_name" data-column_name="board_id" data-id="'+data[count].chapter_id+'">'+data[count].board_name+'</td>';
         html += '<td contenteditable class="column_name" data-column_name="medium_id" data-id="'+data[count].chapter_id+'">'+data[count].medium_name+'</td>';
@@ -266,13 +272,21 @@ $(document).ready(function() {
         html += '<td contenteditable class="column_name" data-column_name="chapter_name" data-id="'+data[count].chapter_id+'">'+data[count].chapter_name+'</td>';
        // html += '<td contenteditable class="column_name" data-column_name="chapter_description" data-id="'+data[count].chapter_id+'">'+data[count].chapter_description+'</td>';
         //html += '<td contenteditable class="column_name" data-column_name="chapter_status" data-id="'+data[count].chapter_id+'">'+data[count].chapter_status+'</td>';
-        html += '<td contenteditable class="column_name" data-column_name="created_at" data-id="'+data[count].chapter_id+'">'+data[count].created_at+'</td>';
+        // html += '<td contenteditable class="column_name" data-column_name="created_at" data-id="'+data[count].chapter_id+'">'+data[count].created_at+'</td>';
+        html += '<td data-column_name="created_at" data-id="' + data[count].chapter_id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
         html += '<td>';
         html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].chapter_id+'" data-subject-id="'+data[count].subject_id+'" data-toggle="modal"  title="Update Class Details"><i class="fas fa-edit"></i></button>';
         html += '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button"  data-id="'+data[count].chapter_id+'" data-toggle="modal"  title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
         html += '</td></tr>';
     }
       $('tbody').html(html);
+      $('.data-table').DataTable({
+          // DataTables configuration options here
+          "order": [[0, "desc"]], // Example: Sort by the first column (subject_id) in descending order
+          "paging": true,
+          "pageLength": 10,
+          "bDestroy": true
+      });
     }
     });
    }
@@ -338,7 +352,6 @@ $(document).ready(function() {
               //class Data//
               var htmlclassString = data.class_id;
               var optionsClass = $(htmlclassString);
-              console.log(optionsClass);
                 // Iterate over the options
                 optionsClass.each(function(index, optionclass) {
                   optionsClass.filter(':contains("2")').prop('selected', true);

@@ -10,5 +10,14 @@ class Medium extends Model
     use HasFactory;
     protected $table = 'mediums';
     protected $primaryKey = 'medium_id';
-    protected $fillable = ['medium_name','board_id','medium_description','medium_status'];
+    protected $fillable = [
+        'medium_name',
+        'board_id',
+        'medium_description',
+        'medium_status',
+        'created_by',
+        'creation_ip',
+        'modified_by',
+        'modified_ip',
+    ];
 }

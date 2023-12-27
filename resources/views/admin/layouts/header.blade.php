@@ -21,14 +21,12 @@
          var base_url = "{{url('/')}}";
          var _accessToken = "{{csrf_token()}}";
       </script>
-
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
       <link rel="icon" href="{{ asset('public/assets/images/favicon.ico')}}" type="image/x-icon">
       <!-- prism css -->
       <link rel="stylesheet" href="{{ asset('public/assets/css/plugins/prism-coy.css')}}">
       <!-- vendor css -->
       <link rel="stylesheet" href="{{ asset('public/assets/css/style.css')}}">
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-      <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-      <script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>       
-      <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css" />
+      <link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+
    </head>

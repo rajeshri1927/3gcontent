@@ -19,8 +19,8 @@ Route::group(array('prefix' => '/admin','middleware' => ['web','admin']), functi
     $module_controller = "App\Http\Controllers\Admin\BoardController@";
     Route::any('/board',['as'=>'','uses'=>$module_controller.'index']);
     Route::post('/addBoard',['as'=>'','uses'=>$module_controller.'addBoard']);
-    Route::get('/getBoarddata',['as'=>'','uses'=>$module_controller.'getBoarddata']);
-    Route::get('/fetchBoardData',['as'=>'','uses'=>$module_controller.'fetchBoardData']);
+    Route::get('/getBoardAllData',['as'=>'','uses'=>$module_controller.'getBoardAllData']);
+    Route::get('/updateBoarddata',['as'=>'','uses'=>$module_controller.'updateBoarddata']);
     Route::delete('/deleteBoarddata',['as'=>'','uses'=>$module_controller.'deleteBoarddata']);
 
     //Medium Controller Route//
@@ -32,8 +32,8 @@ Route::group(array('prefix' => '/admin','middleware' => ['web','admin']), functi
     Route::delete('/deleteMediumData',['as'=>'','uses'=>$module_controller.'deleteMediumData']);
 
     //Class Controller Route//
-    $module_controller = "App\Http\Controllers\Admin\ClassController@";
-    Route::any('/class',['as'=>'','uses'=>$module_controller.'index']);
+    $module_controller = "App\Http\Controllers\Admin\StandardController@";
+    Route::any('/standard',['as'=>'','uses'=>$module_controller.'index']);
     Route::get('/getMediums',['as'=>'','uses'=>$module_controller.'getMedium']);
     Route::post('/addClass',['as'=>'','uses'=>$module_controller.'addClass']);
     Route::get('/getClassAllData',['as'=>'','uses'=>$module_controller.'getClassAllData']);

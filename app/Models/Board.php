@@ -10,6 +10,13 @@ class Board extends Model
     use HasFactory;
     protected $table = 'boards';
     protected $primaryKey = 'board_id';
-    protected $fillable = ['board_name','board_description','board_status'];
-
+    protected $fillable = [
+    'board_name',
+    'board_description',
+    'board_status',
+    'created_by',
+    'creation_ip',
+    'modified_by',
+    'modified_ip'];
+        
 }

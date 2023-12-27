@@ -128,7 +128,7 @@
         <div class="card-body table-border-style">
             <div class="table-responsive">
             <span id="form_output"></span>
-                <table style="width: 100%;" class="table table-striped table-bordered data-table">
+                <table style="width: 100%;" class="table table-striped table-bordered data-table" id="search">
                     <thead>
                         <tr>
                             <th>Sr.No</th>
@@ -173,11 +173,6 @@
 <!-- [ stiped-table ] end -->
 <!-- Footer -->
 @include('admin.layouts.footer')
-
-<link href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-<script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap5.min.js"></script>
-
 <script>
 $(document).ready(function() {
     $('#board_id').on('change', function(event){ 
@@ -249,50 +244,50 @@ $(document).ready(function() {
         });
     });
     //View/Get data in html format Here//
-    fetchClassData();
-    function fetchClassData()
+    fetchTopicData();
+    function fetchTopicData()
     {
         var binfo = true;
         var paging = true;
         var table = $('.data-table').DataTable({
-            "bDestroy": true,
-            processing: false,
-            serverSide: true,
+            "destroy": true,
+            "processing": true,
+            "serverSide": true,
             ajax: {
                 url:  base_url + "/admin/getTopicAllData",
                 data: function (d) {
-                    d.search = $('#search').val()
+                    //d.search = $('#search').val()
                 }
             },
-            bAutoWidth: false,
+            "bAutoWidth": false,
             "searching": true,
             "ordering": false,
             "bInfo": binfo,
             "bLengthChange": true,
             "paging": paging,
             "bPaginate": true,
-            "pageLength": 5,
+            "pageLength": 10,
             columns: [
-                {data: 'id', name: 'id'},
-                {data: 'board_name', name: 'board_name',className: "text-center"},
-                {data: 'medium_name', name: 'medium_name',className: "text-center"},
-                {data: 'class_name', name: 'class_name',className: "text-center"},
-                {data: 'subject_name', name: 'subject_name',className: "text-center"},
-                {data: 'chapter_name', name: 'chapter_name',className: "text-center"},
-                {data: 'topic_name', name: 'topic_name',className: "text-center"},
-                {data: 'created_at', name: 'created_at',className: "text-center"},
-                {data: 'built_action_btns', name: 'built_action_btns',className: 'text-center'}
+                { data: 'topic_id', name: 'topics.topic_id'},
+                { data: 'board_name', name: 'boards.board_name', className: 'text-center' },
+                { data: 'medium_name', name: 'mediums.medium_name', className: 'text-center' },
+                { data: 'class_name', name: 'class.class_name', className: 'text-center' },
+                { data: 'subject_name', name: 'subjects.subject_name',className: "text-center"},
+                { data: 'chapter_name', name: 'chapters.chapter_name',className: "text-center"},
+                { data: 'topic_name', name: 'topic_name',className: "text-center"},
+                { data: 'created_at', name: 'created_at',className: "text-center"},
+                { data: 'built_action_btns', name: 'built_action_btns',className: 'text-center'}
             ],
-            "order": [[ 0, "desc" ]],
+            "order": [[ 6, "desc" ]],
             fixedHeader: {
                 header: true
             }
         });
 
-        oTable = $('.data-table').DataTable();
-        $('#search').keyup(function(){
-            oTable.search($(this).val()).draw() ;
-        })
+        // oTable = $('.data-table').DataTable();
+        // $('#search').keyup(function(){
+        //     oTable.search($(this).val()).draw() ;
+        // })
 
         $.fn.dataTable.ext.errMode = 'none';
 
@@ -421,7 +416,7 @@ $(document).ready(function() {
                 success:function(data)
                 {
                     $('#form_output').html(data);
-                    fetchClassData();
+                    fetchTopicData();
                     window.location.reload();
                 }
             });

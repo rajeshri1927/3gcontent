@@ -127,20 +127,30 @@
       for(var count=0; count < data.length; count++)
       {
        html +='<tr>';
+      var createdAtDate = new Date(data[count].created_at);
+      var options = { day: 'numeric', month: 'short', year: 'numeric' };
+      var formattedCreatedAt = createdAtDate.toLocaleDateString('en-US', options);
+
        html +='<td contenteditable class="column_name" data-column_name="question_type_id" data-id="'+data[count].question_type_id+'">'+data[count].question_type_id+'</td>';
        html +='<td contenteditable class="column_name" data-column_name="question_type" data-id="'+data[count].question_type_id+'">'+data[count].question_type+'</td>';
        html += '<td contenteditable class="column_name" data-column_name="question_type_description" data-id="'+data[count].question_type_id+'">'+data[count].question_type_description+'</td>';
        html += '<td contenteditable class="column_name" data-column_name="question_type_status" data-id="'+data[count].question_type_id+'">'+data[count].question_type_status+'</td>';
-       html += '<td contenteditable class="column_name" data-column_name="created_at" data-id="'+data[count].question_type_id+'">'+data[count].created_at+'</td>';
+      //  html += '<td contenteditable class="column_name" data-column_name="created_at" data-id="'+data[count].question_type_id+'">'+data[count].created_at+'</td>';
        // html += '<td><button type="button" class="btn btn-danger btn-xs delete" id="'+data[count].question_type_id+'">Delete</button></td></tr>';
+       html += '<td data-column_name="created_at" data-id="' + data[count].question_type_id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
        html += '<td>';
        html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-id="'+data[count].question_type_id+'" data-toggle="modal"  title="Update Question Type Details"><i class="fas fa-edit"></i></button>';
        html += '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].question_type_id+'" data-toggle="modal"  title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
        html += '</td></tr>';
-   
-   
       }
       $('tbody').html(html);
+      $('#question_type_table').DataTable({
+          // DataTables configuration options here
+          "order": [[0, "desc"]], // Example: Sort by the first column (subject_id) in descending order
+          "paging": true,
+          "pageLength": 10,
+          "bDestroy": true
+      });
      }
     });
    }

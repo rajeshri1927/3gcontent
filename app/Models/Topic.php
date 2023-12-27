@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Topic extends Model
 {
     use HasFactory;
-    protected $table   =  'topic_details';
+    protected $table   =  'topics';
     protected $primaryKey = 'topic_id';
     protected $fillable = [
         'topic_id',

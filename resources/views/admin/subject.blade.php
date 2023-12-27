@@ -116,7 +116,7 @@
     <div class="card-body table-border-style">
       <div class="table-responsive">
       <span id="form_output"></span>
-        <table class="table table-striped table-bordered ">
+        <table class="table table-striped table-bordered data-table">
           <thead>
             <tr>
               <th>Sr.No</th>
@@ -198,7 +198,7 @@ $(document).ready(function() {
                 if(result)
                 {
                   $('#class_id').html('<option value="">Select Class</option>');
-                  $('#class_id').html(result);
+                  $('#class_id').append(result);
                 }else{
                   $('#class_id').html('<option value="">No Class</option>');
                 }
@@ -216,23 +216,36 @@ $(document).ready(function() {
      success:function(data)
     {
       var html = '';
-    for(var count=0; count < data.length; count++)
+  for(var count=0; count < data.length; count++)
       {
         html +='<tr>';
+        var createdAtDate = new Date(data[count].created_at);
+          var formattedCreatedAt = createdAtDate.toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric'
+          });
         html +='<td contenteditable class="column_name" data-column_name="subject_id" data-id="'+data[count].subject_id+'">'+data[count].subject_id+'</td>';
         html +='<td contenteditable class="column_name" data-column_name="board_id" data-id="'+data[count].subject_id+'">'+data[count].board_name+'</td>';
-        html += '<td contenteditable class="column_name" data-column_name="medium_id" data-id="'+data[count].subject_id+'">'+data[count].medium_name+'</td>';
+        html +='<td contenteditable class="column_name" data-column_name="medium_id" data-id="'+data[count].subject_id+'">'+data[count].medium_name+'</td>';
         html +='<td contenteditable class="column_name" data-column_name="class_id" data-id="'+data[count].subject_id+'">'+data[count].class_name+'</td>';
         html += '<td contenteditable class="column_name" data-column_name="subject_name" data-id="'+data[count].subject_id+'">'+data[count].subject_name+'</td>';
         html += '<td contenteditable class="column_name" data-column_name="subject_description" data-id="'+data[count].subject_id+'">'+data[count].subject_description+'</td>';
         html += '<td contenteditable class="column_name" data-column_name="subject_status" data-id="'+data[count].subject_id+'">'+data[count].subject_status+'</td>';
-        html += '<td contenteditable class="column_name" data-column_name="created_at" data-id="'+data[count].subject_id+'">'+data[count].created_at+'</td>';
+        html += '<td data-column_name="created_at" data-id="' + data[count].subject_id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
         html += '<td>';
         html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].subject_id+'" data-toggle="modal"  title="Update Class Details"><i class="fas fa-edit"></i></button>';
         html += '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button"  data-id="'+data[count].subject_id+'" data-toggle="modal"  title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
         html += '</td></tr>';
     }
       $('tbody').html(html);
+      $('.data-table').DataTable({
+          // DataTables configuration options here
+          "order": [[0, "desc"]], // Example: Sort by the first column (subject_id) in descending order
+          "paging": true,
+          "pageLength": 10,
+          "bDestroy": true
+      });
     }
     });
    }
@@ -333,6 +346,7 @@ $(document).ready(function() {
         success:function(data)
         {
             $('#form_output').html(data);
+            setInterval('location.reload()', 4000);   
             fetchSubjectData();
         }
         });

@@ -44,14 +44,23 @@
                         <label for="recipient-name" class="col-form-label">Select Board </label>
                             <select class="form-control" name="board_id" id="board_id">
                             <option value="">--Select Board--</option>
+                            @if(!empty($BoardList))
                                 @foreach($BoardList as $data)
                                     <option value="{{$data->board_id}}">{{$data->board_name}}</option>
                                 @endforeach
+                            @endif
                             </select>
                         </div>
                         <div class="col-md-6 form-group">
-                            <label for="recipient-name" class="col-form-label">Select Medium </label>
-                            <select class="form-control" name="medium_id" id="medium_id"></select>
+                            <label for="medium_id" class="col-form-label">Select Medium </label>
+                            <select class="form-control formField" name="medium_id" id="medium_id">
+                                <option value="">--- Select Medium ---</option>
+                                @if(!empty($MediumList))
+                                    @foreach($MediumList as $data)
+                                        <option value="{{$data->medium_id}}">{{$data->medium_name}}</option>
+                                    @endforeach
+                                @endif
+                            </select>
                         </div>
                         </div>
                         <div class="row">
@@ -88,7 +97,7 @@
         <div class="card-body table-border-style">
             <div class="table-responsive">
             <span id="form_output"></span>
-                <table class="table table-striped table-bordered ">
+                <table class="table table-striped table-bordered" id="standard_table">
                     <thead>
                         <tr>
                             <th>Sr.No</th>
@@ -96,42 +105,12 @@
                             <th>Medium Name</th>
                             <th>Class Name</th>
                             <th>Class Description</th>
+                            <th>Class Status</th>
                             <th>Create Date / Time</th>
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <!-- <tr>
-                            <td>1</td>
-                            <td>Mark</td>
-                            <td>Otto</td>
-                            <td>18 Dec 2023 11.30 PM</td>
-                            <td>
-                                <button class="btn btn-sm btn-warning mt-1" data-id="MED_DB20C156D75" onclick="editClassDetail(this);" data-toggle="modal" data-target="#editModal" title="Change Class Details" fdprocessedid="9o67l"><i class="fas fa-edit"></i></button>
-                                <button class="btn btn-sm btn-danger mt-1" data-id="MED_DB20C156D75" data-toggle="modal" data-target="#deleteModal" onclick="deleteClassDetail(this);" title="Delete Class Details" fdprocessedid="33khcl"><i class="fas fa-trash-alt"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Jacob</td>
-                            <td>Thornton</td>
-                            <td>18 Dec 2023 11.30 PM</td>
-                            <td>
-                                <button class="btn btn-sm btn-warning mt-1" data-toggle="modal" data-target="#editModal" data-id="MED_DB20C156D75" onclick="editClassDetail(this);" title="Change Class Details" fdprocessedid="9o67l"><i class="fas fa-edit"></i></button>
-                                <button class="btn btn-sm btn-danger mt-1" data-id="MED_DB20C156D75" data-toggle="modal" data-target="#deleteModal" onclick="deleteClassDetail(this);" title="Delete Class Details" fdprocessedid="33khcl"><i class="fas fa-trash-alt"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Larry</td>
-                            <td>the Bird</td>
-                            <td>18 Dec 2023 11.30 PM</td>
-                            <td>
-                                <button class="btn btn-sm btn-warning mt-1" data-toggle="modal" data-target="#editModal" data-id="MED_DB20C156D75" onclick="editClassDetail(this);" title="Change Class Details" fdprocessedid="9o67l"><i class="fas fa-edit"></i></button>
-                                <button class="btn btn-sm btn-danger mt-1" data-id="MED_DB20C156D75" onclick="deleteClassDetail(this);" data-toggle="modal" data-target="#deleteModal" title="Delete Class Details" fdprocessedid="33khcl"><i class="fas fa-trash-alt"></i></button>
-                            </td>
-                        </tr> -->
-                    </tbody>
+                    <tbody></tbody>
                 </table>
             </div>
 	    </div>
@@ -190,28 +169,54 @@ $(document).ready(function() {
    fetchClassData();
    function fetchClassData()
    {
-    $.ajax({
-     url: base_url + "/admin/getClassAllData",
-     dataType:"json",
-     success:function(data)
-    {
-      var html = '';
-    for(var count=0; count < data.length; count++)
-      {
-        html +='<tr>';
-        html +='<td contenteditable class="column_name" data-column_name="class_id" data-id="'+data[count].class_id+'">'+data[count].class_id+'</td>';
-        html +='<td contenteditable class="column_name" data-column_name="board_name" data-id="'+data[count].class_id+'">'+data[count].board_name+'</td>';
-        html += '<td contenteditable class="column_name" data-column_name="medium_name" data-id="'+data[count].class_id+'">'+data[count].medium_name+'</td>';
-        html +='<td contenteditable class="column_name" data-column_name="class_description" data-id="'+data[count].class_id+'">'+data[count].class_description+'</td>';
-        html += '<td contenteditable class="column_name" data-column_name="class_status" data-id="'+data[count].class_id+'">'+data[count].class_status+'</td>';
-        html += '<td contenteditable class="column_name" data-column_name="created_at" data-id="'+data[count].class_id+'">'+data[count].created_at+'</td>';
-        html += '<td>';
-        html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-medium-id="'+data[count].medium_id+'" data-board-id="'+data[count].board_id+'" data-id="'+data[count].class_id+'" data-toggle="modal"  title="Update Class Details"><i class="fas fa-edit"></i></button>';
-        html += '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].class_id+'" data-toggle="modal"  title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
-        html += '</td></tr>';
-    }
-      $('tbody').html(html);
-    }
+    var binfo = true;
+        var paging = true;
+        var table = $('#standard_table').DataTable({
+            "destroy": true,
+            "processing": true,
+            "serverSide": true,
+            ajax: {
+                url:  base_url + "/admin/getClassAllData",
+                data: function (d) {
+                    
+                    //console.log(data);
+                    //d.search = $('#search').val()
+                }
+            },
+        bAutoWidth: false,
+        searching: true,
+        ordering: false,
+        bInfo: binfo,
+        bLengthChange: true,
+        paging: paging,
+        bPaginate: true,
+        pageLength: 10,
+        columns: [
+            { data: 'class_id', name: 'class.class_id', className: 'text-center' },
+            { data: 'board_name', name: 'boards.board_name', className: 'text-center' },
+            { data: 'medium_name', name: 'mediums.medium_name', className: 'text-center' },
+            { data: 'class_name', name: 'class.class_name', className: 'text-center' },
+            { data: 'class_description', name: 'class.class_description', className: 'text-center' },
+            { data: 'class_status', name: 'class.class_status', className: 'text-center' },
+            { data: 'created_at', name: 'class.created_at', className: 'text-center' },
+            { data: 'built_action_btns', name: 'built_action_btns', className: 'text-center' }
+        ],
+        order: [[6, 'desc']],  // Assuming you want to sort by 'created_at' column, adjust the index if needed
+        fixedHeader: {
+            header: true
+        }
+    });
+
+    // Uncomment the following lines if you want to enable client-side searching
+    // var oTable = $('.data-table').DataTable();
+    // $('#search').keyup(function () {
+    //     oTable.search($(this).val()).draw();
+    // });
+
+    // Error handling
+    $.fn.dataTable.ext.errMode = 'none';
+    $('.data-table').on('error.dt', function (e, settings, techNote, message) {
+        console.log('An error has been reported by DataTables: ', message);
     });
    }
 
@@ -252,28 +257,56 @@ $(document).ready(function() {
     });
 
     //Update data fetch Here//
+//     $(document).on('click', '.update', function(){
+//          var class_id = $(this).attr("data-id");
+//          var medium_id = $(this).attr('data-medium-id');
+//          alert(medium_id);
+//          var board_id = $(this).attr("data-board-id");
+//          $('#form_output').html('');
+//          $.ajax({
+//             url: base_url + "/admin/updateGetClassData",
+//             method:'get',
+//             data:{class_id:class_id,board_id:board_id,medium_id:medium_id},
+//             dataType:'json',
+//             success:function(data)
+//             {
+//                     // var htmlString = data.medium_id;
+//                     // var options = $(htmlString);
+
+//                     // // Iterate over the options
+//                     // options.each(function(index, option) {
+//                     //     options.filter(':contains("2")').prop('selected', true);
+//                     // });
+//                 $('#medium_id').html(data.medium_id);
+//                 $('#board_id').val(data.board_id);
+//                 $('#class_name').val(data.class_name);
+//                 $('#class_description').val(data.class_description);
+//                 $('#class_status').val(data.class_status);
+//                 $('#class_id').val(class_id);
+//                 $('#classModal').modal('show');
+//                 $('#action').val('Update');
+//                 $('.modal-title').text('Edit Data');
+//                 $('#button_action').val('update');
+//             }
+//          })
+//    });
+    //Update data fetch Here//
     $(document).on('click', '.update', function(){
          var class_id = $(this).attr("data-id");
-         var medium_id = $(this).attr('data-medium-id');
-         var board_id = $(this).attr("data-board-id");
          $('#form_output').html('');
          $.ajax({
             url: base_url + "/admin/updateGetClassData",
             method:'get',
-            data:{class_id:class_id,board_id:board_id,medium_id:medium_id},
+            data:{class_id:class_id},
             dataType:'json',
             success:function(data)
             {
-                var htmlString = data.medium_id;
-                var options = $(htmlString);
-
-                // Iterate over the options
-                options.each(function(index, option) {
-                    options.filter(':contains("2")').prop('selected', true);
-                });
-                $('#medium_id').html(options);
                 $('#board_id').val(data.board_id);
+                $('#medium_id').val(data.medium_id);
                 $('#class_name').val(data.class_name);
+                // $('#subject_id').val(data.subject_id);
+                // $('#chapter_id').val(data.chapter_id);
+                // $('#topic_name').val(data.topic_name);
                 $('#class_description').val(data.class_description);
                 $('#class_status').val(data.class_status);
                 $('#class_id').val(class_id);
@@ -298,6 +331,7 @@ $(document).ready(function() {
         success:function(data)
         {
             $('#form_output').html(data);
+            setInterval('location.reload()', 1000);   
             fetchClassData();
         }
         });

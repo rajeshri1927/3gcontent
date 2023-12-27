@@ -157,29 +157,69 @@ $(document).ready(function() {
    fetchMediumData();
    function fetchMediumData()
    {
-    $.ajax({
-     url: base_url + "/admin/getMediumAllData",
-     dataType:"json",
-     success:function(data)
-    {
-      var html = '';
-    for(var count=0; count < data.length; count++)
-      {
-        html +='<tr>';
-        html +='<td contenteditable class="column_name" data-column_name="medium_id" data-id="'+data[count].medium_id+'">'+data[count].medium_id+'</td>';
-        html +='<td contenteditable class="column_name" data-column_name="medium_name" data-id="'+data[count].medium_id+'">'+data[count].medium_name+'</td>';
-        html += '<td contenteditable class="column_name" data-column_name="board_id" data-id="'+data[count].medium_id+'">'+data[count].board_name+'</td>';
-        html +='<td contenteditable class="column_name" data-column_name="medium_description" data-id="'+data[count].medium_id+'">'+data[count].medium_description+'</td>';
-        html += '<td contenteditable class="column_name" data-column_name="medium_status" data-id="'+data[count].medium_id+'">'+data[count].medium_status+'</td>';
-        html += '<td contenteditable class="column_name" data-column_name="created_at" data-id="'+data[count].medium_id+'">'+data[count].created_at+'</td>';
-        html += '<td>';
-        html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-id="'+data[count].medium_id+'" data-toggle="modal"  title="Update Board Details"><i class="fas fa-edit"></i></button>';
-        html += '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].medium_id+'" data-toggle="modal"  title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
-        html += '</td></tr>';
-    }
-      $('tbody').html(html);
-    }
-    });
+    var binfo = true;
+        var paging = true;
+        var table = $('#Medium_table').DataTable({
+            "destroy": true,
+            "processing": true,
+            "serverSide": true,
+            ajax: {
+                url:  base_url + "/admin/getMediumAllData",
+                data: function (d) {
+                    
+                    //console.log(data);
+                    //d.search = $('#search').val()
+                }
+            },
+            "bAutoWidth": false,
+            "searching": true,
+            "ordering": false,
+            "bInfo": binfo,
+            "bLengthChange": true,
+            "paging": paging,
+            "bPaginate": true,
+            "pageLength": 10,
+            columns: [
+                {data: 'medium_id', name: 'medium_id'},
+                {data: 'board_name', name: 'boards.board_name', className: 'text-center' },
+                {data: 'medium_name', name: 'medium_name',className: "text-center"},
+                {data: 'medium_description', name: 'medium_description',className: "text-center"},
+                {data: 'medium_status', name: 'medium_status',className: "text-center"},
+                {data: 'created_at', name: 'created_at',className: "text-center"},
+                {data: 'built_action_btns', name:'built_action_btns', className: 'text-center'}
+            ],
+            "order": [[ 0, "desc" ]],
+            fixedHeader: {
+                header: true
+            }
+        });
+        $.fn.dataTable.ext.errMode = 'none';
+        $('#Medium_table').on('error.dt', function (e, settings, techNote, message) {
+            console.log('An error has been reported by DataTables: ', message);
+        });
+    // $.ajax({
+    //  url: base_url + "/admin/getMediumAllData",
+    //  dataType:"json",
+    //  success:function(data)
+    // {
+    //   var html = '';
+    // for(var count=0; count < data.length; count++)
+    //   {
+    //     html +='<tr>';
+    //     html +='<td contenteditable class="column_name" data-column_name="medium_id" data-id="'+data[count].medium_id+'">'+data[count].medium_id+'</td>';
+    //     html +='<td contenteditable class="column_name" data-column_name="medium_name" data-id="'+data[count].medium_id+'">'+data[count].medium_name+'</td>';
+    //     html += '<td contenteditable class="column_name" data-column_name="board_id" data-id="'+data[count].medium_id+'">'+data[count].board_name+'</td>';
+    //     html +='<td contenteditable class="column_name" data-column_name="medium_description" data-id="'+data[count].medium_id+'">'+data[count].medium_description+'</td>';
+    //     html += '<td contenteditable class="column_name" data-column_name="medium_status" data-id="'+data[count].medium_id+'">'+data[count].medium_status+'</td>';
+    //     html += '<td contenteditable class="column_name" data-column_name="created_at" data-id="'+data[count].medium_id+'">'+data[count].created_at+'</td>';
+    //     html += '<td>';
+    //     html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-id="'+data[count].medium_id+'" data-toggle="modal"  title="Update Board Details"><i class="fas fa-edit"></i></button>';
+    //     html += '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].medium_id+'" data-toggle="modal"  title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
+    //     html += '</td></tr>';
+    // }
+    //   $('tbody').html(html);
+    // }
+    // });
    }
 
     //Add Medium Using Ajax //
@@ -255,6 +295,7 @@ $(document).ready(function() {
         success:function(data)
         {
             $('#form_output').html(data);
+            setInterval('location.reload()', 4000);   
             fetchMediumData();
         }
         });

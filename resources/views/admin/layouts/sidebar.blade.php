@@ -48,7 +48,7 @@
 				<ul class="pcoded-submenu">
 					<li><a href="board">Board</a></li>
 					<li><a href="medium">Medium </a></li>
-					<li><a href="class">Class</a></li>
+					<li><a href="standard">Standard</a></li>
 					<li><a href="subject">Subject</a></li>
 					 <li><a href="chapter">Chapters</a></li>
 					<li><a href="topics">Topics List</a></li>

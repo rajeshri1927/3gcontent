@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Http\Request;
 use App\Models\Medium;
@@ -8,6 +9,7 @@ use App\Models\Board;
 use App\Models\Standard;
 use App\Models\Subject;
 use Validator;
+use DataTables;
 
 class SubjectController extends Controller
 {
@@ -32,6 +34,7 @@ class SubjectController extends Controller
     }
 
     public function addSubject(Request $request){
+        $user = Auth::user();
         $validation = Validator::make($request->all(), [
             'subject_name'  => 'required'
         ]);
@@ -54,7 +57,9 @@ class SubjectController extends Controller
                     'class_id'      => $request->get('class_id'),
                     'subject_name'  => $request->get('subject_name'),
                     'subject_description' => $request->get('subject_description'),
-                    'subject_status' => $request->get('subject_status')
+                    'subject_status' => $request->get('subject_status'),
+                    'created_by' => $user->name,
+                    'creation_ip' => $_SERVER['REMOTE_ADDR']
                 ]);
                 $subject->save();
                 $success_output = '<div class="alert alert-success">Subject Data Added Successfully!! </div>';
@@ -68,7 +73,9 @@ class SubjectController extends Controller
                         'class_id'      => $request->get('class_id'),
                         'subject_name'  => $request->get('subject_name'),
                         'subject_description' => $request->get('subject_description'),
-                        'subject_status' => $request->get('subject_status')
+                        'subject_status' => $request->get('subject_status'),
+                        'modified_by' => $user->name,
+                        'modified_ip' => $_SERVER['REMOTE_ADDR']
                     ]);
                     
                     $success_output = '<div class="alert alert-success">Subject Data Updated !!!</div>';
@@ -148,10 +155,13 @@ class SubjectController extends Controller
     public function deleteSubjectData(Request $request){
         $subjectId = $request->subject_id;
         if (!is_null($subjectId)) {
-            $subject = Subject::where('subject_id', $subjectId)->first();
+            // $subject = Subject::where('subject_id', $subjectId)->first();
 
-            if ($subject) {
-                $subject->delete();
+            // if ($subject) {
+            //     $subject->delete();
+            $subject = Subject::find($subjectId);
+                if ($subject) {
+                    $subject->update(['subject_status' => 'No']);
                 echo '<div class="alert alert-success">Subject Deleted</div>';
                 //return response()->json(['message' => 'Data Deleted'], 200);
             } else {

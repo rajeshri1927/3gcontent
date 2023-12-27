@@ -1,8 +1,9 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Models\QuestionType;
@@ -26,6 +27,7 @@ class QuestionTypeController extends Controller
     }
 
     public function addQuestionType(Request $request){
+        $user = Auth::user();
         $validation = Validator::make($request->all(), [
             'question_type'    => 'required'
         ]);
@@ -45,7 +47,9 @@ class QuestionTypeController extends Controller
                 $questionType = new QuestionType([
                     'question_type'    =>  $request->get('question_type'),
                     'question_type_description' =>  $request->get('question_type_description'),
-                    'question_type_status' => $request->get('question_type_status')
+                    'question_type_status' => $request->get('question_type_status'),
+                    'created_by' => $user->name,
+                    'creation_ip' => $_SERVER['REMOTE_ADDR']
                 ]);
                 $questionType->save();
                 $success_output = '<div class="alert alert-success">Question Type Data Inserted</div>';
@@ -57,7 +61,9 @@ class QuestionTypeController extends Controller
                     $question_type->update([
                         'question_type'    =>  $request->get('question_type'),
                         'question_type_description' =>  $request->get('question_type_description'),
-                        'question_type_status' => $request->get('question_type_status')
+                        'question_type_status' => $request->get('question_type_status'),
+                        'modified_by' => $user->name,
+                        'modified_ip' => $_SERVER['REMOTE_ADDR']
                     ]);
             
                     $success_output = '<div class="alert alert-success">Question Type Data Updated</div>';
@@ -91,10 +97,13 @@ class QuestionTypeController extends Controller
         $questionTypeID = $request->question_type_id;
 
         if (!is_null($questionTypeID)) {
-            $questionType = QuestionType::where('question_type_id', $questionTypeID)->first();
+            // $questionType = QuestionType::where('question_type_id', $questionTypeID)->first();
 
+            // if ($questionType) {
+            //     $questionType->delete();
+            $questionType = QuestionType::find($questionTypeID);
             if ($questionType) {
-                $questionType->delete();
+                $questionType->update(['question_type_status' => 'No']);
                 echo '<div class="alert alert-success">Data Deleted</div>';
                 //return response()->json(['message' => 'Data Deleted'], 200);
             } else {

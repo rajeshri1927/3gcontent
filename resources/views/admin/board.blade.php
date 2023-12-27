@@ -69,7 +69,7 @@
       <div class="card-body table-border-style">
          <div class="table-responsive">
             <span id="form_output"></span>
-            <table class="table table-striped table-bordered"  id="Board_table" >
+            <table class="table table-striped table-bordered data-table"  id="Board_table" >
                <thead>
                   <tr>
                      <th>Sr.No</th>
@@ -112,39 +112,56 @@
 <!-- Footer -->
 @include('admin.layouts.footer')
 <script>
-   $(document).ready(function() {
+$(document).ready(function() {
    
-   fetchBoardData();
-   
-   function fetchBoardData()
-   {
-    $.ajax({
-     url: base_url + "/admin/getBoarddata",
-     dataType:"json",
-     success:function(data)
-     {
-      var html = '';
-      for(var count=0; count < data.length; count++)
-      {
-       html +='<tr>';
-       html +='<td contenteditable class="column_name" data-column_name="board_id" data-id="'+data[count].board_id+'">'+data[count].board_id+'</td>';
-       html +='<td contenteditable class="column_name" data-column_name="board_name" data-id="'+data[count].board_id+'">'+data[count].board_name+'</td>';
-       html += '<td contenteditable class="column_name" data-column_name="board_description" data-id="'+data[count].board_id+'">'+data[count].board_description+'</td>';
-       html += '<td contenteditable class="column_name" data-column_name="board_status" data-id="'+data[count].board_id+'">'+data[count].board_status+'</td>';
-       html += '<td contenteditable class="column_name" data-column_name="board_status" data-id="'+data[count].board_id+'">'+data[count].created_at+'</td>';
-       // html += '<td><button type="button" class="btn btn-danger btn-xs delete" id="'+data[count].board_id+'">Delete</button></td></tr>';
-       html += '<td>';
-       html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-id="'+data[count].board_id+'" data-toggle="modal"  title="Update Board Details"><i class="fas fa-edit"></i></button>';
-       html += '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].board_id+'" data-toggle="modal"  title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
-       html += '</td></tr>';
-   
-   
-      }
-      $('tbody').html(html);
-     }
-    });
-   }
+   fetchBoardAllData();
 
+function fetchBoardAllData() {
+    var binfo = true;
+    var paging = true;
+    
+    var table = $('.data-table').DataTable({
+        "destroy": true,
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            "url": base_url + "/admin/getBoardAllData",
+            "data": function (d) {
+                // Include additional parameters if needed
+               //d.search = $('#search').val();
+            }
+        },
+        "bAutoWidth": false,
+        "searching": true,
+        "ordering": false,
+        "bInfo": binfo,
+        "bLengthChange": true,
+        "paging": paging,
+        "bPaginate": true,
+        "pageLength": 10,
+        "columns": [
+            {data: 'board_id', name: 'board_id'},
+            {data: 'board_name', name: 'board_name', className: "text-center"},
+            {data: 'board_description', name: 'board_description', className: "text-center"},
+            {data: 'board_status', name: 'board_status', className: "text-center"},
+            {data: 'created_at', name: 'created_at', className: "text-center"},
+            {data: 'built_action_btns', name: 'built_action_btns', className: 'text-center'}
+        ],
+        "order": [[ 0, "desc" ]],
+        fixedHeader: {
+            header: true
+        }
+    });
+
+    $.fn.dataTable.ext.errMode = 'none';
+
+    $('.data-table').on('error.dt', function (e, settings, techNote, message) {
+        console.log('An error has been reported by DataTables: ', message);
+    });
+}
+
+
+    //Add Board Function Here//
     $('#addBoard').on('submit', function(event){ 
        event.preventDefault();
        var form_data = $(this).serialize();
@@ -197,11 +214,12 @@
      }
     });
      
-   $(document).on('click', '.update', function(){
+   
+    $(document).on('click', '.update', function(){
          var board_id = $(this).attr("data-id");
          $('#form_output').html('');
          $.ajax({
-            url: base_url + "/admin/fetchBoardData",
+            url: base_url + "/admin/updateBoarddata",
             method:'get',
             data:{board_id:board_id},
             dataType:'json',
