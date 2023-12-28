@@ -62,7 +62,8 @@ Route::group(array('prefix' => '/admin','middleware' => ['web','admin']), functi
      $module_controller = "App\Http\Controllers\Admin\QuestionTypeController@";
      Route::any('/questionType',['as'=>'','uses'=>$module_controller.'index']);
      Route::any('/addQuestionType',['as'=>'','uses'=>$module_controller.'addQuestionType']);
-     Route::any('/getQuestionTypeData',['as'=>'','uses'=>$module_controller.'getQuestionTypeData']);
+     Route::any('/getQuestionTypeAllData',['as'=>'','uses'=>$module_controller.'getQuestionTypeAllData']);
+     Route::any('/getTopicAjax',['as'=>'','uses'=>$module_controller.'getTopicAjax']);
      Route::any('/updateQuestionTypeData',['as'=>'','uses'=>$module_controller.'updateQuestionTypeData']);
      Route::any('/deleteQuestionTypeData',['as'=>'','uses'=>$module_controller.'deleteQuestionTypeData']);
     
