@@ -11,12 +11,12 @@
         <div class="row align-items-center">
             <div class="col-md-12">
                 <div class="page-header-title">
-                    <h5 class="m-b-10">Topic Here</h5>
+                    <h5 class="m-b-10">Manage Questions Here</h5>
                 </div>
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.php"><i class="feather icon-home"></i></a></li>
-                    <li class="breadcrumb-item"><a href="#!">Topic Info</a></li>
-                    <li class="breadcrumb-item"><a href="#!">Topic Details</a></li>
+                    <li class="breadcrumb-item"><a href="#!">Manage Questions Info</a></li>
+                    <li class="breadcrumb-item"><a href="#!">Manage Questions Details</a></li>
                 </ul>
             </div>
         </div>
@@ -27,17 +27,17 @@
 <div class="col-xl-12">
     <div class="card">
         <div class="card-header text-right">
-            <button type="button" class="btn  btn-primary" data-toggle="modal" data-target="#topicModal" > <i class="fa-solid fa-plus"></i> Add New Topic </button>
+            <button type="button" class="btn  btn-primary" data-toggle="modal" data-target="#questionModal" > <i class="fa-solid fa-plus"></i> Add New Question </button>
         </div>
-        <div class="modal fade" id="topicModal" tabindex="-1" role="dialog" aria-labelledby="topicModalLabel" aria-hidden="true">
+        <div class="modal fade" id="questionModal" tabindex="-1" role="dialog" aria-labelledby="questionModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="topicModalLabel">Create Topic</h5>
+                        <h5 class="modal-title" id="questionModalLabel">Create Question</h5>
                         <button id="topicModalClose" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     </div>
                     <div class="modal-body">
-                    <form autocomplete="off" id="addTopic" method="post">
+                    <form autocomplete="off" id="addQuestion" method="post">
                         {{ csrf_field() }}
                         <div class="row">
                         <div class="col-md-6 form-group">
@@ -80,25 +80,58 @@
                                 </select>
                             </div>
                             <div class="col-md-6 form-group">
-                                <label for="topic_name" class="col-form-label"> Topic name:</label>
-                                <input type="text" class="form-control formField" id="topic_name" placeholder="Topic name" name="topic_name">
+                                <label for="topic_id" class="col-form-label">Select Topic:</label>
+                                <select class="form-control formField" name="topic_id" id="topic_id">
+                                    <option value="">--- Select Topic ---</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">                            
+                            <div class="col-md-6 form-group">
+                                <label for="marks" class="col-form-label"> Enter marks:</label>
+                                <input type="text" class="form-control formField" id="marks" placeholder="Enter Marks" name="marks">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label for="questionType_id" class="col-form-label">Select Question Type:</label>
+                                <select class="form-control formField" name="questionType_id" id="questionType_id">
+                                    <option value="">--- Select Question Type ---</option>
+                                    @if(!empty($QuestionTypeList))
+                                        @foreach($QuestionTypeList as $data)
+                                            <option value="{{ $data->question_type_id }}">{{ $data->question_type }}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6 form-group">
-                                <label for="topic_status" class="col-form-label"> Topic Status:</label>
-                                <select class="form-control formField" name="topic_status" id="topic_status">
+                                <label for="dificultyLevel" class="col-form-label">Difficult Level:</label>
+                                <select class="form-control formField" name="dificultyLevel" id="dificultyLevel">
+                                    <option value="">--- Select Difficult Level ---</option>
+                                    <option value="Easy">Easy</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Advance">Advance</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label for="question_status" class="col-form-label"> Question Status:</label>
+                                <select class="form-control formField" name="question_status" id="question_status">
                                     <option value="">--Select Status--</option>
                                     <option value="Yes">Yes</option>
                                     <option value="No">No</option>
                                 </select>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-12 form-group" style="text-align:center;">
+                                <button type="button" class="btn btn-primary" name="addQuestionBtn" id="addQuestionBtn">Add Question</button>
+                            </div>
+                        </div>
                         <div class="modal-footer">
-                            <input type="hidden" name="topic_id" id="topic_id" value="" />
+                            <input type="hidden" name="question_bank_id" id="question_bank_id" value="" />
                             <input type="hidden" name="button_action" id="button_action" value="insert" />
                             <button type="button" class="btn  btn-secondary" data-dismiss="modal">Close</button>
-                            <input type="submit"  name="submit" id="action" class="btn  btn-primary" value="Add Topic">
+                            <input type="submit"  name="submit" id="action" class="btn  btn-primary" value="Add Question">
                         </div>
                     </form>
                     </div>
@@ -117,8 +150,8 @@
                             <th>Class</th>
                             <th>Subject</th>
                             <th>Chapter</th>
-                            <th>Topic</th>
-                            <th>Topic status</th>
+                            <th>Marks</th>
+                            <th>Type</th>
                             <th>Create Date / Time</th>
                             <th>Action</th>
                         </tr>
@@ -156,7 +189,7 @@
 @include('admin.layouts.footer')
 <script>
 $(document).ready(function() {
-    $('#topicModal').on('hidden.bs.modal', function () {
+    $('#questionModal').on('hidden.bs.modal', function () {
         $(this).find('form').trigger('reset');
     });
 
@@ -228,60 +261,33 @@ $(document).ready(function() {
             }
         });
     });
-    //View/Get data in html format Here//
-    fetchTopicData();
-    function fetchTopicData()
-    {
-        /* var binfo = true;
-        var paging = true;
-        var table = $('.data-table').DataTable({
-            "destroy": true,
-            "processing": true,
-            "serverSide": true,
-            ajax: {
-                url:  base_url + "/admin/getTopicAllData",
-                data: function (d) {
-                    d.search = $('input[type="search"]').val()
+
+    $('#chapter_id').on('change', function(event){ 
+        event.preventDefault();
+        var board_id = $("#board_id").val();
+        var medium_id = $("#medium_id").val();
+        var class_id = $("#class_id").val();
+        var subject_id = $("#subject_id").val();
+        var chapter_id = this.value;
+        $.ajax({
+            url: base_url + "/admin/getTopicAjax",
+            method:"GET",
+            data:{chapter_id:chapter_id},
+            success:function(result){
+                $('#topic_id').html('<option value="">--- Select Topic ---</option>');
+                if(result){
+                    $('#topic_id').append(result);
                 }
-            },
-            "bAutoWidth": false,
-            "searching": true,
-            "ordering": false,
-            "bInfo": binfo,
-            "bLengthChange": true,
-            "paging": paging,
-            "bPaginate": true,
-            "pageLength": 10,
-            columns: [
-                { data: 'topic_id', name: 'topics.topic_id'},
-                { data: 'board_name', name: 'boards.board_name', className: 'text-center' },
-                { data: 'medium_name', name: 'mediums.medium_name', className: 'text-center' },
-                { data: 'class_name', name: 'class.class_name', className: 'text-center' },
-                { data: 'subject_name', name: 'subjects.subject_name',className: "text-center"},
-                { data: 'chapter_name', name: 'chapters.chapter_name',className: "text-center"},
-                { data: 'topic_name', name: 'topic_name',className: "text-center"},
-                { data: 'created_at', name: 'created_at',className: "text-center"},
-                { data: 'built_action_btns', name: 'built_action_btns',className: 'text-center'}
-            ],
-            "order": [[ 6, "desc" ]],
-            fixedHeader: {
-                header: true
             }
         });
+    });
 
-        oTable = $('.data-table').DataTable();
-        $('input[type="search"]').keyup(function(){
-            oTable.search($(this).val()).draw() ;
-        })
-
-        $.fn.dataTable.ext.errMode = 'none';
-
-        $('.data-table').on( 'error.dt', function ( e, settings, techNote, message ) {
-            console.log( 'An error has been reported by DataTables: ', message );
-        }) ; */
-
+    //View/Get data in html format Here//
+    fetchQuestionData();
+    function fetchQuestionData()
+    {
         $.ajax({
-            url: base_url + "/admin/getTopicAllData",
+            url: base_url + "/admin/getQuestionAllData",
             dataType:"json",
             success:function(data) {
                 var html = '';
@@ -291,18 +297,18 @@ $(document).ready(function() {
                     var options = { day: 'numeric', month: 'short', year: 'numeric' };
                     var formattedCreatedAt = createdAtDate.toLocaleDateString('en-US', options);
 
-                    html +='<td contenteditable class="column_name" data-column_name="topic_id" data-id="'+data[count].topic_id+'">'+data[count].topic_id+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="board_name" data-id="'+data[count].topic_id+'">'+data[count].board_name+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="medium_name" data-id="'+data[count].topic_id+'">'+data[count].medium_name+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="class_name" data-id="'+data[count].topic_id+'">'+data[count].class_name+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="subject_name" data-id="'+data[count].topic_id+'">'+data[count].subject_name+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="chapter_name" data-id="'+data[count].topic_id+'">'+data[count].chapter_name+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="topic_name" data-id="'+data[count].topic_id+'">'+data[count].topic_name+'</td>';
-                    html += '<td contenteditable class="column_name" data-column_name="topic_status" data-id="'+data[count].topic_id+'">'+data[count].topic_status+'</td>';
-                    html += '<td data-column_name="created_at" data-id="' + data[count].topic_id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
+                    html +='<td contenteditable class="column_name" data-column_name="question_bank_id" data-id="'+data[count].question_bank_id+'">'+data[count].question_bank_id+'</td>';
+                    html +='<td contenteditable class="column_name" data-column_name="board_name" data-id="'+data[count].question_bank_id+'">'+data[count].board_name+'</td>';
+                    html +='<td contenteditable class="column_name" data-column_name="medium_name" data-id="'+data[count].question_bank_id+'">'+data[count].medium_name+'</td>';
+                    html +='<td contenteditable class="column_name" data-column_name="class_name" data-id="'+data[count].question_bank_id+'">'+data[count].class_name+'</td>';
+                    html +='<td contenteditable class="column_name" data-column_name="subject_name" data-id="'+data[count].question_bank_id+'">'+data[count].subject_name+'</td>';
+                    html +='<td contenteditable class="column_name" data-column_name="chapter_name" data-id="'+data[count].question_bank_id+'">'+data[count].chapter_name+'</td>';
+                    html +='<td contenteditable class="column_name" data-column_name="marks" data-id="'+data[count].question_bank_id+'">'+data[count].marks+'</td>';
+                    html += '<td contenteditable class="column_name" data-column_name="question_type" data-id="'+data[count].question_bank_id+'">'+data[count].question_type+'</td>';
+                    html += '<td data-column_name="created_at" data-id="' + data[count].question_bank_id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
                     html += '<td>';
-                    html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].topic_id+'" data-subject-id="'+data[count].subject_id+'" data-chapter-id="'+data[count].chapter_id+'" data-toggle="modal"  title="Update Question Type Details"><i class="fas fa-edit"></i></button>';
-                    html += '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].topic_id+'" data-toggle="modal"  title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
+                    html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].question_bank_id+'" data-subject-id="'+data[count].subject_id+'" data-topic-id="'+data[count].topic_id+'" data-chapter-id="'+data[count].chapter_id+'" data-questionType="'+data[count].question_type_id+'" data-toggle="modal" title="Update Question Bank Details"><i class="fas fa-edit"></i></button>';
+                    html += '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].question_bank_id+'" data-toggle="modal"  title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
                     html += '</td></tr>';
                 }
                 $('tbody').html(html);
@@ -318,7 +324,7 @@ $(document).ready(function() {
     }
 
     //Add Medium Using Ajax //
-    $('#addTopic').on('submit', function(event){ 
+    $('#addQuestion').on('submit', function(event){ 
         event.preventDefault();
         var err = 0;
         if($("#board_id").val() == ''){
@@ -333,7 +339,11 @@ $(document).ready(function() {
             err = 1;
         } else if($("#chapter_id").val() == ''){
             err = 1;
-        } else if($("#topic_name").val() == ''){
+        } else if($("#topic_id").val() == ''){
+            err = 1;
+        } else if($("#marks").val() == ''){
+            err = 1;
+        } else if($("#questionType_id").val() == ''){
             err = 1;
         }
 
@@ -345,7 +355,7 @@ $(document).ready(function() {
         } else {
             var form_data = $(this).serialize();
             $.ajax({ 
-                url: base_url + "/admin/addTopic",
+                url: base_url + "/admin/addQuestion",
                 method:"POST",
                 data:form_data,
                 dataType:"json",
@@ -358,11 +368,11 @@ $(document).ready(function() {
                         $('#form_output').html(error_html);
                     } else {
                         $('#form_output').html(data.success);
-                        $('#addTopic')[0].reset();
+                        $('#addQuestion')[0].reset();
                         $('#action').val('Add');
                         $('.modal-title').text('Add Data');
                         $('#button_action').val('insert');
-                        $("#topicModal").modal("hide");
+                        $("#questionModal").modal("hide");
                         setInterval('location.reload()', 1000);   
                         //window.location.reload();
                     }
@@ -373,17 +383,19 @@ $(document).ready(function() {
 
     //Update data fetch Here//
     $(document).on('click', '.update', function(){
-        var topic_id = $(this).attr("data-id");
+        var question_bank_id = $(this).attr("data-id");
         var board_id   = $(this).attr("data-board-id");
         var medium_id = $(this).attr("data-medium-id");
         var class_id = $(this).attr("data-class-id");
         var subject_id = $(this).attr("data-subject-id");
         var chapter_id = $(this).attr("data-chapter-id");
+        var topic_id = $(this).attr("data-topic-id");
+        var questionType_id = $(this).attr("data-questionType");
          $('#form_output').html('');
          $.ajax({
-            url: base_url + "/admin/updateGetTopicData",
+            url: base_url + "/admin/updateGetQuestionData",
             method:'get',
-            data:{topic_id:topic_id,board_id:board_id,medium_id:medium_id,class_id:class_id,subject_id:subject_id,chapter_id:chapter_id},
+            data:{question_bank_id:question_bank_id,board_id:board_id,medium_id:medium_id,class_id:class_id,subject_id:subject_id,chapter_id:chapter_id,topic_id:topic_id,questionType_id:questionType_id},
             dataType:'json',
             success:function(data)
             {
@@ -423,12 +435,30 @@ $(document).ready(function() {
                 });
                 $('#chapter_id').html(optionChapter);
 
+                //Topic Data//
+                var htmlTopicString = data.topic_id;
+                var optionTopic = $(htmlTopicString);
+                // Iterate over the options
+                optionTopic.each(function(index,topic) {
+                    optionTopic.filter(':contains("2")').prop('selected', true);
+                });
+                $('#topic_id').html(optionTopic);
+
+                //Chapter Data//
+                var htmlQuestionTypeString = data.question_type;
+                var optionQuestionType = $(htmlQuestionTypeString);
+                // Iterate over the options
+                optionQuestionType.each(function(index,questionType) {
+                    optionQuestionType.filter(':contains("2")').prop('selected', true);
+                });
+                $('#questionType_id').html(optionQuestionType);
+
                 $('#board_id').val(data.board_id);
-                $('#topic_name').val(data.topic_name);
-                $('#topic_description').val(data.topic_description);
-                $('#topic_status').val(data.topic_status);
-                $('#topic_id').val(topic_id);
-                $('#topicModal').modal('show');
+                $('#dificultyLevel').val(data.level);
+                $('#question_status').val(data.question_status);
+                $('#marks').val(data.marks);
+                $('#question_bank_id').val(question_bank_id);
+                $('#questionModal').modal('show');
                 $('#action').val('Update');
                 $('.modal-title').text('Edit Data');
                 $('#button_action').val('update');
@@ -439,16 +469,16 @@ $(document).ready(function() {
    //Delete Medium Here//
    var _token = $('input[name="_token"]').val();
     $(document).on('click', '#delete', function(){
-        var topic_id = $(this).attr("data-id");
+        var question_id = $(this).attr("data-id");
         if(confirm("Are you sure you want to delete this records?")) {
             $.ajax({
-                url: base_url + "/admin/deleteTopicData",
+                url: base_url + "/admin/deleteQuestionData",
                 method:"delete",
-                data:{topic_id:topic_id, _token:_token},
+                data:{question_id:question_id, _token:_token},
                 success:function(data)
                 {
                     $('#form_output').html(data);
-                    fetchTopicData();
+                    fetchQuestionData();
                     window.location.reload();
                 }
             });
