@@ -66,13 +66,24 @@ Route::group(array('prefix' => '/admin','middleware' => ['web','admin']), functi
      Route::any('/updateQuestionTypeData',['as'=>'','uses'=>$module_controller.'updateQuestionTypeData']);
      Route::any('/deleteQuestionTypeData',['as'=>'','uses'=>$module_controller.'deleteQuestionTypeData']);
     
+    //Topics Route Here//
     $module_controller = "App\Http\Controllers\Admin\TopicController@";
     Route::any('/topics',['as'=>'','uses'=>$module_controller.'index']);
     Route::get('/getTopicAllData',['as'=>'','uses'=>$module_controller.'getTopicAllData']);
+    Route::get('/getTopicMediums',['as'=>'','uses'=>$module_controller.'getMedium']);
     Route::any('/getClassAjax',['as'=>'','uses'=>$module_controller.'getClassesAjax']);
     Route::any('/getSubjectsAjax',['as'=>'','uses'=>$module_controller.'getSubjectsAjax']);
     Route::any('/getChapterAjax',['as'=>'','uses'=>$module_controller.'getChapterAjax']);
     Route::post('/addTopic',['as'=>'','uses'=>$module_controller.'addTopic']);
     Route::get('/updateGetTopicData',['as'=>'','uses'=>$module_controller.'updateGetTopicData']);
     Route::delete('/deleteTopicData',['as'=>'','uses'=>$module_controller.'deleteTopicData']);
+    
+    //Question bank Route Here//
+    $module_controller = "App\Http\Controllers\Admin\QuestionBankController@";
+    Route::any('/questionBank',['as'=>'','uses'=>$module_controller.'index']);
+    Route::get('/getQuestionAllData',['as'=>'','uses'=>$module_controller.'getQuestionBankData']);
+    Route::any('/addQuestion',['as'=>'','uses'=>$module_controller.'addQuestionBank']);
+    Route::any('/getTopicAjax',['as'=>'','uses'=>$module_controller.'getTopicAjax']);
+    Route::any('/updateGetQuestionData',['as'=>'','uses'=>$module_controller.'updateQuestionBankData']);
+    Route::delete('/deleteQuestionData',['as'=>'','uses'=>$module_controller.'deleteQuestionBankData']);
 });
