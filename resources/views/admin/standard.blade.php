@@ -155,10 +155,10 @@ $(document).ready(function() {
             {
                 if(result)
                 {
-                  $('#medium_id').html('<option value="">Select Medium</option>');
+                  $('#medium_id').html('<option value="">--Select Medium--</option>');
                   $('#medium_id').append(result);
                 }else{
-                  $('#medium_id').html('<option value="">No Medium</option>');
+                  $('#medium_id').html('<option value="">--No Medium--</option>');
                 }
             }
         });
