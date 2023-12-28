@@ -10,7 +10,11 @@ class QuestionType extends Model
     use HasFactory;
     protected $table = 'question_types';
     protected $primaryKey = 'question_type_id';
-    protected $fillable = ['question_type','question_type_description','question_type_status','created_by',
+    protected $fillable = [
+    'question_type',
+    'question_type_description',
+    'question_type_status',
+    'created_by',
     'creation_ip',
     'modified_by',
     'modified_ip'];
