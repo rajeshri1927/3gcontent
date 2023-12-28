@@ -34,7 +34,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="topicModalLabel">Create Topic</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <button id="topicModalClose" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     </div>
                     <div class="modal-body">
                     <form id="addTopic" method="post">
@@ -128,7 +128,7 @@
         <div class="card-body table-border-style">
             <div class="table-responsive">
             <span id="form_output"></span>
-                <table style="width: 100%;" class="table table-striped table-bordered data-table" id="search">
+                <table style="width: 100%;" class="table table-striped table-bordered data-table" id="topic_table">
                     <thead>
                         <tr>
                             <th>Sr.No</th>
@@ -138,6 +138,7 @@
                             <th>Subject</th>
                             <th>Chapter</th>
                             <th>Topic</th>
+                            <th>Topic status</th>
                             <th>Create Date / Time</th>
                             <th>Action</th>
                         </tr>
@@ -175,6 +176,10 @@
 @include('admin.layouts.footer')
 <script>
 $(document).ready(function() {
+    $('#topicModal').on('hidden.bs.modal', function () {
+        $(this).find('form').trigger('reset');
+    });
+
     $('#board_id').on('change', function(event){ 
         event.preventDefault();
         var board_id = this.value;
@@ -215,7 +220,7 @@ $(document).ready(function() {
         $.ajax({
             url: base_url + "/admin/getSubjectsAjax",
             method:"GET",
-            data:{board_id:board_id,medium_id:medium_id,class_id:class_id},
+            data:{class_id:class_id},
             success:function(result){
                 $('#subject_id').html('<option value="">--- Select Subject ---</option>');
                 if(result){
@@ -234,7 +239,7 @@ $(document).ready(function() {
         $.ajax({
             url: base_url + "/admin/getChapterAjax",
             method:"GET",
-            data:{board_id:board_id,medium_id:medium_id,class_id:class_id,subject_id:subject_id},
+            data:{subject_id:subject_id},
             success:function(result){
                 $('#chapter_id').html('<option value="">--- Select Chapter ---</option>');
                 if(result){
@@ -247,7 +252,7 @@ $(document).ready(function() {
     fetchTopicData();
     function fetchTopicData()
     {
-        var binfo = true;
+        /* var binfo = true;
         var paging = true;
         var table = $('.data-table').DataTable({
             "destroy": true,
@@ -256,7 +261,7 @@ $(document).ready(function() {
             ajax: {
                 url:  base_url + "/admin/getTopicAllData",
                 data: function (d) {
-                    //d.search = $('#search').val()
+                    d.search = $('input[type="search"]').val()
                 }
             },
             "bAutoWidth": false,
@@ -284,42 +289,52 @@ $(document).ready(function() {
             }
         });
 
-        // oTable = $('.data-table').DataTable();
-        // $('#search').keyup(function(){
-        //     oTable.search($(this).val()).draw() ;
-        // })
+        oTable = $('.data-table').DataTable();
+        $('input[type="search"]').keyup(function(){
+            oTable.search($(this).val()).draw() ;
+        })
 
         $.fn.dataTable.ext.errMode = 'none';
 
         $('.data-table').on( 'error.dt', function ( e, settings, techNote, message ) {
             console.log( 'An error has been reported by DataTables: ', message );
-        }) ;
-        
-        /* $.ajax({
+        }) ; */
+
+        $.ajax({
             url: base_url + "/admin/getTopicAllData",
             dataType:"json",
-            success:function(data)
-            {
+            success:function(data) {
                 var html = '';
-                for(var count=0; count < data.length; count++)
-                {
+                for(var count=0; count < data.length; count++) {
                     html +='<tr>';
-                    html +='<td contenteditable class="column_name" data-column_name="class_id" data-id="'+data[count].topic_id+'">'+data[count].topic_id+'</td>';
+                    var createdAtDate = new Date(data[count].created_at);
+                    var options = { day: 'numeric', month: 'short', year: 'numeric' };
+                    var formattedCreatedAt = createdAtDate.toLocaleDateString('en-US', options);
+
+                    html +='<td contenteditable class="column_name" data-column_name="topic_id" data-id="'+data[count].topic_id+'">'+data[count].topic_id+'</td>';
                     html +='<td contenteditable class="column_name" data-column_name="board_name" data-id="'+data[count].topic_id+'">'+data[count].board_name+'</td>';
-                    html += '<td contenteditable class="column_name" data-column_name="medium_name" data-id="'+data[count].topic_id+'">'+data[count].medium_name+'</td>';
+                    html +='<td contenteditable class="column_name" data-column_name="medium_name" data-id="'+data[count].topic_id+'">'+data[count].medium_name+'</td>';
                     html +='<td contenteditable class="column_name" data-column_name="class_name" data-id="'+data[count].topic_id+'">'+data[count].class_name+'</td>';
                     html +='<td contenteditable class="column_name" data-column_name="subject_name" data-id="'+data[count].topic_id+'">'+data[count].subject_name+'</td>';
                     html +='<td contenteditable class="column_name" data-column_name="chapter_name" data-id="'+data[count].topic_id+'">'+data[count].chapter_name+'</td>';
-                    html += '<td contenteditable class="column_name" data-column_name="topic_name" data-id="'+data[count].topic_id+'">'+data[count].topic_name+'</td>';
-                    html += '<td contenteditable class="column_name" data-column_name="created_at" data-id="'+data[count].topic_id+'">'+data[count].created_at+'</td>';
+                    html +='<td contenteditable class="column_name" data-column_name="topic_name" data-id="'+data[count].topic_id+'">'+data[count].topic_name+'</td>';
+                    html += '<td contenteditable class="column_name" data-column_name="topic_status" data-id="'+data[count].topic_id+'">'+data[count].topic_status+'</td>';
+                    html += '<td data-column_name="created_at" data-id="' + data[count].topic_id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
                     html += '<td>';
-                    html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-id="'+data[count].topic_id+'" data-toggle="modal"  title="Update Topic Details"><i class="fas fa-edit"></i></button>';
-                    html += '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].topic_id+'" data-toggle="modal"  title="Delete Topic Details"><i class="fas fa-trash-alt"></i></button>';
+                    html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-id="'+data[count].topic_id+'" data-toggle="modal"  title="Update Question Type Details"><i class="fas fa-edit"></i></button>';
+                    html += '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].topic_id+'" data-toggle="modal"  title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
                     html += '</td></tr>';
                 }
                 $('tbody').html(html);
+                $('#topic_table').DataTable({
+                    // DataTables configuration options here
+                    "order": [[0, "desc"]], // Example: Sort by the first column (subject_id) in descending order
+                    "paging": true,
+                    "pageLength": 10,
+                    "bDestroy": true
+                });
             }
-        }); */
+        });
     }
 
     //Add Medium Using Ajax //
