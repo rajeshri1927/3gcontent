@@ -66,7 +66,7 @@ class TopicController extends Controller
     }
 
     public function getSubjectsAjax(Request $request){
-        $subjectList = Subject::where('board_id',$request->board_id)->where('medium_id',$request->medium_id)->where('class_id',$request->class_id)->get();
+        $subjectList = Subject::where('class_id',$request->class_id)->get();
         $html = '';
         foreach ($subjectList as $subjectDet) {
             $html .= '<option value="' . $subjectDet->subject_id . '">' . $subjectDet->subject_name . '</option>';
@@ -75,7 +75,7 @@ class TopicController extends Controller
     }
 
     public function getChapterAjax(Request $request){
-        $chapterList = Chapter::where('board_id',$request->board_id)->where('medium_id',$request->medium_id)->where('class_id',$request->class_id)->get();
+        $chapterList = Chapter::where('subject_id',$request->subject_id)->get();
         $html = '';
         foreach ($chapterList as $chapterDet) {
             $html .= '<option value="' . $chapterDet->chapter_id . '">' . $chapterDet->chapter_name . '</option>';
@@ -86,15 +86,15 @@ class TopicController extends Controller
     public function getTopicAllData(){
         $build_result = array();
 
-        $topic = Topic::select('topics.topic_id','topics.class_id','topics.board_id','topics.medium_id','topics.topic_name','topics.created_at','boards.board_name','mediums.medium_name','class.class_name','chapters.chapter_name','subjects.subject_name')
+        $topic = Topic::select('topics.topic_id','topics.class_id','topics.board_id','topics.medium_id','topics.topic_name','topics.created_at','topics.topic_status','boards.board_name','mediums.medium_name','class.class_name','chapters.chapter_name','subjects.subject_name')
         ->join('class', 'class.class_id', '=', 'topics.class_id')
         ->join('boards', 'topics.board_id', '=', 'boards.board_id')
         ->join('mediums', 'topics.medium_id', '=', 'mediums.medium_id')
         ->join('chapters', 'topics.chapter_id', '=', 'chapters.chapter_id')
         ->join('subjects', 'topics.subject_id', '=', 'subjects.subject_id')
-        ->latest();
+        ->get();
 
-        $json_result = DataTables::of($topic)
+        /* $json_result = DataTables::of($topic)
         ->addColumn('built_action_btns', function ($data) {
             return '<button name="button" class="btn btn-sm btn-warning mt-1 update" type="button" data-id="'.$data->topic_id.'" data-toggle="modal" title="Update Topic Details"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'.$data->topic_id.'" data-toggle="modal" name="button" title="Delete Topic Details"><i class="fas fa-trash-alt"></i></button>';
         })->make(true);
@@ -118,8 +118,8 @@ class TopicController extends Controller
             return response()->json($build_result);
         } else {
             return response()->json($build_result);
-        }
-        // echo json_encode($topic);
+        } */
+        echo json_encode($topic);
     }
 
     public function addTopic(Request $request){
