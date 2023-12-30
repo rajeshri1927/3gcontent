@@ -6,6 +6,12 @@ use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use App\Models\Board;
+use App\Models\Medium;
+use App\Models\Standard;
+use App\Models\Subject;
+use App\Models\Chapter;
+use App\Models\Topic;
 use App\Models\QuestionType;
 use Validator;
 
@@ -18,12 +24,93 @@ class QuestionTypeController extends Controller
 
     public function index()
     {     
-        return view($this->module_view_folder.'.questiontype', $this->arr_view_data);
+        $data['BoardList'] = Board::get(["board_name", "board_id"]);
+        $data['BoardList'] = $data['BoardList'] ?? collect();
+        $data['MediumList']  = Medium::get(["medium_name", "medium_id"]);
+        $data['MediumList']  = $data['MediumList'] ?? collect();
+        $data['ClassList']   = Standard::get(["class_name", "class_id"]);
+        $data['ClassList']   = $data['ClassList'] ?? collect();
+        $data['SubjectList'] = Subject::get(["subject_name", "subject_id"]);
+        $data['SubjectList'] = $data['SubjectList'] ?? collect();
+        $data['ChapterList'] = Chapter::get(["chapter_name", "chapter_id"]);
+        $data['ChapterList'] = $data['ChapterList'] ?? collect();
+        $data['TopicList'] = Topic::get(["topic_name", "topic_id"]);
+        $data['TopicList'] = $data['TopicList'] ?? collect();
+        $questionType = QuestionType::select('question_types.question_type_id','question_types.class_id','question_types.board_id','question_types.medium_id','question_types.question_type','question_types.created_at','boards.board_name','mediums.medium_name','class.class_name','subjects.subject_name','chapters.chapter_name',
+        'topics.topic_name')
+        ->join('class', 'class.class_id', '=', 'question_types.class_id')
+        ->join('boards', 'question_types.board_id', '=', 'boards.board_id')
+        ->join('mediums', 'question_types.medium_id', '=', 'mediums.medium_id')
+        ->join('subjects', 'question_types.subject_id', '=', 'subjects.subject_id')
+        ->join('chapters', 'question_types.chapter_id', '=', 'chapters.chapter_id')
+        ->join('topics', 'question_types.topic_id', '=', 'topics.topic_id')
+        ->orderBy('question_types.question_type_id', 'asc')
+        ->toSql();
+        $data['questionTypeList'] = $questionType;
+        return view($this->module_view_folder.'.questiontype', $this->arr_view_data,$data);
     }
 
-    public function getQuestionTypeData(){
-        $questionType = QuestionType::select('*')->where('question_type_status','Yes')->orderBy('question_type_id','asc')->get();
-        echo json_encode($questionType);
+    public function getTopicAjax(Request $request){
+        $topicList = Topic::where('chapter_id',$request->chapter_id)->get();
+        $html = '';
+        foreach ($topicList as $topicDet) {
+            //dd($topicDet);
+            $html .= '<option value="' . $topicDet->topic_id . '">' . $topicDet->topic_name . '</option>';
+        }  
+        echo $html;
+    }
+    // public function getQuestionTypeData(){
+    //     $questionType = QuestionType::select('*')->where('question_type_status','Yes')->orderBy('question_type_id','asc')->get();
+    //     echo json_encode($questionType);
+    // }
+    
+    // public function getQuestionTypeAllData(){
+    //     $questionType = QuestionType::select('question_types.question_type_id',
+    //     'question_types.board_id','question_types.medium_id','question_types.class_id',
+    //     'question_types.subject_id','question_types.chapter_id','question_types.topic_id',
+    //     'question_types.question_type','question_types.question_type_description','question_types.question_type_status',
+    //     'question_types.created_at','boards.board_name','mediums.medium_name','class.class_name','chapters.chapter_name',
+    //     'subjects.subject_name','topics.topic_name','topics.topic_name')
+    //     ->join('class', 'class.class_id', '=', 'question_types.class_id')
+    //     ->join('boards', 'question_types.board_id', '=', 'boards.board_id')
+    //     ->join('mediums', 'question_types.medium_id', '=', 'mediums.medium_id')
+    //     ->join('chapters', 'question_types.chapter_id', '=', 'chapters.chapter_id')
+    //     ->join('subjects', 'question_types.subject_id', '=', 'subjects.subject_id')
+    //     ->join('topics', 'question_types.topic_id', '=', 'topics.topic_id')
+    //     ->get();
+    //     echo json_encode($questionType);
+    // }
+    
+    public function getQuestionTypeAllData()
+    {
+        $questionType = QuestionType::select(
+            'question_types.question_type_id',
+            'question_types.board_id',
+            'question_types.medium_id',
+            'question_types.class_id',
+            'question_types.subject_id',
+            'question_types.chapter_id',
+            'question_types.topic_id',
+            'question_types.question_type',
+            'question_types.question_type_description',
+            'question_types.question_type_status',
+            'question_types.created_at',
+            'boards.board_name',
+            'mediums.medium_name',
+            'class.class_name',
+            'chapters.chapter_name',
+            'subjects.subject_name',
+            'topics.topic_name'
+        )
+            ->join('class', 'class.class_id', '=', 'question_types.class_id')
+            ->join('boards', 'question_types.board_id', '=', 'boards.board_id')
+            ->join('mediums', 'question_types.medium_id', '=', 'mediums.medium_id')
+            ->join('chapters', 'question_types.chapter_id', '=', 'chapters.chapter_id')
+            ->join('subjects', 'question_types.subject_id', '=', 'subjects.subject_id')
+            ->join('topics', 'question_types.topic_id', '=', 'topics.topic_id')
+            ->get();
+
+        return response()->json($questionType);
     }
 
     public function addQuestionType(Request $request){
@@ -45,6 +132,12 @@ class QuestionTypeController extends Controller
             if($request->get('button_action') == "insert")
             {
                 $questionType = new QuestionType([
+                    'board_id'         =>  $request->get('board_id'),
+                    'medium_id'        =>  $request->get('medium_id'),
+                    'class_id'         =>  $request->get('class_id'),
+                    'subject_id'       =>  $request->get('subject_id'),
+                    'chapter_id'       =>  $request->get('chapter_id'),
+                    'topic_id'         =>  $request->get('topic_id'),
                     'question_type'    =>  $request->get('question_type'),
                     'question_type_description' =>  $request->get('question_type_description'),
                     'question_type_status' => $request->get('question_type_status'),
@@ -59,6 +152,12 @@ class QuestionTypeController extends Controller
             
                 if ($question_type) {
                     $question_type->update([
+                        'board_id'         =>  $request->get('board_id'),
+                        'medium_id'        =>  $request->get('medium_id'),
+                        'class_id'         =>  $request->get('class_id'),
+                        'subject_id'       =>  $request->get('subject_id'),
+                        'chapter_id'       =>  $request->get('chapter_id'),
+                        'topic_id'         =>  $request->get('topic_id'),
                         'question_type'    =>  $request->get('question_type'),
                         'question_type_description' =>  $request->get('question_type_description'),
                         'question_type_status' => $request->get('question_type_status'),
@@ -85,6 +184,12 @@ class QuestionTypeController extends Controller
         $questionTypeID = $request->input('question_type_id');
         $questionType   = QuestionType::find($questionTypeID);
         $output   = array(
+            'board_id'         =>  $questionType->board_id,
+            'medium_id'        =>  $questionType->medium_id,
+            'class_id'         =>  $questionType->class_id,
+            'subject_id'       =>  $questionType->subject_id,
+            'chapter_id'       =>  $questionType->chapter_id,
+            'topic_id'         =>  $questionType->topic_id,
             'question_type'    =>  $questionType->question_type,
             'question_type_description' =>  $questionType->question_type_description,
             'question_type_status' => $questionType->question_type_status

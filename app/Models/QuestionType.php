@@ -11,6 +11,12 @@ class QuestionType extends Model
     protected $table = 'question_types';
     protected $primaryKey = 'question_type_id';
     protected $fillable = [
+    'board_id',
+    'medium_id',
+    'class_id',
+    'subject_id',
+    'chapter_id',
+    'topic_id',
     'question_type',
     'question_type_description',
     'question_type_status',

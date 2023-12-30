@@ -26,7 +26,7 @@ class TopicController extends Controller
         $data['BoardList']   = Board::get(["board_name", "board_id"]);
         $data['BoardList']   = $data['BoardList'] ?? collect();
 
-        $topic = Topic::select('topics.topic_id','topics.class_id','topics.board_id','topics.medium_id','topics.topic_name','chapters.created_at','boards.board_name','mediums.medium_name','class.class_name','subjects.subject_name','chapters.chapter_name')
+        $topic = Topic::select('topics.topic_id','topics.class_id','topics.board_id','topics.medium_id','topics.topic_name','topics.created_at','boards.board_name','mediums.medium_name','class.class_name','subjects.subject_name','chapters.chapter_name')
         ->join('class', 'class.class_id', '=', 'topics.class_id')
         ->join('boards', 'topics.board_id', '=', 'boards.board_id')
         ->join('mediums', 'topics.medium_id', '=', 'mediums.medium_id')
