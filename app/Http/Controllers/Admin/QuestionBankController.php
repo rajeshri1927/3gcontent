@@ -46,14 +46,13 @@ class QuestionBankController extends Controller
     public function getQuestionBankData(){
         $error_array = array();
         $success_output = '';
-        $question = QuestionBank::select('question_bank.*','topics.topic_name','question_bank.created_at','boards.board_name','mediums.medium_name','class.class_name','subjects.subject_name','chapters.chapter_name','question_types.question_type')
+        $question = QuestionBank::select('question_bank.*','topics.topic_name','question_bank.created_at','boards.board_name','mediums.medium_name','class.class_name','subjects.subject_name','chapters.chapter_name')
         ->join('class', 'class.class_id', '=', 'question_bank.class_id')
         ->join('boards', 'question_bank.board_id', '=', 'boards.board_id')
         ->join('mediums', 'question_bank.medium_id', '=', 'mediums.medium_id')
         ->join('subjects', 'question_bank.subject_id', '=', 'subjects.subject_id')
         ->join('chapters', 'question_bank.chapter_id', '=', 'chapters.chapter_id')
         ->join('topics', 'question_bank.topic_id', '=', 'topics.topic_id')
-        ->join('question_types', 'question_bank.question_type_id', '=', 'question_types.question_type_id')
         ->orderBy('question_bank.question_bank_id', 'asc')
         ->get();
         if($question){
@@ -83,37 +82,42 @@ class QuestionBankController extends Controller
             if($request->get('button_action') == "insert")
             {
                 $questionBank = new QuestionBank([
-                    'board_id'      =>  $request->get('board_id'),
-                    'medium_id'     =>  $request->get('medium_id'),
-                    'class_id'     =>  $request->get('class_id'),
-                    'subject_id' => $request->get('subject_id'),
-                    'chapter_id' => $request->get('chapter_id'),
-                    'topic_id' => $request->get('topic_id'),
-                    'marks'    =>  $request->get('marks'),
-                    'question_type_id' =>  $request->get('questionType_id'),
-                    'level' => $request->get('dificultyLevel'),
-                    'question_status' => $request->get('question_status'),
+                    'board_id'      =>  $request->board_id,
+                    'medium_id'     =>  $request->medium_id,
+                    'class_id'     =>  $request->class_id,
+                    'subject_id' => $request->subject_id,
+                    'chapter_id' => $request->chapter_id,
+                    'topic_id' => $request->topic_id,
+                    'marks'    =>  $request->marks,
+                    'question_type_id' =>  $request->question_type_id,
+                    'level' => $request->dificultyLevel,
+                    'question_status' => $request->question_status,
+                    'question' => $request->question,
+                    'solution' => $request->solution,
                     'created_by' => $user->name,
                     'creation_ip' => $_SERVER['REMOTE_ADDR']
                 ]);
                 $questionBank->save();
+                $Qb = QuestionBank::where('question_bank_id',$questionBank->getKey())->update(array('question_bank_id' => 'QST'));
                 $success_output = '<div class="alert alert-success">Question Bank Data Inserted</div>';
             }
             if ($request->get('button_action') == 'update') {
-                $question_bank = QuestionBank::find($request->get('question_bank_id'));
+                $question_bank = QuestionBank::find($request->question_bank_id);
             
                 if ($question_bank) {
                     $question_bank->update([
-                        'board_id'      =>  $request->get('board_id'),
-                        'medium_id'     =>  $request->get('medium_id'),
-                        'class_id'     =>  $request->get('class_id'),
-                        'subject_id' => $request->get('subject_id'),
-                        'chapter_id' => $request->get('chapter_id'),
-                        'topic_id' => $request->get('topic_id'),
-                        'marks'    =>  $request->get('marks'),
-                        'question_type_id' =>  $request->get('questionType_id'),
-                        'level' => $request->get('dificultyLevel'),
-                        'question_status' => $request->get('question_status'),
+                        'board_id'      =>  $request->board_id,
+                        'medium_id'     =>  $request->medium_id,
+                        'class_id'     =>  $request->class_id,
+                        'subject_id' => $request->subject_id,
+                        'chapter_id' => $request->chapter_id,
+                        'topic_id' => $request->topic_id,
+                        'marks'    =>  $request->marks,
+                        'question_type_id' =>  $request->question_type_id,
+                        'level' => $request->dificultyLevel,
+                        'question_status' => $request->question_status,
+                        'question' => $request->question,
+                        'solution' => $request->solution,
                         'modified_by' => $user->name,
                         'modified_ip' => $_SERVER['REMOTE_ADDR']
                     ]);
@@ -179,7 +183,7 @@ class QuestionBankController extends Controller
 
         $htmlquestiontype = '';
         foreach ($questionTypeList as $questionTypeDet) {
-            $isSelected = ($questionTypeDet->question_type_id == $questionType_id) ? 'selected' : '';
+            $isSelected = ($questionTypeDet->question_type_id == $question_type_id) ? 'selected' : '';
             $htmlquestiontype .= '<option value="' . $questionTypeDet->question_type_id . '" ' . $isSelected . '>' . $questionTypeDet->question_type . '</option>';
         }
 
