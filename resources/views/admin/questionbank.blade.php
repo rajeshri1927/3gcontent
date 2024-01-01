@@ -3,6 +3,9 @@
   <!-- Sidebar -->
   @include('admin.layouts.sidebar')
 <!-- [ Main Content ] start -->
+<!-- <link rel="stylesheet" href="{{ asset('public/assets/css/summernote-bs4.css')}}"> -->
+<link href="{{ asset('public/assets/summernote/summernote-bs4.min.css')}}" rel="stylesheet">
+<link href="{{ asset('public/assets/summernote/summernote.css')}}" rel="stylesheet">
 <section class="pcoded-main-container">
 <div class="pcoded-content">
 <!-- [ breadcrumb ] start -->
@@ -92,12 +95,12 @@
                                 <input type="text" class="form-control formField" id="marks" placeholder="Enter Marks" name="marks">
                             </div>
                             <div class="col-md-6 form-group">
-                                <label for="questionType_id" class="col-form-label">Select Question Type:</label>
-                                <select class="form-control formField" name="questionType_id" id="questionType_id">
+                                <label for="question_type_id" class="col-form-label">Select Question Type:</label>
+                                <select class="form-control formField" name="question_type_id" id="question_type_id">
                                     <option value="">--- Select Question Type ---</option>
                                     @if(!empty($QuestionTypeList))
                                         @foreach($QuestionTypeList as $data)
-                                            <option value="{{ $data->question_type_id }}">{{ $data->question_type }}</option>
+                                            <option value="{{ $data->question_type }}">{{ $data->question_type }}</option>
                                         @endforeach
                                     @endif
                                 </select>
@@ -122,16 +125,103 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-12 form-group" style="text-align:center;">
-                                <button type="button" class="btn btn-primary" name="addQuestionBtn" id="addQuestionBtn">Add Question</button>
+
+                        <!-- MCQ section -->
+                        <div class="row" id="mcqForm" style="display:none">
+                            <div class="col-md-8 form-group">
+                                <label for="mcqQuestion">Question (MCQs)</label>
+                                <textarea class="textarea formField" name="mcqQuestion" id="mcqQuestion" placeholder="Place some text here" style="width: 100%; height: 400px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="question">Options</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><input type="radio" name="qOption" value="option1"></span>
+                                    </div>
+                                    <input type="text" class="form-control" name="option1" id="option1">
+                                </div>
+                                <div class="input-group mt-1">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><input type="radio" name="qOption" value="option2"></span>
+                                    </div>
+                                    <input type="text" class="form-control" name="option2" id="option2">
+                                </div>
+                                <div class="input-group mt-1">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><input type="radio" name="qOption" value="option3"></span>
+                                    </div>
+                                    <input type="text" class="form-control" name="option3" id="option3">
+                                </div>
+                                <div class="input-group mt-1">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><input type="radio" name="qOption" value="option4"></span>
+                                    </div>
+                                    <input type="text" class="form-control" name="option4" id="option4">
+                                </div>
                             </div>
                         </div>
+                        <!-- MCQ section ends -->
+
+                        <!-- True False Section -->
+                        <div class="row" id="trueFalseFrom" style="display:none">
+                            <div class="col-md-8 form-group">
+                                <label for="tfQuestion">Question (True / False)</label>
+                                <textarea class="textarea formField" name="tfQuestion" id="tfQuestion" placeholder="Place some text here" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                            </div>
+                            <div class="col-sm-4">
+                                <label for="question">Options</label>
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <div class="form-group">                              
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                    <span class="input-group-text"><input type="radio" name="trueFalse" value="Yes"></span>
+                                                    </div>
+                                                    <input type="text" class="form-control" name="true" value="True" readonly>
+                                                </div>
+                                                <!-- /input-group -->
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">                              
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                    <span class="input-group-text"><input type="radio" name="trueFalse" value="No"></span>
+                                                    </div>
+                                                    <input type="text" class="form-control" name="false" value="False" readonly>
+                                                </div>
+                                                <!-- /input-group -->
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- True False Section End-->
+
+                        <!-- Written Question  -->
+                        <div class="row" id="writtenQuestions" style="display:none">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label for="question">Question <span id="qt"></span></label>
+                                    <textarea class="textarea formField question-editor" name="question" id="question" placeholder="Place some text here" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label for="solution">Solution</label>
+                                    <textarea class="textarea formField solution-editor" name="solution" id="solution" placeholder="Place some text here" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Written Question End -->
+
                         <div class="modal-footer">
                             <input type="hidden" name="question_bank_id" id="question_bank_id" value="" />
                             <input type="hidden" name="button_action" id="button_action" value="insert" />
                             <button type="button" class="btn  btn-secondary" data-dismiss="modal">Close</button>
-                            <input type="submit"  name="submit" id="action" class="btn  btn-primary" value="Add Question">
+                            <input type="submit" name="submit" id="action" class="btn  btn-primary" value="Add Question">
                         </div>
                     </form>
                     </div>
@@ -187,14 +277,41 @@
 <!-- [ stiped-table ] end -->
 <!-- Footer -->
 @include('admin.layouts.footer')
+<style>
+    .empty-border {
+      border: 1px solid red; /* Customize the border style */
+    }
+    .filled-border {
+      border: 2px solid rgba(0, 0, 0, 0.15); /* Customize the border style */
+    }
+</style>
+<script src="{{ asset('public/assets/summernote/summernote-bs4.js')}}"></script>
+<script src="{{ asset('public/assets/js/summernote-math.js')}}"></script>
 <script>
 $(document).ready(function() {
+
+    $('.textarea').summernote({
+        fontSizes: ['8', '9', '10', '11', '12', '13', '14','16', '18','20', '24'],
+        height: 150,
+        toolbar:[
+            ['style', ['bold', 'italic', 'underline', 'clear','strikethrough','superscript', 'subscript','fontsize','fontsizeunit','fontname','color','forecolor','backcolor']],
+            ['para', ['ul', 'ol', 'paragraph', 'style','height']],
+            ['insert', ['picture','hr','link','video','table','math']],
+            ['misc', ['undo', 'redo']],
+            ['view', ['fullscreen', 'codeview','help']],
+        ]
+    });
+
     $('#questionModal').on('hidden.bs.modal', function () {
+        $('.formField').filter(function() {
+            return this.value == ''
+        }).css('border','2px solid rgba(0, 0, 0, 0.15)');
         $(this).find('form').trigger('reset');
     });
 
     $('#board_id').on('change', function(event){ 
         event.preventDefault();
+        $(this).css('border','2px solid rgba(0, 0, 0, 0.15)');
         var board_id = this.value;
         $.ajax({
             url: base_url + "/admin/getTopicMediums",
@@ -211,6 +328,7 @@ $(document).ready(function() {
 
     $('#medium_id').on('change', function(event){ 
         event.preventDefault();
+        $(this).css('border','2px solid rgba(0, 0, 0, 0.15)');
         var medium_id = this.value;
         $.ajax({
             url: base_url + "/admin/getClass",
@@ -227,6 +345,7 @@ $(document).ready(function() {
 
     $('#class_id').on('change', function(event){ 
         event.preventDefault();
+        $(this).css('border','2px solid rgba(0, 0, 0, 0.15)');
         var board_id = $("#board_id").val();
         var medium_id = $("#medium_id").val();
         var class_id = this.value;
@@ -245,6 +364,7 @@ $(document).ready(function() {
 
     $('#subject_id').on('change', function(event){ 
         event.preventDefault();
+        $(this).css('border','2px solid rgba(0, 0, 0, 0.15)');
         var board_id = $("#board_id").val();
         var medium_id = $("#medium_id").val();
         var class_id = $("#class_id").val();
@@ -264,6 +384,7 @@ $(document).ready(function() {
 
     $('#chapter_id').on('change', function(event){ 
         event.preventDefault();
+        $(this).css('border','2px solid rgba(0, 0, 0, 0.15)');
         var board_id = $("#board_id").val();
         var medium_id = $("#medium_id").val();
         var class_id = $("#class_id").val();
@@ -282,6 +403,32 @@ $(document).ready(function() {
         });
     });
 
+    $("#topic_id, #dificultyLevel, #question_status").on('change', function(){
+        $(this).css('border','2px solid rgba(0, 0, 0, 0.15)');
+    });
+    $("#marks").on('keyup', function(){
+        $(this).css('border','2px solid rgba(0, 0, 0, 0.15)');
+    });
+
+    $("#question_type_id").on('change', function(event){
+        var questionType = $(this).val();
+        $(this).css('border','2px solid rgba(0, 0, 0, 0.15)');
+        if (questionType=="") {
+            $("#mcqForm, #trueFalseFrom, #writtenQuestions").hide();
+        } else if (questionType=="MCQ") {
+            $("#mcqFrom").show();
+            $("#trueFalseFrom, #writtenQuestions").hide();
+        } else if (questionType=="True or False") {
+            $("#mcqFrom").hide();
+            $("#trueFalseFrom").show();
+            $("#writtenQuestions").hide();
+        } else{
+            $("#mcqFrom, #trueFalseFrom").hide();
+            $("#qt").html("("+questionType+")");
+            $("#writtenQuestions").show();
+        }
+    });
+
     //View/Get data in html format Here//
     fetchQuestionData();
     function fetchQuestionData()
@@ -297,14 +444,14 @@ $(document).ready(function() {
                     var options = { day: 'numeric', month: 'short', year: 'numeric' };
                     var formattedCreatedAt = createdAtDate.toLocaleDateString('en-US', options);
 
-                    html +='<td contenteditable class="column_name" data-column_name="question_bank_id" data-id="'+data[count].question_bank_id+'">'+data[count].question_bank_id+'</td>';
+                    html +='<td contenteditable class="column_name" data-column_name="question_bank_id" data-id="'+data[count].question_bank_id+'">'+count+'</td>';
                     html +='<td contenteditable class="column_name" data-column_name="board_name" data-id="'+data[count].question_bank_id+'">'+data[count].board_name+'</td>';
                     html +='<td contenteditable class="column_name" data-column_name="medium_name" data-id="'+data[count].question_bank_id+'">'+data[count].medium_name+'</td>';
                     html +='<td contenteditable class="column_name" data-column_name="class_name" data-id="'+data[count].question_bank_id+'">'+data[count].class_name+'</td>';
                     html +='<td contenteditable class="column_name" data-column_name="subject_name" data-id="'+data[count].question_bank_id+'">'+data[count].subject_name+'</td>';
                     html +='<td contenteditable class="column_name" data-column_name="chapter_name" data-id="'+data[count].question_bank_id+'">'+data[count].chapter_name+'</td>';
                     html +='<td contenteditable class="column_name" data-column_name="marks" data-id="'+data[count].question_bank_id+'">'+data[count].marks+'</td>';
-                    html += '<td contenteditable class="column_name" data-column_name="question_type" data-id="'+data[count].question_bank_id+'">'+data[count].question_type+'</td>';
+                    html += '<td contenteditable class="column_name" data-column_name="question_type" data-id="'+data[count].question_bank_id+'">'+data[count].question_type_id+'</td>';
                     html += '<td data-column_name="created_at" data-id="' + data[count].question_bank_id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
                     html += '<td>';
                     html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].question_bank_id+'" data-subject-id="'+data[count].subject_id+'" data-topic-id="'+data[count].topic_id+'" data-chapter-id="'+data[count].chapter_id+'" data-questionType="'+data[count].question_type_id+'" data-toggle="modal" title="Update Question Bank Details"><i class="fas fa-edit"></i></button>';
@@ -327,24 +474,55 @@ $(document).ready(function() {
     $('#addQuestion').on('submit', function(event){ 
         event.preventDefault();
         var err = 0;
+        var fieldId = '';
         if($("#board_id").val() == ''){
             err = 1;
-        } else if($("#board_id").val() == ''){
-            err = 1;
+            fieldId = $("#board_id");
         } else if($("#medium_id").val() == ''){
             err = 1;
+            fieldId = $("#medium_id");
         } else if($("#class_id").val() == ''){
             err = 1;
+            fieldId = $("#class_id");
         } else if($("#subject_id").val() == ''){
             err = 1;
+            fieldId = $("#subject_id");
         } else if($("#chapter_id").val() == ''){
             err = 1;
+            fieldId = $("#chapter_id");
         } else if($("#topic_id").val() == ''){
             err = 1;
+            fieldId = $("#topic_id");
         } else if($("#marks").val() == ''){
             err = 1;
-        } else if($("#questionType_id").val() == ''){
+            fieldId = $("#marks");
+        } else if($("#question_type_id").val() == ''){
             err = 1;
+            fieldId = $("#question_type_id");
+        } else if($("#question_type_id").val() == 'MCQ'){
+            if ($.trim($("textarea#mcqQuestion").val())=="") {
+                $("textarea#mcqQuestion").focus();
+                err = 1;
+            }else if (!$("input[name='qOption']:checked").val()) {
+                err = 1;
+            }
+        } else if($("#question_type_id").val() == 'True or False'){
+            if ($.trim($("textarea#tfQuestion").val())=="") {
+                $("textarea#tfQuestion").focus();
+                err = 1;
+            }else if (!$("input[name='trueFalse']:checked").val()) {
+                err = 1;
+            }
+        } else if($("#question_type_id").val() != 'MCQ' || $("#question_type_id").val() != 'True or False'){
+            if ($.trim($("textarea#question").val())=="") {
+                $('#writtenQuestions #question').summernote('focus');
+                $(".question-editor").parent().find('.note-editor').css('border','1px solid #e60000');
+                return false;
+            }else if ($.trim($("textarea#solution").val())=="") {
+                $('#writtenQuestions #solution').summernote('focus');
+                $(".solution-editor").parent().find('.note-editor').css('border','1px solid #e60000');
+                return false;
+            }
         }
 
         if (err == 1){
@@ -381,6 +559,20 @@ $(document).ready(function() {
         }
     });
 
+    $('.question-editor').on('summernote.change', function() {
+        // Remove the border if content is not empty
+        if ($.trim($("textarea#question").val())!="") {
+            $(".question-editor").parent().find('.note-editor').css('border','1px solid #00000032');
+        }
+    });
+
+    $('.solution-editor').on('summernote.change', function() {
+        // Remove the border if content is not empty
+        if ($.trim($("textarea#solution").val())!="") {
+            $(".solution-editor").parent().find('.note-editor').css('border','1px solid #00000032');
+        }
+    });
+
     //Update data fetch Here//
     $(document).on('click', '.update', function(){
         var question_bank_id = $(this).attr("data-id");
@@ -390,12 +582,12 @@ $(document).ready(function() {
         var subject_id = $(this).attr("data-subject-id");
         var chapter_id = $(this).attr("data-chapter-id");
         var topic_id = $(this).attr("data-topic-id");
-        var questionType_id = $(this).attr("data-questionType");
+        var question_type_id = $(this).attr("data-questionType");
          $('#form_output').html('');
          $.ajax({
             url: base_url + "/admin/updateGetQuestionData",
-            method:'get',
-            data:{question_bank_id:question_bank_id,board_id:board_id,medium_id:medium_id,class_id:class_id,subject_id:subject_id,chapter_id:chapter_id,topic_id:topic_id,questionType_id:questionType_id},
+            method:'post',
+            data:{question_bank_id:question_bank_id,board_id:board_id,medium_id:medium_id,class_id:class_id,subject_id:subject_id,chapter_id:chapter_id,topic_id:topic_id,question_type_id:question_type_id},
             dataType:'json',
             success:function(data)
             {
@@ -451,7 +643,7 @@ $(document).ready(function() {
                 optionQuestionType.each(function(index,questionType) {
                     optionQuestionType.filter(':contains("2")').prop('selected', true);
                 });
-                $('#questionType_id').html(optionQuestionType);
+                $('#question_type_id').html(optionQuestionType);
 
                 $('#board_id').val(data.board_id);
                 $('#dificultyLevel').val(data.level);
