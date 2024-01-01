@@ -115,7 +115,7 @@ class MediumController extends Controller
         echo json_encode($output);
     }
 
-    function updateGetMediumData(Request $request)
+    public function updateGetMediumData(Request $request)
     {
         $medium_id = $request->input('medium_id');
         $medium     = Medium::find($medium_id);

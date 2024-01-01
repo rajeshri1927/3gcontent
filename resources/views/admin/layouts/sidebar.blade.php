@@ -50,22 +50,22 @@
 					<li><a href="medium">Medium </a></li>
 					<li><a href="standard">Standard</a></li>
 					<li><a href="subject">Subject</a></li>
-					 <li><a href="chapter">Chapters</a></li>
+					<li><a href="chapter">Chapters</a></li>
 					<li><a href="topics">Topics List</a></li>
 					<li><a href="questionType">Question Type</a></li>
 					<li><a href="questionBank">Question Bank </a></li>
 				</ul>
 			</li>
 			<!-- Class Managment Here -->
-			<!-- <li class="nav-item pcoded-hasmenu">	
-			<a href="#!" class="nav-link "><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext"> Class Management</span></a>
+			<li class="nav-item pcoded-hasmenu">	
+			<a href="#!" class="nav-link "><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext"> User Management</span></a>
 				<ul class="pcoded-submenu">
-					<li><a href="student_details.php">Student List</a></li>
-					<li><a href="batch_details.php">Batch List</a></li>
-					<li><a href="test_details.php">Test List</a></li>
-					<li><a href="chapters_details.php">Attandance List</a></li>
+					<li><a href="employeeManagement">Employee Managment</a></li>
+					<li><a href="classesManagement">Classes Managment</a></li>
+					<!--  <li><a href="test_details.php">Test List</a></li>
+					<li><a href="chapters_details.php">Attandance List</a></li> -->
 				</ul>
-			</li> -->
+			</li>
 			<!-- End Class Managment -->
 			<!-- Test Managment Here -->
 			<!-- <li class="nav-item pcoded-hasmenu">	
