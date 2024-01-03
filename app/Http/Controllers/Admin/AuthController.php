@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Session;
-use Crypt;
 use Validator;
 use DB;
 
@@ -31,7 +30,7 @@ class AuthController extends Controller{
 
     public function submitSignUpForm(Request $request){
         /* $validation = Validator::make($request->all(), [
-            'username'  => 'required',
+            'emp_name'  => 'required',
             'email' => 'required|email',
             'password' => 'required|min:8'
         ]);
@@ -45,7 +44,7 @@ class AuthController extends Controller{
                 $role_id = 1;
             }            
             $userArr = array('role_id' => $role_id,
-                             'name' => $request->username,
+                             'name' => $request->emp_name,
                              'email' => $request->email,
                              'password' => Hash::make($request->password),
                              'status' => 1);
@@ -55,21 +54,22 @@ class AuthController extends Controller{
             echo '0';
         } */
         $validation = $request->validate([
-            'username' => 'required',
-            'email' => 'required|email|unique:users',
+            'emp_name' => 'required',
+            'email'    => 'required|email|unique:users',
             'password' => 'required|min:6',
         ]);
         $data_obj = User::where('role_id', 1)->first();
-        if(isset($data_obj->name)){
+        if(isset($data_obj->emp_name)){
             $role_id = 2;
         } else {
             $role_id = 1;
         }
         $data = array('role_id' => $role_id,
-                      'name' => $request->username,
+                      'emp_name' => $request->emp_name,
                       'email' => $request->email,
                       'password' => Hash::make($request->password),
-                      'status' => 1);
+                      'status' => 'Yes');
+                    //   dd($data);
         User::create($data);
         return Redirect("admin")->withSuccess('You have register');
     }

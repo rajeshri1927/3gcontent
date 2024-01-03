@@ -87,7 +87,23 @@ Route::group(array('prefix' => '/admin','middleware' => ['web','admin']), functi
     Route::any('/getTopicAjax',['as'=>'','uses'=>$module_controller.'getTopicAjax']);
     Route::any('/updateGetQuestionData',['as'=>'','uses'=>$module_controller.'updateQuestionBankData']);
     Route::delete('/deleteQuestionData',['as'=>'','uses'=>$module_controller.'deleteQuestionBankData']);
-    
+
+    //Employee Managment Route Here//
+    $module_controller = "App\Http\Controllers\Admin\EmployeeManagentController@";
+    Route::any('/employeeManagement',['as'=>'','uses'=>$module_controller.'index']);
+    Route::any('/addEmployee',['as'=>'','uses'=>$module_controller.'addEmployee']);
+    Route::any('/getEmpAllData',['as'=>'','uses'=>$module_controller.'getEmpAllData']);
+    Route::any('/updateGetEmpData',['as'=>'','uses'=>$module_controller.'updateGetEmpData']);
+    Route::delete('/deleteEmployeeData',['as'=>'','uses'=>$module_controller.'deleteEmployeeData']);
+
+     //Employee Managment Route Here//
+     $module_controller = "App\Http\Controllers\Admin\classesManagementController@";
+     Route::any('/classesManagement',['as'=>'','uses'=>$module_controller.'index']);
+    //  Route::any('/addEmployee',['as'=>'','uses'=>$module_controller.'addEmployee']);
+    //  Route::any('/getEmpAllData',['as'=>'','uses'=>$module_controller.'getEmpAllData']);
+    //  Route::any('/updateGetEmpData',['as'=>'','uses'=>$module_controller.'updateGetEmpData']);
+    //  Route::delete('/deleteEmployeeData',['as'=>'','uses'=>$module_controller.'deleteEmployeeData']);
+
     // Create question paper routes
     $module_controller = "App\Http\Controllers\Admin\QuestionPaperController@";
     Route::any('/getQuestionPaperAllData',['as'=>'','uses'=>$module_controller.'getQuestionPaperAllData']);

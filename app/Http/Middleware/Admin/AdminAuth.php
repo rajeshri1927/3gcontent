@@ -30,9 +30,9 @@ class AdminAuth
             Session::flash('deactive', 'You have entered wrong credentials');
             return redirect('/admin');
         } */
-        if(isset(Auth::user()->role_id) && Auth::user()->role_id == 1){
+        if(isset(Auth::user()->role_id) && in_array(Auth::user()->role_id, [1, 2])) {
             return $next($request);
         }
-        return redirect('/admin');
+        return redirect('/admin');        
     }
 }

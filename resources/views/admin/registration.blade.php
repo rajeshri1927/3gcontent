@@ -13,20 +13,20 @@
 						<form autocomplete="off" id="signUpFrm" method="POST" action="{{ url('/admin/storeuser') }}">
 							@csrf
 							<div class="form-group mb-3">
-								<input type="text" class="form-control formField" id="Username" name="username" placeholder="Username">
+								<input type="text" class="form-control formField" id="emp_name" name="emp_name" placeholder="Enter Name">
 								<input type="hidden" class="custom-control-input" id="nonceVal" value="{{ $nonceVal }}">
 								@if ($errors->has('name'))
                                 	<span class="text-danger">{{ $errors->first('username') }}</span>
                                 @endif
 							</div>
 							<div class="form-group mb-3">
-								<input type="text" class="form-control formField" id="Email" name="email" placeholder="Email address">
+								<input type="text" autocomplete="off" class="form-control formField" id="Email" name="email" placeholder="Email address">
 								@if ($errors->has('email'))
                                 	<span class="text-danger">{{ $errors->first('email') }}</span>
                                 @endif
 							</div>
 							<div class="form-group mb-4">
-								<input type="password" class="form-control formField" id="Password" name="password" placeholder="Password">
+								<input type="password" autocomplete="off" class="form-control formField" id="Password" name="password" placeholder="Password">
 								@if ($errors->has('password'))
                                 	<span class="text-danger">{{ $errors->first('password') }}</span>
                                 @endif
