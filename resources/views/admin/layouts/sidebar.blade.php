@@ -90,6 +90,13 @@
 				</ul>
 			</li> -->
 			<!-- End Test Managment -->
+         <li class="nav-item pcoded-hasmenu">
+				<a href="#!" class="nav-link "><span class="pcoded-micon"><i class="fas fa-university nav-icon"></i></span><span class="pcoded-mtext">Generate paper</span></a>
+				<ul class="pcoded-submenu">
+					<li><a href="mcqpaper"><span class="pcoded-mtext">MCQ </span></a></li>
+					<li><a href="subjectivepaper"><span class="pcoded-mtext">Subjective </span></a></li>
+				</ul>
+			</li>
 		</ul>		
 	</div>
 </div>

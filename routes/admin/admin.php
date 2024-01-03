@@ -87,4 +87,26 @@ Route::group(array('prefix' => '/admin','middleware' => ['web','admin']), functi
     Route::any('/getTopicAjax',['as'=>'','uses'=>$module_controller.'getTopicAjax']);
     Route::any('/updateGetQuestionData',['as'=>'','uses'=>$module_controller.'updateQuestionBankData']);
     Route::delete('/deleteQuestionData',['as'=>'','uses'=>$module_controller.'deleteQuestionBankData']);
+    
+    // Create question paper routes
+    $module_controller = "App\Http\Controllers\Admin\QuestionPaperController@";
+    Route::any('/getQuestionPaperAllData',['as'=>'','uses'=>$module_controller.'getQuestionPaperAllData']);
+    Route::any('/mcqpaper',['as'=>'','uses'=>$module_controller.'mcqpaperlist']);
+    Route::any('/createmcqpaper',['as'=>'','uses'=>$module_controller.'createMcqPaper']);
+    Route::any('/addmcqpaper',['as'=>'','uses'=>$module_controller.'addMcqPaperDetails']);
+    Route::any('/deleteMCQPaper',['as'=>'','uses'=>$module_controller.'deleteMCQPaperData']);
+    Route::any('/viewMCQPaper',['as'=>'','uses'=>$module_controller.'viewMCQPaper']);
+    Route::any('/viewMCQPaper/{id}',['as'=>'','uses'=>$module_controller.'viewMCQPaper']);
+    Route::any('/subjectivepaper',['as'=>'','uses'=>$module_controller.'subjectivepaperlist']);
+    Route::any('/createsubjectivepaper',['as'=>'','uses'=>$module_controller.'createSubjectivePaper']);
+    Route::any('/getAllChaptersAjax',['as'=>'','uses'=>$module_controller.'getAllChaptersAjax']);
+    Route::any('/getSelectedChapterDetailsAjax',['as'=>'','uses'=>$module_controller.'getSelectedChapterDataAjax']);
+
+    // Ready paper structure routes
+    $module_controller = "App\Http\Controllers\Admin\ReadyPaperController@";
+    Route::any('/ready_paper_structure',['as'=>'','uses'=>$module_controller.'readyPaperStructure']);
+    Route::any('/getReadyQuestionPaperData',['as'=>'','uses'=>$module_controller.'getAllReadyPaperStructureData']);
+    Route::any('/addPaperStructureDetails',['as'=>'','uses'=>$module_controller.'readyPaperStructureCreate']);
+    Route::any('/updateGetReadyPaperStructureData',['as'=>'','uses'=>$module_controller.'updateReadyPaperStructureData']);
+    Route::any('/deleteReadyPaperStructureData',['as'=>'','uses'=>$module_controller.'deletReadyPaperStructure']);
 });
