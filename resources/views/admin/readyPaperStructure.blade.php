@@ -19,6 +19,7 @@
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.php"><i class="feather icon-home"></i></a></li>
                     <li class="breadcrumb-item"><a href="#!">Ready Paper Structure Info</a></li>
+                    <li class="breadcrumb-item"><a href="#!">Ready Paper Structure Details</a></li>
                 </ul>
             </div>
         </div>
@@ -586,13 +587,7 @@ $(document).ready(function() {
                 $('#subject_id').html(optionSubject);
 
                 //Question Type Data//
-                var htmlQuestionTypeString = data.question_type;
-                var optionQuestionType = $(htmlQuestionTypeString);
-                // Iterate over the options
-                optionQuestionType.each(function(index,questionType) {
-                    optionQuestionType.filter(':contains("2")').prop('selected', true);
-                });
-                $('#qType_id').html(optionQuestionType);
+                $('#qType_id').val(data.question_type);
 
                 //Total Marks Data//
                 var htmlTotalMarksString = data.total_paper_marks;

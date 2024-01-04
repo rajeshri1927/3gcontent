@@ -208,7 +208,55 @@ class QuestionPaperController extends Controller
     }    
 
     public function createSubjectivePaper(Request $request){
+        $this->arr_view_data['BoardList'] = Board::get(["board_name", "board_id"]);
+        $this->arr_view_data['BoardList'] = $this->arr_view_data['BoardList'] ?? collect();
         return view($this->module_view_folder.'.create_subjective_paper', $this->arr_view_data);
+    }
+
+    public function addSubjectivePaperDetails(Request $request){
+        $user = Auth::user();
+        $validation = Validator::make($request->all(), [
+            'board_id'    => 'required',
+            'medium_id'    => 'required',
+            'class_id'    => 'required',
+            'subject_id'    => 'required',
+            'paper_marks'    => 'required'
+        ]);
+        $error_array = array();
+        $success_output = '';
+        if ($validation->fails()){
+            foreach($validation->messages()->getMessages() as $field_name => $messages){
+                $error_array[] = $messages;
+            }
+        } else {
+            if($request->get('button_action') == "insert")
+            {
+                $subjectiveQuestion = new SubjectiveModel([
+                                    'board_id' => $request->board_id,
+                                    'medium_id' => $request->medium_id,
+                                    'class_id' => $request->class_id,
+                                    'subject_id' => $request->subject_id,
+                                    'chepter_ids' => implode(",", $request->filterchaptername2),
+                                    'paper_type' => 'ReadyPaper',
+                                    'paper_date' => $request->paper_date,
+                                    'paper_marks' => $request->paper_marks,
+                                    'paper_time' => $request->paper_time,
+                                    'question_list' => '',
+                                    'user_id' => $user->id,
+                                    'status' => 1,
+                                    'created_by' => $user->name
+                                ]);
+                $subjectiveQuestion->save();
+                $mcq_id = $subjectiveQuestion->id;
+                // $this->genrate_mcq_papers($request,$mcq_id);
+            }
+        }
+        $output = array(
+            'error'     =>  $error_array,
+            'success'   =>  $success_output,
+            'redirect_url'   =>  url('/admin/subjectivepaper')
+        );
+        echo json_encode($output);        
     }
 
     public function getAllChaptersAjax(Request $request){

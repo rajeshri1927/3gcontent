@@ -198,7 +198,7 @@ class ReadyPaperController extends Controller
             }
         }
 
-        $htmlquestiontype = '';
+        /* $htmlquestiontype = '';
         foreach ($questionTypeList as $questionTypeDet) {
             if (isset($request->action) && $request->action == 'view') {
                 $htmlquestiontype = $request->input('question_type_id');
@@ -206,7 +206,7 @@ class ReadyPaperController extends Controller
                 $isSelected = ($questionTypeDet->qType === $request->input('question_type_id')) ? 'selected="selected"' : '';
                 $htmlquestiontype .= '<option data-value="'.$questionTypeDet->qType.'" value="'.$questionTypeDet->qType.'" '.$isSelected.'>'.$questionTypeDet->qType.'</option>';
             }
-        }
+        } */
 
         $readyPaperStructureId = $request->input('ready_paper_id');
         $readyPaperStructureList = ReadyPaperStructure::where('id', $readyPaperStructureId)->first();
@@ -269,7 +269,7 @@ class ReadyPaperController extends Controller
             'class_id'     =>  $htmlClass,
             'subject_id' => $htmlsubject,
             'total_paper_marks' => $htmlTotalMarks,
-            'question_type'  =>  $htmlquestiontype,
+            'question_type'  =>  $request->input('question_type_id'),
             'total_marks_as_per_question_type' => $readyPaperStructure->total_marks_as_per_question_type,
             'marks_per_each_question' => $readyPaperStructure->marks_per_each_question,
             'total_no_of_questions_to_ask' => $readyPaperStructure->total_no_of_questions_to_ask,

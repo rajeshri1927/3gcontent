@@ -30,7 +30,7 @@
 <div class="col-xl-12">
     <div class="card">
         <div class="card-header text-right">
-            <a href="{{ url('/createsubjectivepaper') }}" class="btn btn-primary"> <i class="fa-solid fa-plus"></i> Create Paper </a>
+            <a href="{{ url('/admin/createsubjectivepaper') }}" class="btn btn-primary"> <i class="fa-solid fa-plus"></i> Create Paper </a>
         </div>
         <div class="card-body table-border-style">
             <div class="table-responsive">
