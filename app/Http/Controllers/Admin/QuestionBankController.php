@@ -46,13 +46,14 @@ class QuestionBankController extends Controller
     public function getQuestionBankData(){
         $error_array = array();
         $success_output = '';
-        $question = QuestionBank::select('question_bank.*','topics.topic_name','question_bank.created_at','boards.board_name','mediums.medium_name','class.class_name','subjects.subject_name','chapters.chapter_name')
+        $question = QuestionBank::select('question_bank.*','topics.topic_name','question_bank.created_at','boards.board_name','mediums.medium_name','class.class_name','subjects.subject_name','chapters.chapter_name','question_types.question_type')
         ->join('class', 'class.class_id', '=', 'question_bank.class_id')
         ->join('boards', 'question_bank.board_id', '=', 'boards.board_id')
         ->join('mediums', 'question_bank.medium_id', '=', 'mediums.medium_id')
         ->join('subjects', 'question_bank.subject_id', '=', 'subjects.subject_id')
         ->join('chapters', 'question_bank.chapter_id', '=', 'chapters.chapter_id')
         ->join('topics', 'question_bank.topic_id', '=', 'topics.topic_id')
+        ->join('question_types', 'question_bank.question_type_id', '=', 'question_types.question_type_id')
         ->orderBy('question_bank.question_bank_id', 'asc')
         ->get();
         if($question){
@@ -144,7 +145,7 @@ class QuestionBankController extends Controller
         $subject_id   = $request->input('subject_id');
         $chapter_id   = $request->input('chapter_id');
         $topic_id   = $request->input('topic_id');
-        $questionType_id   = $request->input('questionType_id');
+        $questionType_id   = $request->input('question_type_id');
         $mediumList = Medium::where('board_id',$selectedBoardId)->get();
         $classList  = Standard::where('class_id',$class_id)->get();
         $subjectList = Subject::where('subject_id',$subject_id)->get();
@@ -183,7 +184,7 @@ class QuestionBankController extends Controller
 
         $htmlquestiontype = '';
         foreach ($questionTypeList as $questionTypeDet) {
-            $isSelected = ($questionTypeDet->question_type_id == $question_type_id) ? 'selected' : '';
+            $isSelected = ($questionTypeDet->question_type_id == $questionType_id) ? 'selected' : '';
             $htmlquestiontype .= '<option value="' . $questionTypeDet->question_type_id . '" ' . $isSelected . '>' . $questionTypeDet->question_type . '</option>';
         }
 

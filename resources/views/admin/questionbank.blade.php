@@ -100,7 +100,7 @@
                                     <option value="">--- Select Question Type ---</option>
                                     @if(!empty($QuestionTypeList))
                                         @foreach($QuestionTypeList as $data)
-                                            <option value="{{ $data->question_type }}">{{ $data->question_type }}</option>
+                                            <option data-value="{{ $data->question_type }}" value="{{ $data->question_type_id }}">{{ $data->question_type }}</option>
                                         @endforeach
                                     @endif
                                 </select>
@@ -410,7 +410,7 @@ $(document).ready(function() {
         $(this).css('border','2px solid rgba(0, 0, 0, 0.15)');
     });
 
-    $("#question_type_id").on('change', function(event){
+    $(document).on('change',"#question_type_id", function(event){
         var questionType = $(this).val();
         $(this).css('border','2px solid rgba(0, 0, 0, 0.15)');
         if (questionType=="") {
@@ -438,23 +438,24 @@ $(document).ready(function() {
             dataType:"json",
             success:function(data) {
                 var html = '';
+                
                 for(var count=0; count < data.length; count++) {
                     html +='<tr>';
                     var createdAtDate = new Date(data[count].created_at);
                     var options = { day: 'numeric', month: 'short', year: 'numeric' };
                     var formattedCreatedAt = createdAtDate.toLocaleDateString('en-US', options);
-
-                    html +='<td contenteditable class="column_name" data-column_name="question_bank_id" data-id="'+data[count].question_bank_id+'">'+count+'</td>';
+                    console.log(count);
+                    html +='<td contenteditable class="column_name" data-column_name="question_bank_id" data-id="'+data[count].question_bank_id+'">'+(parseInt(count+1))+'</td>';
                     html +='<td contenteditable class="column_name" data-column_name="board_name" data-id="'+data[count].question_bank_id+'">'+data[count].board_name+'</td>';
                     html +='<td contenteditable class="column_name" data-column_name="medium_name" data-id="'+data[count].question_bank_id+'">'+data[count].medium_name+'</td>';
                     html +='<td contenteditable class="column_name" data-column_name="class_name" data-id="'+data[count].question_bank_id+'">'+data[count].class_name+'</td>';
                     html +='<td contenteditable class="column_name" data-column_name="subject_name" data-id="'+data[count].question_bank_id+'">'+data[count].subject_name+'</td>';
                     html +='<td contenteditable class="column_name" data-column_name="chapter_name" data-id="'+data[count].question_bank_id+'">'+data[count].chapter_name+'</td>';
                     html +='<td contenteditable class="column_name" data-column_name="marks" data-id="'+data[count].question_bank_id+'">'+data[count].marks+'</td>';
-                    html += '<td contenteditable class="column_name" data-column_name="question_type" data-id="'+data[count].question_bank_id+'">'+data[count].question_type_id+'</td>';
+                    html += '<td contenteditable class="column_name" data-column_name="question_type" data-id="'+data[count].question_bank_id+'">'+data[count].question_type+'</td>';
                     html += '<td data-column_name="created_at" data-id="' + data[count].question_bank_id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
                     html += '<td>';
-                    html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].question_bank_id+'" data-subject-id="'+data[count].subject_id+'" data-topic-id="'+data[count].topic_id+'" data-chapter-id="'+data[count].chapter_id+'" data-questionType="'+data[count].question_type_id+'" data-toggle="modal" title="Update Question Bank Details"><i class="fas fa-edit"></i></button>';
+                    html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].question_bank_id+'" data-subject-id="'+data[count].subject_id+'" data-topic-id="'+data[count].topic_id+'" data-chapter-id="'+data[count].chapter_id+'" data-question-type-id="'+data[count].question_type_id+'" data-toggle="modal" title="Update Question Bank Details"><i class="fas fa-edit"></i></button>';
                     html += '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].question_bank_id+'" data-toggle="modal"  title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
                     html += '</td></tr>';
                 }
@@ -582,11 +583,11 @@ $(document).ready(function() {
         var subject_id = $(this).attr("data-subject-id");
         var chapter_id = $(this).attr("data-chapter-id");
         var topic_id = $(this).attr("data-topic-id");
-        var question_type_id = $(this).attr("data-questionType");
+        var question_type_id = $(this).attr("data-question-type-id");
          $('#form_output').html('');
          $.ajax({
             url: base_url + "/admin/updateGetQuestionData",
-            method:'post',
+            method:'get',
             data:{question_bank_id:question_bank_id,board_id:board_id,medium_id:medium_id,class_id:class_id,subject_id:subject_id,chapter_id:chapter_id,topic_id:topic_id,question_type_id:question_type_id},
             dataType:'json',
             success:function(data)
