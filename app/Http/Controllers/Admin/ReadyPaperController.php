@@ -32,7 +32,7 @@ class ReadyPaperController extends Controller
         $this->arr_view_data['BoardList'] = Board::get(["board_name", "board_id"]);
         $this->arr_view_data['BoardList'] = $this->arr_view_data['BoardList'] ?? collect();
 
-        $this->arr_view_data['QuestionTypeList'] = QuestionType::get(["question_type", "question_type_id", "question_type_description"]);
+        $this->arr_view_data['QuestionTypeList'] = QuestionType::get(["qType_id", "qType_uid", "qType"]);
         $this->arr_view_data['QuestionTypeList'] = $this->arr_view_data['QuestionTypeList'] ?? collect();
         return view($this->module_view_folder.'.readyPaperStructure', $this->arr_view_data);
     }
@@ -44,8 +44,8 @@ class ReadyPaperController extends Controller
             'medium_id'    => 'required',
             'class_id'    => 'required',
             'subject_id'    => 'required',
-            'total_paper_marks'    => 'required',
-            'question_type_id'    => 'required',
+            'total_paper_marks' => 'required',
+            'qType_id'     => 'required',
             'total_marks_as_per_question_type'    => 'required',
             'marks_per_each_question'    => 'required',
             'total_no_of_questions_to_ask'    => 'required',
@@ -67,7 +67,7 @@ class ReadyPaperController extends Controller
                         'class_id'     =>  $request->class_id,
                         'subject_id' => $request->subject_id,
                         'total_paper_marks' => $request->total_paper_marks,
-                        'question_type_id' => $request->question_type_id,
+                        'question_type_id' => $request->qType_id,
                         'total_marks_as_per_question_type' =>  $request->total_marks_as_per_question_type,
                         'marks_per_each_question' =>  $request->marks_per_each_question,
                         'total_no_of_questions_to_ask' => $request->total_no_of_questions_to_ask,
@@ -88,10 +88,10 @@ class ReadyPaperController extends Controller
                     $ready_paper->update([
                         'board_id'      =>  $request->board_id,
                         'medium_id'     =>  $request->medium_id,
-                        'class_id'     =>  $request->class_id,
-                        'subject_id' => $request->subject_id,
+                        'class_id'      =>  $request->class_id,
+                        'subject_id'    => $request->subject_id,
                         'total_paper_marks' => $request->total_paper_marks,
-                        'question_type_id' => $request->question_type_id,
+                        'question_type_id'  => $request->qType_id,
                         'total_marks_as_per_question_type' =>  $request->total_marks_as_per_question_type,
                         'marks_per_each_question' =>  $request->marks_per_each_question,
                         'total_no_of_questions_to_ask' => $request->total_no_of_questions_to_ask,
@@ -120,14 +120,14 @@ class ReadyPaperController extends Controller
     public function getAllReadyPaperStructureData(Request $request){
         $error_array = array();
         $success_output = '';
-        $readyPaperStructure = ReadyPaperStructure::select('ready_paper_structure.*','boards.board_name','mediums.medium_name','class.class_name','subjects.subject_name','question_types.question_type')
-        ->join('class', 'class.class_id', '=', 'ready_paper_structure.class_id')
-        ->join('boards', 'ready_paper_structure.board_id', '=', 'boards.board_id')
-        ->join('mediums', 'ready_paper_structure.medium_id', '=', 'mediums.medium_id')
-        ->join('subjects', 'ready_paper_structure.subject_id', '=', 'subjects.subject_id')
-        ->join('question_types', 'ready_paper_structure.question_type_id', '=', 'question_types.question_type_id')
+        $readyPaperStructure = ReadyPaperStructure::select('ready_paper_structure.*', 'board_details.board_name', 'medium_details.medium', 'class_details.class_name', 'subject_details.subject_name', 'question_type_details.qType')
+        ->join('class_details', 'class_details.class_id', '=', 'ready_paper_structure.class_id')
+        ->join('board_details', 'ready_paper_structure.board_id', '=', 'board_details.board_id')
+        ->join('medium_details', 'ready_paper_structure.medium_id', '=', 'medium_details.medium_id')
+        ->join('subject_details', 'ready_paper_structure.subject_id', '=', 'subject_details.subject_id')
+        ->join('question_type_details', 'ready_paper_structure.question_type_id', '=', 'question_type_details.qType_id')
         ->orderBy('ready_paper_structure.id', 'desc')
-        ->get();
+        ->get();    
         if($readyPaperStructure){
             $success_output = '<div class="alert alert-success">Get Ready Paper Structure Data !!!</div>';
         }else{
@@ -168,11 +168,11 @@ class ReadyPaperController extends Controller
         $mediumList = Medium::where('board_id',$selectedBoardId)->get();
         $classList  = Standard::where('class_id',$class_id)->get();
         $subjectList = Subject::where('subject_id',$subject_id)->get();
-        $questionTypeList = QuestionType::where('question_type_id',$questionType_id)->get();
+        $questionTypeList = QuestionType::where('qType_id',$questionType_id)->get();
         $html = '';
         foreach ($mediumList as $mediumDet) {
             $isSelected = ($mediumDet->medium_id == $medium_id) ? 'selected' : '';
-            $html .= '<option value="' . $mediumDet->medium_id . '" ' . $isSelected . '>' . $mediumDet->medium_name . '</option>';
+            $html .= '<option value="' . $mediumDet->medium_id . '" ' . $isSelected . '>' . $mediumDet->medium. '</option>';
         }  
 
         $htmlClass = '';

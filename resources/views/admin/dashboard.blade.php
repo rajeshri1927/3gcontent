@@ -2,7 +2,7 @@
 @include('admin.layouts.header')
   <!-- Sidebar -->
 @include('admin.layouts.sidebar')
-<!-- [ Main Content ] start -->
+<!-- [ Main Content ] start --> 
 <div class="pcoded-main-container">
     <div class="pcoded-content">
         <!-- [ breadcrumb ] start -->

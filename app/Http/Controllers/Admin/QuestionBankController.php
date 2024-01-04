@@ -29,7 +29,7 @@ class QuestionBankController extends Controller
         $this->arr_view_data['BoardList'] = Board::get(["board_name", "board_id"]);
         $this->arr_view_data['BoardList'] = $this->arr_view_data['BoardList'] ?? collect();
 
-        $this->arr_view_data['QuestionTypeList'] = QuestionType::get(["question_type", "question_type_description"]);
+        $this->arr_view_data['QuestionTypeList'] = QuestionType::get(["qType", "qType_status"]);
         $this->arr_view_data['QuestionTypeList'] = $this->arr_view_data['QuestionTypeList'] ?? collect();
         return view($this->module_view_folder.'.questionbank', $this->arr_view_data);
     }
@@ -46,16 +46,17 @@ class QuestionBankController extends Controller
     public function getQuestionBankData(){
         $error_array = array();
         $success_output = '';
-        $question = QuestionBank::select('question_bank.*','topics.topic_name','question_bank.created_at','boards.board_name','mediums.medium_name','class.class_name','subjects.subject_name','chapters.chapter_name','question_types.question_type')
-        ->join('class', 'class.class_id', '=', 'question_bank.class_id')
-        ->join('boards', 'question_bank.board_id', '=', 'boards.board_id')
-        ->join('mediums', 'question_bank.medium_id', '=', 'mediums.medium_id')
-        ->join('subjects', 'question_bank.subject_id', '=', 'subjects.subject_id')
-        ->join('chapters', 'question_bank.chapter_id', '=', 'chapters.chapter_id')
-        ->join('topics', 'question_bank.topic_id', '=', 'topics.topic_id')
-        ->join('question_types', 'question_bank.question_type_id', '=', 'question_types.question_type_id')
-        ->orderBy('question_bank.question_bank_id', 'asc')
+        $question = QuestionBank::select('question_list.*','topic_details.topic_name','question_list.created_on','board_details.board_name','medium_details.medium','class_details.class_name','subject_details.subject_name','chapter_details.chapter_name')
+        ->join('class_details', 'class_details.class_id', '=', 'question_list.class_id')
+        ->join('board_details', 'question_list.board_id', '=', 'board_details.board_id')
+        ->join('medium_details', 'question_list.medium_id', '=', 'medium_details.medium_id')
+        ->join('subject_details', 'question_list.subject_id', '=', 'subject_details.subject_id')
+        ->join('chapter_details', 'question_list.chapter_id', '=', 'chapter_details.chapter_id')
+        ->join('topic_details', 'question_list.topic_id', '=', 'topic_details.topic_id')
+        ->orderBy('question_list.question_id', 'DESC')
+        ->take(500)
         ->get();
+        //dd($question);
         if($question){
             $success_output = '<div class="alert alert-success">Get Question Data !!!</div>';
         }else{
@@ -145,7 +146,7 @@ class QuestionBankController extends Controller
         $subject_id   = $request->input('subject_id');
         $chapter_id   = $request->input('chapter_id');
         $topic_id   = $request->input('topic_id');
-        $questionType_id   = $request->input('question_type_id');
+        $questionType_id   = $request->input('questionType_id');
         $mediumList = Medium::where('board_id',$selectedBoardId)->get();
         $classList  = Standard::where('class_id',$class_id)->get();
         $subjectList = Subject::where('subject_id',$subject_id)->get();
@@ -184,7 +185,7 @@ class QuestionBankController extends Controller
 
         $htmlquestiontype = '';
         foreach ($questionTypeList as $questionTypeDet) {
-            $isSelected = ($questionTypeDet->question_type_id == $questionType_id) ? 'selected' : '';
+            $isSelected = ($questionTypeDet->question_type_id == $question_type_id) ? 'selected' : '';
             $htmlquestiontype .= '<option value="' . $questionTypeDet->question_type_id . '" ' . $isSelected . '>' . $questionTypeDet->question_type . '</option>';
         }
 

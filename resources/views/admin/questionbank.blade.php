@@ -1,7 +1,7 @@
 <!-- Main Header -->
 @include('admin.layouts.header')
   <!-- Sidebar -->
-  @include('admin.layouts.sidebar')
+@include('admin.layouts.sidebar')
 <!-- [ Main Content ] start -->
 <!-- <link rel="stylesheet" href="{{ asset('public/assets/css/summernote-bs4.css')}}"> -->
 <link href="{{ asset('public/assets/summernote/summernote-bs4.min.css')}}" rel="stylesheet">
@@ -100,7 +100,7 @@
                                     <option value="">--- Select Question Type ---</option>
                                     @if(!empty($QuestionTypeList))
                                         @foreach($QuestionTypeList as $data)
-                                            <option data-value="{{ $data->question_type }}" value="{{ $data->question_type_id }}">{{ $data->question_type }}</option>
+                                            <option value="{{ $data->qType }}">{{ $data->qType }}</option>
                                         @endforeach
                                     @endif
                                 </select>
@@ -229,25 +229,25 @@
             </div>
         </div>
         <div class="card-body table-border-style">
-            <div class="table-responsive">
+        <div class="table-responsive">
             <span id="form_output"></span>
-                <table style="width: 100%;" class="table table-striped table-bordered data-table" id="topic_table">
-                    <thead>
-                        <tr>
-                            <th>Sr.No</th>
-                            <th>Board</th>
-                            <th>Medium</th>
-                            <th>Class</th>
-                            <th>Subject</th>
-                            <th>Chapter</th>
-                            <th>Marks</th>
-                            <th>Type</th>
-                            <th>Create Date / Time</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+            <table class="table table-striped table-bordered example1" id="example1">
+                <thead>
+                    <tr>
+                        <th>Sr.No</th>
+                        <th>Board</th>
+                        <th>Medium</th>
+                        <th>Class</th>
+                        <th>Subject</th>
+                        <th>Chapter</th>
+                        <th>Marks</th>
+                        <th>Type</th>
+                        <th>Question</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
 	    </div>
         <!-- Delete Class Modal -->
         <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -289,6 +289,21 @@
 <script src="{{ asset('public/assets/js/summernote-math.js')}}"></script>
 <script>
 $(document).ready(function() {
+    //  $(".example1").DataTable({
+    //   "responsive": true,
+    //   "autoWidth": false,
+    //   "pageLength": 50,
+    //   "language": {
+    //   "lengthMenu": 'Show <select class="form-control form-control-sm">'+
+    //   '<option value="10">10</option>'+
+    //   '<option value="50">50</option>'+
+    //   '<option value="100">100</option>'+
+    //   '<option value="500">500</option>'+
+    //   '<option value="1000">1000</option>'+
+    //   '<option value="-1">All</option>'+
+    //   '</select> entries'
+    //  }
+    // });
 
     $('.textarea').summernote({
         fontSizes: ['8', '9', '10', '11', '12', '13', '14','16', '18','20', '24'],
@@ -410,7 +425,7 @@ $(document).ready(function() {
         $(this).css('border','2px solid rgba(0, 0, 0, 0.15)');
     });
 
-    $(document).on('change',"#question_type_id", function(event){
+    $("#question_type_id").on('change', function(event){
         var questionType = $(this).val();
         $(this).css('border','2px solid rgba(0, 0, 0, 0.15)');
         if (questionType=="") {
@@ -438,29 +453,29 @@ $(document).ready(function() {
             dataType:"json",
             success:function(data) {
                 var html = '';
-                
-                for(var count=0; count < data.length; count++) {
+                for(var count=1; count < data.length; count++) {
                     html +='<tr>';
-                    var createdAtDate = new Date(data[count].created_at);
+                    var createdAtDate = new Date(data[count].created_on);
                     var options = { day: 'numeric', month: 'short', year: 'numeric' };
                     var formattedCreatedAt = createdAtDate.toLocaleDateString('en-US', options);
-                    console.log(count);
-                    html +='<td contenteditable class="column_name" data-column_name="question_bank_id" data-id="'+data[count].question_bank_id+'">'+(parseInt(count+1))+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="board_name" data-id="'+data[count].question_bank_id+'">'+data[count].board_name+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="medium_name" data-id="'+data[count].question_bank_id+'">'+data[count].medium_name+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="class_name" data-id="'+data[count].question_bank_id+'">'+data[count].class_name+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="subject_name" data-id="'+data[count].question_bank_id+'">'+data[count].subject_name+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="chapter_name" data-id="'+data[count].question_bank_id+'">'+data[count].chapter_name+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="marks" data-id="'+data[count].question_bank_id+'">'+data[count].marks+'</td>';
-                    html += '<td contenteditable class="column_name" data-column_name="question_type" data-id="'+data[count].question_bank_id+'">'+data[count].question_type+'</td>';
-                    html += '<td data-column_name="created_at" data-id="' + data[count].question_bank_id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
+
+                    html +='<td contenteditable class="column_name" data-column_name="question_id" data-id="'+data[count].question_id+'">'+count+'</td>';
+                    html +='<td contenteditable class="column_name" data-column_name="board_name" data-id="'+data[count].question_id+'">'+data[count].board_name+'</td>';
+                    html +='<td contenteditable class="column_name" data-column_name="medium_name" data-id="'+data[count].question_id+'">'+data[count].medium+'</td>';
+                    html +='<td contenteditable class="column_name" data-column_name="class_name" data-id="'+data[count].question_id+'">'+data[count].class_name+'</td>';
+                    html +='<td contenteditable class="column_name" data-column_name="subject_name" data-id="'+data[count].question_id+'">'+data[count].subject_name+'</td>';
+                    html +='<td contenteditable class="column_name" data-column_name="chapter_name" data-id="'+data[count].question_id+'">'+data[count].chapter_name+'</td>';
+                    html +='<td contenteditable class="column_name" data-column_name="marks" data-id="'+data[count].question_id+'">'+data[count].marks+'</td>';
+                    html += '<td contenteditable class="column_name" data-column_name="question_type" data-id="'+data[count].question_id+'">'+data[count].question_type+'</td>';
+                    html += '<td contenteditable class="column_name" data-column_name="question_type" data-id="'+data[count].question_id+'">'+data[count].question+'</td>';
+                    html += '<td data-column_name="created_at" data-id="' + data[count].question_id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
                     html += '<td>';
-                    html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].question_bank_id+'" data-subject-id="'+data[count].subject_id+'" data-topic-id="'+data[count].topic_id+'" data-chapter-id="'+data[count].chapter_id+'" data-question-type-id="'+data[count].question_type_id+'" data-toggle="modal" title="Update Question Bank Details"><i class="fas fa-edit"></i></button>';
-                    html += '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].question_bank_id+'" data-toggle="modal"  title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
+                    html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].question_bank_id+'" data-subject-id="'+data[count].subject_id+'" data-topic-id="'+data[count].topic_id+'" data-chapter-id="'+data[count].chapter_id+'" data-questionType="'+data[count].question_type_id+'" data-toggle="modal" title="Update Question Bank Details"><i class="fas fa-edit"></i></button>';
+                    html += '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].question_id+'" data-toggle="modal"  title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
                     html += '</td></tr>';
                 }
                 $('tbody').html(html);
-                $('#topic_table').DataTable({
+                $('#example1').DataTable({
                     // DataTables configuration options here
                     "order": [[0, "desc"]], // Example: Sort by the first column (subject_id) in descending order
                     "paging": true,
@@ -583,11 +598,11 @@ $(document).ready(function() {
         var subject_id = $(this).attr("data-subject-id");
         var chapter_id = $(this).attr("data-chapter-id");
         var topic_id = $(this).attr("data-topic-id");
-        var question_type_id = $(this).attr("data-question-type-id");
+        var question_type_id = $(this).attr("data-questionType");
          $('#form_output').html('');
          $.ajax({
             url: base_url + "/admin/updateGetQuestionData",
-            method:'get',
+            method:'post',
             data:{question_bank_id:question_bank_id,board_id:board_id,medium_id:medium_id,class_id:class_id,subject_id:subject_id,chapter_id:chapter_id,topic_id:topic_id,question_type_id:question_type_id},
             dataType:'json',
             success:function(data)

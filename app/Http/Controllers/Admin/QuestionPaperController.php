@@ -39,11 +39,11 @@ class QuestionPaperController extends Controller
         $success_output = '';
         // SELECT mcq.id,bd.board_name, mediums.medium, cd.class_name, sd.subject_name, brdt.branch_name ,mcq.chepter_ids , mcq.question_counter, mcq.created_at, ad.admin_class FROM mcq_master mcq LEFT JOIN board_details bd ON mcq.fk_board_id = bd.board_id LEFT JOIN medium_details md ON mcq.fk_medium_id = md.medium_id LEFT JOIN class_details cd ON mcq.fk_class_id = cd.class_id LEFT JOIN subject_details sd ON mcq.fk_subject_id = sd.subject_id LEFT JOIN branch_details brdt ON mcq.fk_branch_id = brdt.branch_id LEFT JOIN admin ad ON mcq.user_id = ad.admin_id order by mcq.created_at DESC
 
-        $question = McqModel::select('mcq_master.id', 'boards.board_name', 'mediums.medium_name', 'class.class_name', 'subjects.subject_name', 'mcq_master.chepter_ids', 'mcq_master.question_counter', 'mcq_master.created_at', 'mcq_master.created_by')
-        ->join('boards', 'mcq_master.fk_board_id', '=', 'boards.board_id')
-        ->join('mediums', 'mcq_master.fk_medium_id', '=', 'mediums.medium_id')
-        ->join('class', 'mcq_master.fk_class_id', '=', 'class.class_id')
-        ->join('subjects', 'mcq_master.fk_subject_id', '=', 'subjects.subject_id')
+        $question = McqModel::select('mcq_master.id', 'board_details.board_name', 'medium_details.medium', 'class_details.class_name', 'subject_details.subject_name', 'mcq_master.chepter_ids', 'mcq_master.question_counter', 'mcq_master.created_at', 'mcq_master.created_by')
+        ->join('board_details', 'mcq_master.fk_board_id', '=', 'board_details.board_id')
+        ->join('medium_details', 'mcq_master.fk_medium_id', '=', 'medium_details.medium_id')
+        ->join('class_details', 'mcq_master.fk_class_id', '=', 'class_details.class_id')
+        ->join('subject_details', 'mcq_master.fk_subject_id', '=', 'subject_details.subject_id')
         // ->join('users', 'mcq_master.user_id', '=', 'users.admin_id')
         ->orderBy('mcq_master.id', 'asc')
         ->get();
@@ -140,8 +140,8 @@ class QuestionPaperController extends Controller
         $chapterIDs = implode(",", $request->filterchapternames);
         $chapterIDs = [$chapterIDs];
         // \DB::enableQueryLog();
-        $results = \DB::table('chapters as cd')
-                    ->select('cd.chapter_id', 'cd.chapter_name', \DB::raw('(SELECT COUNT(1) FROM question_bank ql LEFT JOIN question_types qt ON qt.question_type_id = ql.question_type_id WHERE ql.chapter_id = cd.chapter_id AND qt.question_type = "MCQ") AS question_counter'))
+        $results = \DB::table('chapter_details as cd')
+                    ->select('cd.chapter_id', 'cd.chapter_name', \DB::raw('(SELECT COUNT(1) FROM question_list ql LEFT JOIN question_type_details qt ON qt.qType_id = ql.qType_id WHERE ql.chapter_id = cd.chapter_id AND qt.question_type = "MCQ") AS question_counter'))
                     ->whereIn('cd.chapter_id', $chapterIDs)
                     ->orderByDesc('cd.chapter_id')
                     ->get();

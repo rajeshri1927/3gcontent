@@ -107,7 +107,7 @@ $(document).ready(function() {
                     console.log(count);
                     html +='<td contenteditable class="column_name" data-column_name="mcq_id" data-id="'+data[count].id+'">'+(parseInt(count+1))+'</td>';
                     html +='<td contenteditable class="column_name" data-column_name="board_name" data-id="'+data[count].id+'">'+data[count].board_name+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="medium_name" data-id="'+data[count].id+'">'+data[count].medium_name+'</td>';
+                    html +='<td contenteditable class="column_name" data-column_name="medium_name" data-id="'+data[count].id+'">'+data[count].medium+'</td>';
                     html +='<td contenteditable class="column_name" data-column_name="class_name" data-id="'+data[count].id+'">'+data[count].class_name+'</td>';
                     html +='<td contenteditable class="column_name" data-column_name="subject_name" data-id="'+data[count].id+'">'+data[count].subject_name+'</td>';
                     html +='<td contenteditable class="column_name" data-column_name="created_by" data-id="'+data[count].id+'">'+data[count].created_by+'</td>';

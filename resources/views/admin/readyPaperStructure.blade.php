@@ -1,7 +1,7 @@
 <!-- Main Header -->
 @include('admin.layouts.header')
   <!-- Sidebar -->
-  @include('admin.layouts.sidebar')
+@include('admin.layouts.sidebar')
 <!-- [ Main Content ] start -->
 <!-- <link rel="stylesheet" href="{{ asset('public/assets/css/summernote-bs4.css')}}"> -->
 <link href="{{ asset('public/assets/summernote/summernote-bs4.min.css')}}" rel="stylesheet">
@@ -93,12 +93,12 @@
                                     </select>
                                 </div>
                                 <div class="col-md-4 form-group">
-                                    <label for="question_type_id" class="col-form-label">Select Question Type:</label>
-                                    <select class="form-control formField" name="question_type_id" id="question_type_id">
+                                    <label for="qType_id" class="col-form-label">Select Question Type:</label>
+                                    <select class="form-control formField" name="qType_id" id="qType_id">
                                         <option value="">--- Select Question Type ---</option>
                                         @if(!empty($QuestionTypeList))
                                             @foreach($QuestionTypeList as $data)
-                                                <option data-value="{{ $data->question_type }}" value="{{ $data->question_type_id }}">{{ $data->question_type }}</option>
+                                                <option data-value="{{ $data->qType }}" value="{{ $data->qType_id }}">{{ $data->qType }}</option>
                                             @endforeach
                                         @endif
                                     </select>
@@ -134,7 +134,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-4 form-group">
-                                    <label for="sections_name" class="col-form-label">Sections name:</label>
+                                    <label for="sections_name" class="col-form-label">Sections Name:</label>
                                     <input type="text" class="form-control" id="sections_name" placeholder="Sections Heading here" name="sections_name">
                                 </div>
                                 <div class="col-md-4 form-group">
@@ -243,9 +243,11 @@ $(document).ready(function() {
             method:"GET",
             data:{board_id:board_id},
             success:function(result){
-                $('#medium_id').html('<option value="">--- Select Medium ---</option>');
                 if(result){
+                    $('#medium_id').html('<option value="">--- Select Medium ---</option>');
                     $('#medium_id').append(result);
+                }else{
+                    $('#medium_id').html('<option value="">--- No Medium ---</option>');
                 }
             }
         });
@@ -260,9 +262,14 @@ $(document).ready(function() {
             method:"GET",
             data:{medium_id:medium_id},
             success:function(result){
-                $('#class_id').html('<option value="">--- Select Class ---</option>');
                 if(result){
                     $('#class_id').append(result);
+                }
+                if(result){
+                    $('#class_id').html('<option value="">--- Select Class ---</option>');      
+                    $('#class_id').append(result);
+                }else{
+                    $('#class_id').html('<option value="">--- No Class ---</option>');
                 }
             }
         });
@@ -278,10 +285,12 @@ $(document).ready(function() {
             url: base_url + "/admin/getSubjectsAjax",
             method:"GET",
             data:{class_id:class_id},
-            success:function(result){
-                $('#subject_id').html('<option value="">--- Select Subject ---</option>');
+            success:function(result){   
                 if(result){
+                    $('#subject_id').html('<option value="">--- Select Subject ---</option>');      
                     $('#subject_id').append(result);
+                }else{
+                    $('#subject_id').html('<option value="">--- No Subject ---</option>');
                 }
             }
         });
@@ -299,12 +308,15 @@ $(document).ready(function() {
             method:"GET",
             data:{subject_id:subject_id},
             success:function(result){
-                $('#chapter_id').html('<option value="">--- Select Chapter ---</option>');
-                if(result){
+                if(result)
+                {
+                    $('#chapter_id').html('<option value="">--- Select Chapter ---</option>');           
                     $('#chapter_id').append(result);
+                }else{
+                    $('#chapter_id').html('<option value="">--- No Class ---</option>');
                 }
             }
-        });
+            });
     });
 
     $('#total_paper_marks').on('change', function(event){ 

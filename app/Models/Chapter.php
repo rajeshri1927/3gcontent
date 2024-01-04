@@ -14,12 +14,10 @@ class Chapter extends Model
     protected $keyType = 'string';
     // Set default values for attributes
     protected $attributes = [
-        'board_id' => 1, // Replace 1 with the actual default value
+        'chapter_id' => 1, // Replace 1 with the actual default value
     ];  
     const CREATED_AT = 'created_on';
     const UPDATED_AT = 'modified_on';
-
-
     protected $fillable = [
     'chapter_id',
     'board_id',

@@ -1,7 +1,7 @@
 <!-- Main Header -->
 @include('admin.layouts.header')
   <!-- Sidebar -->
-  @include('admin.layouts.sidebar')
+@include('admin.layouts.sidebar')
 <!-- [ Main Content ] start -->
 <section class="pcoded-main-container">
 <div class="pcoded-content">
@@ -39,80 +39,6 @@
                     <div class="modal-body">
                     <form id="addQuestiontype" method="post">
                         {{ csrf_field() }}
-                        <!-- <div class="row">
-                           <div class="col-md-6 form-group">
-                              <label for="recipient-name" class="col-form-label">Select Board </label>
-                              <select class="form-control formField" name="board_id" id="board_id">
-                                 <option value="">--- Select Board ---</option>
-                                 @if(!empty($BoardList))
-                                       @foreach($BoardList as $data)
-                                          <option value="{{$data->board_id}}">{{$data->board_name}}</option>
-                                       @endforeach
-                                 @endif
-                              </select>
-                           </div>
-                           <div class="col-md-6 form-group">
-                              <label for="medium_id" class="col-form-label">Select Medium </label>
-                              <select class="form-control formField" name="medium_id" id="medium_id">
-                                 <option value="">--- Select Medium ---</option>
-                                 @if(!empty($MediumList))
-                                       @foreach($MediumList as $data)
-                                          <option value="{{$data->medium_id}}">{{$data->medium_name}}</option>
-                                       @endforeach
-                                 @endif
-                              </select>
-                           </div>
-                        </div> -->
-                        <!-- <div class="row">
-                            <div class="col-md-6 form-group">
-                                <label for="class_id" class="col-form-label">Select Class:</label>
-                                <select class="form-control formField" name="class_id" id="class_id">
-                                    <option value="">--- Select Class ---</option>
-                                    @if(!empty($ClassList))
-                                        @foreach($ClassList as $data)
-                                            <option value="{{$data->class_id}}">{{$data->class_name}}</option>
-                                        @endforeach
-                                    @endif
-                                </select>
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label for="subject_id" class="col-form-label">Select Subject:</label>
-                                <select class="form-control formField" name="subject_id" id="subject_id">
-                                    <option value="">--- Select Subject ---</option>
-                                    @if(!empty($SubjectList))
-                                        @foreach($SubjectList as $data)
-                                            <option value="{{$data->subject_id}}">{{$data->subject_name}}</option>
-                                        @endforeach
-                                    @endif
-                                </select>
-                            </div>
-                        </div> -->
-                        <!-- <div class="row">
-                            <div class="col-md-12 form-group">
-                                <label for="chapter_id" class="col-form-label">Select Chapter:</label>
-                                <select class="form-control formField" name="chapter_id" id="chapter_id">
-                                    <option value="">--- Select Chapter ---</option>
-                                    @if(!empty($ChapterList))
-                                        @foreach($ChapterList as $data)
-                                            <option value="{{$data->chapter_id}}">{{$data->chapter_name}}</option>
-                                        @endforeach
-                                    @endif
-                                </select>
-                            </div>
-                        </div> -->
-                        <!-- <div class="row">
-                           <div class="col-md-12 form-group">
-                              <label for="chapter_id" class="col-form-label">Topic  Name:</label>
-                              <select class="form-control formField" name="topic_id" id="topic_id">
-                                 <option value="">--- Select Topic ---</option>
-                                    @if(!empty($TopicList))
-                                       @foreach($TopicList as $data)
-                                          <option value="{{$data->topic_id}}">{{$data->topic_name}}</option>
-                                       @endforeach
-                                    @endif
-                              </select>
-                           </div>
-                        </div> -->
                         <div class="row">
                            <div class="col-md-6 form-group">
                               <label for="qType" class="col-form-label">Question Type:</label>
@@ -127,22 +53,6 @@
                               </select>
                            </div>
                         </div>
-                        <!-- <div class="row">
-                           <div class="col-md-12 form-group">
-                              <label for="question_type_description" class="col-form-label"> Question Type Description:</label>
-                              <input type="text" class="form-control" id="question_type_description" name="question_type_description">
-                           </div>
-                        </div> -->
-                        <!-- <div class="row">
-                           <div class="col-md-4 form-group">
-                              <label for="question_type_status" class="col-form-label"> Question Type Status:</label>
-                              <select class="form-control formField" name="question_type_status" id="question_type_status">
-                                 <option value="">--Select Status--</option>
-                                 <option value="Yes">Yes</option>
-                                 <option value="No">No</option>
-                              </select>
-                           </div>
-                        </div> -->
                         <div class="modal-footer">
                             <input type="hidden" name="qType_id" id="qType_id" value="" />
                             <input type="hidden" name="button_action" id="button_action" value="insert" />
@@ -161,12 +71,6 @@
                     <thead>
                         <tr>
                             <th>Sr.No</th>
-                            <!-- <th>Board</th>
-                            <th>Medium</th>
-                            <th>Class</th>
-                            <th>Subject</th>
-                            <th>Chapter</th>
-                            <th>Topic</th> -->
                             <th>Question Type</th>
                             <th>status</th>
                             <th>Create Date / Time</th>
@@ -209,147 +113,10 @@ $(document).ready(function() {
     $('#questionTypeModal').on('hidden.bs.modal', function () {
         $(this).find('form').trigger('reset');
     });
-
-    // $('#board_id').on('change', function(event){ 
-    //     event.preventDefault();
-    //     var board_id = this.value;
-    //     $.ajax({
-    //         url: base_url + "/admin/getMediums",
-    //         method:"GET",
-    //         data:{board_id:board_id},
-    //         success:function(result){
-    //             $('#medium_id').html('<option value="">--- Select Medium ---</option>');
-    //             if(result){
-    //                 $('#medium_id').append(result);
-    //             }
-    //         }
-    //     });
-    // });
-
-    // $('#medium_id').on('change', function(event){ 
-    //     event.preventDefault();
-    //     var medium_id = this.value;
-    //     $.ajax({
-    //         url: base_url + "/admin/getClass",
-    //         method:"GET",
-    //         data:{medium_id:medium_id},
-    //         success:function(result){
-    //             $('#class_id').html('<option value="">--- Select Class ---</option>');
-    //             if(result){
-    //                 $('#class_id').append(result);
-    //             }
-    //         }
-    //     });
-    // });
-
-    // $('#class_id').on('change', function(event){ 
-    //     event.preventDefault();
-    //     var board_id = $("#board_id").val();
-    //     var medium_id = $("#medium_id").val();
-    //     var class_id = this.value;
-    //     $.ajax({
-    //         url: base_url + "/admin/getSubjectsAjax",
-    //         method:"GET",
-    //         data:{class_id:class_id},
-    //         success:function(result){
-    //             $('#subject_id').html('<option value="">--- Select Subject ---</option>');
-    //             if(result){
-    //                 $('#subject_id').append(result);
-    //             }
-    //         }
-    //     });
-    // });
-
-    // $('#subject_id').on('change', function(event){ 
-    //     event.preventDefault();
-    //     var board_id = $("#board_id").val();
-    //     var medium_id = $("#medium_id").val();
-    //     var class_id = $("#class_id").val();
-    //     var subject_id = this.value;
-    //     $.ajax({
-    //         url: base_url + "/admin/getChapterAjax",
-    //         method:"GET",
-    //         data:{subject_id:subject_id},
-    //         success:function(result){
-    //             $('#chapter_id').html('<option value="">--- Select Chapter ---</option>');
-    //             if(result){
-    //                 $('#chapter_id').append(result);
-    //             }
-    //         }
-    //     });
-    // });
-
-    // $('#chapter_id').on('change', function(event){ 
-    //     event.preventDefault();
-    //     var board_id   = $("#board_id").val();
-    //     var medium_id  = $("#medium_id").val();
-    //     var class_id   = $("#class_id").val();
-    //     var subject_id = $("#subject_id").val();
-    //     var chapter_id = this.value;
-    //     $.ajax({
-    //         url: base_url + "/admin/getTopicAjax",
-    //         method:"GET",
-    //         data:{chapter_id:chapter_id},
-    //         success:function(result){
-    //             $('#topic_id').html('<option value="">--- Select Topic ---</option>');
-    //             if(result){
-    //                 $('#topic_id').append(result);
-    //             }
-    //         }
-    //     });
-    // });
     //View/Get data in html format Here//
     fetchTopicData();
     function fetchTopicData()
     {
-        /* var binfo = true;
-        var paging = true;
-        var table = $('.data-table').DataTable({
-            "destroy": true,
-            "processing": true,
-            "serverSide": true,
-            ajax: {
-                url:  base_url + "/admin/getTopicAllData",
-                data: function (d) {
-                    d.search = $('input[type="search"]').val()
-                }
-            },
-            "bAutoWidth": false,
-            "searching": true,
-            "ordering": false,
-            "bInfo": binfo,
-            "bLengthChange": true,
-            "paging": paging,
-            "bPaginate": true,
-            "pageLength": 10,
-            columns: [
-                { data: 'topic_id', name: 'topics.topic_id'},
-                { data: 'board_name', name: 'boards.board_name', className: 'text-center' },
-                { data: 'medium_name', name: 'mediums.medium_name', className: 'text-center' },
-                { data: 'class_name', name: 'class.class_name', className: 'text-center' },
-                { data: 'subject_name', name: 'subjects.subject_name',className: "text-center"},
-                { data: 'chapter_name', name: 'chapters.chapter_name',className: "text-center"},
-                { data: 'topic_name', name: 'topic_name',className: "text-center"},
-                { data: 'created_at', name: 'created_at',className: "text-center"},
-                { data: 'built_action_btns', name: 'built_action_btns',className: 'text-center'}
-            ],
-            "order": [[ 6, "desc" ]],
-            fixedHeader: {
-                header: true
-            }
-        });
-
-        oTable = $('.data-table').DataTable();
-        $('input[type="search"]').keyup(function(){
-            oTable.search($(this).val()).draw() ;
-        })
-
-        $.fn.dataTable.ext.errMode = 'none';
-
-        $('.data-table').on( 'error.dt', function ( e, settings, techNote, message ) {
-            console.log( 'An error has been reported by DataTables: ', message );
-        }) ; */
-
         $.ajax({
             url: base_url + "/admin/getQuestionTypeAllData",
             dataType:"json",
@@ -362,12 +129,6 @@ $(document).ready(function() {
                     var formattedCreatedAt = createdAtDate.toLocaleDateString('en-US', options);
 
                     html +='<td contenteditable class="column_name" data-column_name="qType_id" data-id="'+data[count].qType_id+'">'+data[count].qType_id+'</td>';
-                    // html +='<td contenteditable class="column_name" data-column_name="board_name" data-id="'+data[count].question_type_id+'">'+data[count].board_name+'</td>';
-                    // html +='<td contenteditable class="column_name" data-column_name="medium_name" data-id="'+data[count].question_type_id+'">'+data[count].medium_name+'</td>';
-                    // html +='<td contenteditable class="column_name" data-column_name="class_name" data-id="'+data[count].question_type_id+'">'+data[count].class_name+'</td>';
-                    // html +='<td contenteditable class="column_name" data-column_name="subject_name" data-id="'+data[count].question_type_id+'">'+data[count].subject_name+'</td>';
-                    // html +='<td contenteditable class="column_name" data-column_name="chapter_name" data-id="'+data[count].question_type_id+'">'+data[count].chapter_name+'</td>';
-                    // html +='<td contenteditable class="column_name" data-column_name="topic_name" data-id="'+data[count].question_type_id+'">'+data[count].topic_name+'</td>';
                     html += '<td contenteditable class="column_name" data-column_name="question_type" data-id="'+data[count].qType_id+'">'+data[count].qType+'</td>';
                     html += '<td contenteditable class="column_name" data-column_name="question_type_status" data-id="'+data[count].qType_id+'">'+data[count].qType_status+'</td>';
                     html += '<td data-column_name="created_at" data-id="' + data[count].qType_id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
@@ -455,14 +216,7 @@ $(document).ready(function() {
             dataType:'json',
             success:function(data)
             {
-                // $('#board_id').val(data.board_id);
-                // $('#medium_id').val(data.medium_id);
-                // $('#class_id').val(data.class_id);
-                // $('#subject_id').val(data.subject_id);
-                // $('#chapter_id').val(data.chapter_id);
-                // $('#topic_id').val(data.topic_id);
                 $('#qType').val(data.qType);
-                // $('#question_type_description').val(data.question_type_description);
                 $('#qType_status').val(data.qType_status);
                 $('#qType_id').val(qType_id);
                 $('#questionTypeModal').modal('show');
