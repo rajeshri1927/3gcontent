@@ -120,12 +120,11 @@ class ReadyPaperController extends Controller
     public function getAllReadyPaperStructureData(Request $request){
         $error_array = array();
         $success_output = '';
-        $readyPaperStructure = ReadyPaperStructure::select('ready_paper_structure.*', 'board_details.board_name', 'medium_details.medium', 'class_details.class_name', 'subject_details.subject_name', 'question_type_details.qType')
+        $readyPaperStructure = ReadyPaperStructure::select('ready_paper_structure.*', 'board_details.board_name', 'medium_details.medium', 'class_details.class_name', 'subject_details.subject_name')
         ->join('class_details', 'class_details.class_id', '=', 'ready_paper_structure.class_id')
         ->join('board_details', 'ready_paper_structure.board_id', '=', 'board_details.board_id')
         ->join('medium_details', 'ready_paper_structure.medium_id', '=', 'medium_details.medium_id')
         ->join('subject_details', 'ready_paper_structure.subject_id', '=', 'subject_details.subject_id')
-        ->join('question_type_details', 'ready_paper_structure.question_type_id', '=', 'question_type_details.qType_id')
         ->orderBy('ready_paper_structure.id', 'desc')
         ->get();    
         if($readyPaperStructure){
@@ -164,72 +163,108 @@ class ReadyPaperController extends Controller
         $selectedBoardId  = $request->input('board_id');
         $class_id   = $request->input('class_id');
         $subject_id   = $request->input('subject_id');
-        $questionType_id   = $request->input('question_type_id');
+        // $questionType_id   = $request->input('question_type_id');
         $mediumList = Medium::where('board_id',$selectedBoardId)->get();
         $classList  = Standard::where('class_id',$class_id)->get();
         $subjectList = Subject::where('subject_id',$subject_id)->get();
-        $questionTypeList = QuestionType::where('qType_id',$questionType_id)->get();
+        $questionTypeList = QuestionType::get();
         $html = '';
         foreach ($mediumList as $mediumDet) {
-            $isSelected = ($mediumDet->medium_id == $medium_id) ? 'selected' : '';
-            $html .= '<option value="' . $mediumDet->medium_id . '" ' . $isSelected . '>' . $mediumDet->medium. '</option>';
-        }  
+            if (isset($request->action) && $request->action == 'view') {
+                $html .= ($mediumDet->medium_id == $medium_id) ? $mediumDet->medium : '';
+            } else {
+                $isSelected = ($mediumDet->medium_id == $medium_id) ? 'selected' : '';
+                $html .= '<option value="' . $mediumDet->medium_id . '" ' . $isSelected . '>' . $mediumDet->medium. '</option>';
+            }
+        }
 
         $htmlClass = '';
         foreach ($classList as $classDet) {
-            $isSelected = ($classDet->class_id == $class_id) ? 'selected' : '';
-            $htmlClass .= '<option value="' . $classDet->class_id . '" ' . $isSelected . '>' . $classDet->class_name . '</option>';
-        }  
+            if (isset($request->action) && $request->action == 'view') {
+                $htmlClass = $classDet->class_name;
+            } else {
+                $isSelected = ($classDet->class_id == $class_id) ? 'selected' : '';
+                $htmlClass .= '<option value="' . $classDet->class_id . '" ' . $isSelected . '>' . $classDet->class_name . '</option>';
+            }
+        }
 
         $htmlsubject = '';
         foreach ($subjectList as $subjectDet) {
-            $isSelected = ($subjectDet->subject_id == $subject_id) ? 'selected' : '';
-            $htmlsubject .= '<option value="' . $subjectDet->subject_id . '" ' . $isSelected . '>' . $subjectDet->subject_name . '</option>';
+            if (isset($request->action) && $request->action == 'view') {
+                $htmlsubject = $subjectDet->subject_name;
+            } else {
+                $isSelected = ($subjectDet->subject_id == $subject_id) ? 'selected' : '';
+                $htmlsubject .= '<option value="' . $subjectDet->subject_id . '" ' . $isSelected . '>' . $subjectDet->subject_name . '</option>';
+            }
         }
 
         $htmlquestiontype = '';
         foreach ($questionTypeList as $questionTypeDet) {
-            $isSelected = ($questionTypeDet->question_type_id == $questionType_id) ? 'selected' : '';
-            $htmlquestiontype .= '<option value="' . $questionTypeDet->question_type_id . '" ' . $isSelected . '>' . $questionTypeDet->question_type . '</option>';
+            if (isset($request->action) && $request->action == 'view') {
+                $htmlquestiontype = $request->input('question_type_id');
+            } else {
+                $isSelected = ($questionTypeDet->qType === $request->input('question_type_id')) ? 'selected="selected"' : '';
+                $htmlquestiontype .= '<option data-value="'.$questionTypeDet->qType.'" value="'.$questionTypeDet->qType.'" '.$isSelected.'>'.$questionTypeDet->qType.'</option>';
+            }
         }
 
         $readyPaperStructureId = $request->input('ready_paper_id');
         $readyPaperStructureList = ReadyPaperStructure::where('id', $readyPaperStructureId)->first();
         $htmlTotalMarks = '';
-        $isSelected0 = $isSelected1 = $isSelected2 = $isSelected3 = $isSelected4 = $isSelected5 = $isSelected6 = $isSelected7 = $isSelected8 = $isSelected9 = $isSelected10 = $isSelected11 = $isSelected12 = '';
-        if($readyPaperStructureList->total_paper_marks == 8){
-            $isSelected0 = 'selected';
-        } elseif ($readyPaperStructureList->total_paper_marks == 12){
-            $isSelected1 = 'selected';
+        $isSelected0 = $isSelected1 = $isSelected2 = $isSelected3 = $isSelected4 = $isSelected5 = $isSelected6 = $isSelected7 = $isSelected8 = $isSelected9 = $isSelected10 = '';
+        if($readyPaperStructureList->total_paper_marks == 10){
+            $isSelected0 = 'selected="selected"';
         } elseif ($readyPaperStructureList->total_paper_marks == 20){
-            $isSelected2 = 'selected';
-        } elseif ($readyPaperStructureList->total_paper_marks == 24){
-            $isSelected3 = 'selected';
+            $isSelected1 = 'selected="selected"';
         } elseif ($readyPaperStructureList->total_paper_marks == 25){
-            $isSelected4 = 'selected';
-        } elseif ($readyPaperStructureList->total_paper_marks == 28){
-            $isSelected5 = 'selected';
+            $isSelected2 = 'selected="selected"';
         } elseif ($readyPaperStructureList->total_paper_marks == 30){
-            $isSelected6 = 'selected';
+            $isSelected3 = 'selected="selected"';
         } elseif ($readyPaperStructureList->total_paper_marks == 40){
-            $isSelected7 = 'selected';
+            $isSelected4 = 'selected="selected"';
         } elseif ($readyPaperStructureList->total_paper_marks == 50){
-            $isSelected8 = 'selected';
-        } elseif ($readyPaperStructureList->total_paper_marks == 56){
-            $isSelected9 = 'selected';
+            $isSelected5 = 'selected="selected"';
         } elseif ($readyPaperStructureList->total_paper_marks == 60){
-            $isSelected10 = 'selected';
+            $isSelected6 = 'selected="selected"';
         } elseif ($readyPaperStructureList->total_paper_marks == 70){
-            $isSelected11 = 'selected';
+            $isSelected7 = 'selected="selected"';
         } elseif ($readyPaperStructureList->total_paper_marks == 80){
-            $isSelected12 = 'selected';
+            $isSelected8 = 'selected="selected"';
+        } elseif ($readyPaperStructureList->total_paper_marks == 90){
+            $isSelected9 = 'selected="selected"';
+        } elseif ($readyPaperStructureList->total_paper_marks == 100){
+            $isSelected10 = 'selected="selected"';
         }
 
-        $htmlTotalMarks .= '<option value="8" '.$isSelected0.'>8</option><option value="12" '.$isSelected1.'>12</option><option value="20" '.$isSelected2.'>20</option><option value="24" '.$isSelected3.'>24</option><option value="25" '.$isSelected4.'>25</option><option value="28" '.$isSelected5.'>28</option><option value="30" '.$isSelected6.'>30</option><option value="40" '.$isSelected7.'>40</option><option value="50" '.$isSelected8.'>50</option><option value="56" '.$isSelected9.'>56</option><option value="60" '.$isSelected10.'>60</option><option value="70" '.$isSelected11.'>70</option><option value="80" '.$isSelected12.'>80</option>';
+        if (isset($request->action) && $request->action == 'view') {
+            $htmlTotalMarks = $readyPaperStructureList->total_paper_marks;
+        } else {
+            $htmlTotalMarks .= '<option value="10" '.$isSelected0.'>10</option><option value="20" '.$isSelected1.'>20</option><option value="25" '.$isSelected2.'>25</option><option value="30" '.$isSelected3.'>30</option><option value="40" '.$isSelected4.'>40</option><option value="50" '.$isSelected5.'>50</option><option value="60" '.$isSelected6.'>60</option><option value="70" '.$isSelected7.'>70</option><option value="80" '.$isSelected8.'>80</option><option value="90" '.$isSelected9.'>90</option><option value="100" '.$isSelected10.'>100</option>';
+        }
 
         $readyPaperStructure  = ReadyPaperStructure::find($readyPaperStructureId);
+
+        $boardDetails = Board::where('board_id',$selectedBoardId)->first();
+        if (isset($request->action) && $request->action == 'view') {
+            $board_id = $boardDetails->board_name;
+        } else {
+            $board_id = $readyPaperStructure->board_id;
+        }
+
+        if (isset($request->action) && $request->action == 'view') {
+            $sub_question_type_order = ($readyPaperStructure->sub_question_type_order) ? $readyPaperStructure->sub_question_type_order : '-';
+            $child_sub_question_type_order = ($readyPaperStructure->child_sub_question_type_order) ? $readyPaperStructure->child_sub_question_type_order : '-';
+            $sections = ($readyPaperStructure->sections) ? $readyPaperStructure->sections : '-';
+            $sections_name = ($readyPaperStructure->sections_name) ? $readyPaperStructure->sections_name : '-';
+        } else {
+            $sub_question_type_order = ($readyPaperStructure->sub_question_type_order) ? $readyPaperStructure->sub_question_type_order : '';
+            $child_sub_question_type_order = ($readyPaperStructure->child_sub_question_type_order) ? $readyPaperStructure->child_sub_question_type_order : '';
+            $sections = ($readyPaperStructure->sections) ? $readyPaperStructure->sections : '';
+            $sections_name = ($readyPaperStructure->sections_name) ? $readyPaperStructure->sections_name : '';
+        }
+
         $output   = array(
-            'board_id'      =>  $readyPaperStructure->board_id,
+            'board_id'      =>  $board_id,
             'medium_id'     =>  $html,
             'class_id'     =>  $htmlClass,
             'subject_id' => $htmlsubject,
@@ -240,10 +275,10 @@ class ReadyPaperController extends Controller
             'total_no_of_questions_to_ask' => $readyPaperStructure->total_no_of_questions_to_ask,
             'total_no_of_questions_to_ans' => $readyPaperStructure->total_no_of_questions_to_ans,
             'question_type_order' => $readyPaperStructure->question_type_order,
-            'sub_question_type_order' => $readyPaperStructure->sub_question_type_order,
-            'child_sub_question_type_order' => $readyPaperStructure->child_sub_question_type_order,
-            'sections' => $readyPaperStructure->sections,
-            'sections_name' => $readyPaperStructure->sections_name
+            'sub_question_type_order' => $sub_question_type_order,
+            'child_sub_question_type_order' => $child_sub_question_type_order,
+            'sections' => $sections,
+            'sections_name' => $sections_name
         );
         echo json_encode($output);
     }

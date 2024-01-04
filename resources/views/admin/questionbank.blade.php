@@ -603,7 +603,7 @@ $(document).ready(function() {
          $.ajax({
             url: base_url + "/admin/updateGetQuestionData",
             method:'post',
-            data:{question_bank_id:question_bank_id,board_id:board_id,medium_id:medium_id,class_id:class_id,subject_id:subject_id,chapter_id:chapter_id,topic_id:topic_id,question_type_id:question_type_id},
+            data:{_token:_accessToken,question_bank_id:question_bank_id,board_id:board_id,medium_id:medium_id,class_id:class_id,subject_id:subject_id,chapter_id:chapter_id,topic_id:topic_id,question_type_id:question_type_id},
             dataType:'json',
             success:function(data)
             {

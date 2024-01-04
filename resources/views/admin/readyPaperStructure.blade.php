@@ -77,19 +77,17 @@
                                     <label for="total_paper_marks" class="col-form-label">Total Paper Marks:</label>
                                     <select class="form-control formField" name="total_paper_marks" id="total_paper_marks">
                                         <option value="">--Select Total Paper Marks--</option>
-                                        <option value="8">8</option>
-                                        <option value="12">12</option>
+                                        <option value="10">10</option>
                                         <option value="20">20</option>
-                                        <option value="24">24</option>
                                         <option value="25">25</option>
-                                        <option value="28">28</option>
                                         <option value="30">30</option>
                                         <option value="40">40</option>
                                         <option value="50">50</option>
-                                        <option value="56">56</option>
                                         <option value="60">60</option>
                                         <option value="70">70</option>
                                         <option value="80">80</option>
+                                        <option value="90">90</option>
+                                        <option value="100">100</option>
                                     </select>
                                 </div>
                                 <div class="col-md-4 form-group">
@@ -98,7 +96,7 @@
                                         <option value="">--- Select Question Type ---</option>
                                         @if(!empty($QuestionTypeList))
                                             @foreach($QuestionTypeList as $data)
-                                                <option data-value="{{ $data->qType }}" value="{{ $data->qType_id }}">{{ $data->qType }}</option>
+                                                <option data-value="{{ $data->qType }}" value="{{ $data->qType }}">{{ $data->qType }}</option>
                                             @endforeach
                                         @endif
                                     </select>
@@ -156,7 +154,95 @@
                     </div>
                 </div>
             </div>
-        </div>		
+        </div>
+        
+        <div class="modal fade" id="paperStructureViewModal" tabindex="-1" role="dialog" aria-labelledby="paperStructureViewModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="paperStructureViewModalLabel">View Paper Structure</h5>
+                    </div>
+                    <div class="modal-body">
+                        <form autocomplete="off" id="addPaperStructure" method="post">
+                            {{ csrf_field() }}
+                            <div class="row">
+                                <div class="col-md-4 form-group">
+                                    <label for="view_board_name" class="col-form-label">Board:</label>
+                                    <span id="view_board_name"></span>
+                                </div>
+                                <div class="col-md-4 form-group">
+                                    <label for="view_medium_name" class="col-form-label">Medium:</label>
+                                    <span id="view_medium_name"></span>
+                                </div>
+                                <div class="col-md-4 form-group">
+                                    <label for="view_class_name" class="col-form-label">Class:</label>
+                                    <span id="view_class_name"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 form-group">
+                                    <label for="view_subject_name" class="col-form-label">Subject:</label>
+                                    <span id="view_subject_name"></span>
+                                </div>
+                                <div class="col-md-4 form-group">
+                                    <label for="view_total_paper_marks" class="col-form-label">Total Paper Marks:</label>
+                                    <span id="view_total_paper_marks"></span>
+                                </div>
+                                <div class="col-md-4 form-group">
+                                    <label for="view_question_type" class="col-form-label">Question Type:</label>
+                                    <span id="view_question_type"></span>
+                                </div>
+                            </div>
+                            <div class="row">                            
+                                <div class="col-md-4 form-group">
+                                    <label for="view_total_marks_as_per_question_type" class="col-form-label">Total Marks As Per Question Type:</label>
+                                    <span id="view_total_marks_as_per_question_type"></span>
+                                </div>
+                                <div class="col-md-4 form-group">
+                                    <label for="view_marks_per_each_question" class="col-form-label">Marks Per Each Question:</label>
+                                    <span id="view_marks_per_each_question"></span>
+                                </div>
+                                <div class="col-md-4 form-group">
+                                    <label for="view_total_no_of_questions_to_ask" class="col-form-label">Total No. Of Questions To Ask:</label>
+                                    <span id="view_total_no_of_questions_to_ask"></span>
+                                </div>
+                            </div>
+                            <div class="row">                            
+                                <div class="col-md-4 form-group">
+                                    <label for="view_total_no_of_questions_to_ans" class="col-form-label">Total No. Of Questions To Answer:</label>
+                                    <span id="view_total_no_of_questions_to_ans"></span>
+                                </div>
+                                <div class="col-md-4 form-group">
+                                    <label for="view_question_type_order" class="col-form-label">Question Type Order in Paper:</label>
+                                    <span id="view_question_type_order"></span>
+                                </div>
+                                <div class="col-md-4 form-group">
+                                    <label for="view_sections" class="col-form-label">Sections:</label>
+                                    <span id="view_sections"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 form-group">
+                                    <label for="view_sections_name" class="col-form-label">Sections Name:</label>
+                                    <span id="view_sections_name"></span>
+                                </div>
+                                <div class="col-md-4 form-group">
+                                    <label for="view_sub_question_type_order" class="col-form-label">Sub Question Order in Paper:</label>
+                                    <span id="view_sub_question_type_order"></span>
+                                </div>
+                                <div class="col-md-4 form-group">
+                                    <label for="view_child_sub_question_type_order" class="col-form-label">Child Sub Question Order in Paper:</label>
+                                    <span id="view_child_sub_question_type_order"></span>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn  btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
         
         <div class="card-body table-border-style">
             <div class="table-responsive">
@@ -348,19 +434,19 @@ $(document).ready(function() {
                     var createdAtDate = new Date(data[count].created_at);
                     var options = { day: 'numeric', month: 'short', year: 'numeric' };
                     var formattedCreatedAt = createdAtDate.toLocaleDateString('en-US', options);
-                    console.log(count);
                     html +='<td contenteditable class="column_name" data-column_name="id" data-id="'+data[count].id+'">'+(parseInt(count+1))+'</td>';
                     html +='<td contenteditable class="column_name" data-column_name="board_name" data-id="'+data[count].id+'">'+data[count].board_name+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="medium_name" data-id="'+data[count].id+'">'+data[count].medium_name+'</td>';
+                    html +='<td contenteditable class="column_name" data-column_name="medium" data-id="'+data[count].id+'">'+data[count].medium+'</td>';
                     html +='<td contenteditable class="column_name" data-column_name="class_name" data-id="'+data[count].id+'">'+data[count].class_name+'</td>';
                     html +='<td contenteditable class="column_name" data-column_name="subject_name" data-id="'+data[count].id+'">'+data[count].subject_name+'</td>';
-                    html += '<td contenteditable class="column_name" data-column_name="question_type" data-id="'+data[count].id+'">'+data[count].question_type+'</td>';
+                    html += '<td contenteditable class="column_name" data-column_name="question_type_id" data-id="'+data[count].id+'">'+data[count].question_type_id+'</td>';
                     html += '<td contenteditable class="column_name" data-column_name="total_paper_marks" data-id="'+data[count].id+'">'+data[count].total_paper_marks+'</td>';
                     html += '<td contenteditable class="column_name" data-column_name="marks_per_each_question" data-id="'+data[count].id+'">'+data[count].marks_per_each_question+'</td>';
                     html += '<td contenteditable class="column_name" data-column_name="question_type_order" data-id="'+data[count].id+'">'+data[count].question_type_order+'</td>';
                     html += '<td data-column_name="created_at" data-id="' + data[count].id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
                     html += '<td>';
-                    html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].id+'" data-subject-id="'+data[count].subject_id+'" data-total-marks="'+data[count].total_paper_marks+'" data-question-type-id="'+data[count].question_type_id+'" data-toggle="modal" title="Update Ready Paper Structure Details"><i class="fas fa-edit"></i></button>';
+                    html += '<button class="btn btn-sm btn-secondary mt-1 view" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].id+'" data-subject-id="'+data[count].subject_id+'" data-total-marks="'+data[count].total_paper_marks+'" data-question-type-id="'+data[count].question_type_id+'" data-toggle="modal" title="Update Ready Paper Structure Details"><i class="fas fa-eye"></i></button>';
+                    html += '<button class="btn btn-sm btn-warning mt-1 ml-2 update" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].id+'" data-subject-id="'+data[count].subject_id+'" data-total-marks="'+data[count].total_paper_marks+'" data-question-type-id="'+data[count].question_type_id+'" data-toggle="modal" title="Update Ready Paper Structure Details"><i class="fas fa-edit"></i></button>';
                     html += '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].id+'" data-toggle="modal"  title="Delete Ready Paper Structure Details"><i class="fas fa-trash-alt"></i></button>';
                     html += '</td></tr>';
                 }
@@ -499,14 +585,14 @@ $(document).ready(function() {
                 });
                 $('#subject_id').html(optionSubject);
 
-                //Chapter Data//
+                //Question Type Data//
                 var htmlQuestionTypeString = data.question_type;
                 var optionQuestionType = $(htmlQuestionTypeString);
                 // Iterate over the options
                 optionQuestionType.each(function(index,questionType) {
                     optionQuestionType.filter(':contains("2")').prop('selected', true);
                 });
-                $('#question_type_id').html(optionQuestionType);
+                $('#qType_id').html(optionQuestionType);
 
                 //Total Marks Data//
                 var htmlTotalMarksString = data.total_paper_marks;
@@ -532,6 +618,59 @@ $(document).ready(function() {
                 $("#sections_name").val(data.sections_name);                
                 $("#sub_question_type_order").val(data.sub_question_type_order);                
                 $("#child_sub_question_type_order").val(data.child_sub_question_type_order);                
+            }
+         })
+    });
+
+    //Update data fetch Here//
+    $(document).on('click', '.view', function(){
+        var ready_paper_id = $(this).attr("data-id");
+        var board_id   = $(this).attr("data-board-id");
+        var medium_id = $(this).attr("data-medium-id");
+        var class_id = $(this).attr("data-class-id");
+        var subject_id = $(this).attr("data-subject-id");
+        var chapter_id = $(this).attr("data-chapter-id");
+        var topic_id = $(this).attr("data-topic-id");
+        var total_marks = $(this).attr("data-total-marks");
+        var question_type_id = $(this).attr("data-question-type-id");
+         $('#form_output').html('');
+         $.ajax({
+            url: base_url + "/admin/updateGetReadyPaperStructureData",
+            method:'get',
+            data:{action:'view',ready_paper_id:ready_paper_id,board_id:board_id,medium_id:medium_id,class_id:class_id,subject_id:subject_id,question_type_id:question_type_id,total_marks:total_marks},
+            dataType:'json',
+            success:function(data)
+            {
+                //Board Data//
+                $('#view_board_name').html("<br/>"+data.board_id);
+
+                //Medium Data//
+                $('#view_medium_name').html("<br/>"+data.medium_id);
+
+                //class Data//
+                $('#view_class_name').html("<br/>"+data.class_id);
+
+                //Subject Data//
+                $('#view_subject_name').html("<br/>"+data.subject_id);
+
+                //Question type Data//
+                $('#view_question_type').html(data.question_type);
+
+                //Total Marks Data//
+                $('#view_total_paper_marks').html("<br/>"+data.total_paper_marks);
+
+                $('#view_board_id').val(data.board_id);
+                $('#paperStructureViewModal').modal('show');
+                $('.modal-title').text('View Data');
+                $("#view_total_marks_as_per_question_type").html("<br/>"+data.total_marks_as_per_question_type);
+                $("#view_marks_per_each_question").html("<br/>"+data.marks_per_each_question);
+                $("#view_total_no_of_questions_to_ask").html("<br/>"+data.total_no_of_questions_to_ask);
+                $("#view_total_no_of_questions_to_ans").html("<br/>"+data.total_no_of_questions_to_ans);                
+                $("#view_question_type_order").html("<br/>"+data.question_type_order);                
+                $("#view_sections").html("<br/>"+data.sections);                
+                $("#view_sections_name").html("<br/>"+data.sections_name);                
+                $("#view_sub_question_type_order").html("<br/>"+data.sub_question_type_order);                
+                $("#view_child_sub_question_type_order").html("<br/>"+data.child_sub_question_type_order);                
             }
          })
     });
