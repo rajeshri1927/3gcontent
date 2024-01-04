@@ -76,17 +76,11 @@
                   </div>
                   <div class="col-sm-6">
                     <div class="form-group">
-                      <label for="subject_description">Subject Description</label>
-                      <input type="text" name="subject_description" id="subject_description" class="form-control" placeholder="Enter subject Description. *">
-                    </div>
-                  </div>
-                  <div class="col-sm-6">
-                    <div class="form-group">
-                      <label for="subject_description">Subject Status</label>
+                    <label for="subject_description">Subject Status</label>
                       <select class="form-control" name="subject_status" id="subject_status">
                           <option value="">--Select Status--</option>
-                          <option value="Yes">Yes</option>
-                          <option value="No">No</option>
+                          <option value="Active">Active</option>
+                          <option value="InActive">InActive</option>
                       </select>
                     </div>
                   </div>
@@ -124,7 +118,6 @@
               <th>Medium Name</th>
               <th>Class Name</th>
               <th>Subject Name</th>
-              <th>Subject Description</th>
               <th>Subject Status</th>
               <th>Created Date / Time</th>
               <th>Action</th>
@@ -216,22 +209,21 @@ $(document).ready(function() {
      success:function(data)
     {
       var html = '';
-  for(var count=0; count < data.length; count++)
+    for(var count=0; count < data.length; count++)
       {
         html +='<tr>';
-        var createdAtDate = new Date(data[count].created_at);
+        var createdAtDate = new Date(data[count].created_on);
           var formattedCreatedAt = createdAtDate.toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'short',
               day: 'numeric'
           });
-        html +='<td contenteditable class="column_name" data-column_name="subject_id" data-id="'+data[count].subject_id+'">'+data[count].subject_id+'</td>';
-        html +='<td contenteditable class="column_name" data-column_name="board_id" data-id="'+data[count].subject_id+'">'+data[count].board_name+'</td>';
-        html +='<td contenteditable class="column_name" data-column_name="medium_id" data-id="'+data[count].subject_id+'">'+data[count].medium_name+'</td>';
-        html +='<td contenteditable class="column_name" data-column_name="class_id" data-id="'+data[count].subject_id+'">'+data[count].class_name+'</td>';
-        html += '<td contenteditable class="column_name" data-column_name="subject_name" data-id="'+data[count].subject_id+'">'+data[count].subject_name+'</td>';
-        html += '<td contenteditable class="column_name" data-column_name="subject_description" data-id="'+data[count].subject_id+'">'+data[count].subject_description+'</td>';
-        html += '<td contenteditable class="column_name" data-column_name="subject_status" data-id="'+data[count].subject_id+'">'+data[count].subject_status+'</td>';
+        html +='<td data-column_name="subject_id" data-id="'+data[count].subject_id+'">'+data[count].subject_id+'</td>';
+        html +='<td data-column_name="board_id" data-id="'+data[count].subject_id+'">'+data[count].board_name+'</td>';
+        html +='<td data-column_name="medium_id" data-id="'+data[count].subject_id+'">'+data[count].medium+'</td>';
+        html +='<td data-column_name="class_id" data-id="'+data[count].subject_id+'">'+data[count].class_name+'</td>';
+        html += '<td data-column_name="subject_name" data-id="'+data[count].subject_id+'">'+data[count].subject_name+'</td>';
+        html += '<td data-column_name="subject_status" data-id="'+data[count].subject_id+'">'+data[count].subject_status+'</td>';
         html += '<td data-column_name="created_at" data-id="' + data[count].subject_id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
         html += '<td>';
         html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].subject_id+'" data-toggle="modal"  title="Update Class Details"><i class="fas fa-edit"></i></button>';
@@ -294,8 +286,8 @@ $(document).ready(function() {
          $('#form_output').html('');
          $.ajax({
             url: base_url + "/admin/updateGetSubjectData",
-            method:'get',
-            data:{subject_id:subject_id,board_id:board_id,medium_id:medium_id,class_id:class_id},
+            method:'POST',
+            data:{_token:_accessToken,subject_id:subject_id,board_id:board_id,medium_id:medium_id,class_id:class_id},
             dataType:'json',
             success:function(data)
             {
@@ -308,7 +300,6 @@ $(document).ready(function() {
                 });
                 $('#medium_id').html(options);
               //class Data//
-              console.log(data.class_id);
               var htmlclassString = data.class_id;
               var optionsClass = $(htmlclassString);
               console.log(optionsClass);
@@ -319,8 +310,6 @@ $(document).ready(function() {
                 $('#class_id').html(optionsClass);
               
                 $('#board_id').val(data.board_id);
-                //$('#medium_id').val(data.medium_id);
-                //$('#class_id').val(data.class_id);
                 $('#subject_name').val(data.subject_name);
                 $('#subject_description').val(data.subject_description);
                 $('#subject_status').val(data.subject_status);

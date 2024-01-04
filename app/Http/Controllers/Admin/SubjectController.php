@@ -52,14 +52,14 @@ class SubjectController extends Controller
             if($request->get('button_action') == "insert")
             {
                 $subject = new Subject([
-                    'board_id'      =>  $request->get('board_id'),
-                    'medium_id'     =>  $request->get('medium_id'),
-                    'class_id'      => $request->get('class_id'),
-                    'subject_name'  => $request->get('subject_name'),
-                    'subject_description' => $request->get('subject_description'),
+                    'subject_id'     => strtoupper(substr(uniqid("sub"."_".md5(uniqid("sub", true))), 0,15)),
+                    'board_id'       => $request->get('board_id'),
+                    'medium_id'      => $request->get('medium_id'),
+                    'class_id'       => $request->get('class_id'),
+                    'subject_name'   => $request->get('subject_name'),
                     'subject_status' => $request->get('subject_status'),
-                    'created_by' => $user->name,
-                    'creation_ip' => $_SERVER['REMOTE_ADDR']
+                    'created_by'     => $user->emp_name,
+                    'creation_ip'    => $_SERVER['REMOTE_ADDR']
                 ]);
                 $subject->save();
                 $success_output = '<div class="alert alert-success">Subject Data Added Successfully!! </div>';
@@ -72,7 +72,6 @@ class SubjectController extends Controller
                         'medium_id'     =>  $request->get('medium_id'),
                         'class_id'      => $request->get('class_id'),
                         'subject_name'  => $request->get('subject_name'),
-                        'subject_description' => $request->get('subject_description'),
                         'subject_status' => $request->get('subject_status'),
                         'modified_by' => $user->name,
                         'modified_ip' => $_SERVER['REMOTE_ADDR']
@@ -96,19 +95,20 @@ class SubjectController extends Controller
         $error_array = array();
         $success_output = '';
         $subject = Subject::select(
-            'subjects.*',
-            'class.class_name',
-            'class.class_id',
-            'boards.board_id',
-            'boards.board_name',
-            'mediums.medium_name',
-            'mediums.medium_id',
+            'subject_details.*',
+            'class_details.class_name',
+            'class_details.class_id',
+            'board_details.board_id',
+            'board_details.board_name',
+            'medium_details.medium',
+            'medium_details.medium_id'
         )
-        ->leftjoin('class', 'class.class_id', '=', 'subjects.class_id')
-        ->leftjoin('mediums', 'subjects.medium_id', '=', 'mediums.medium_id')
-        ->leftjoin('boards', 'class.board_id', '=', 'boards.board_id')
-        ->orderBy('subjects.subject_id', 'asc')
+        ->join('class_details', 'class_details.class_id', '=', 'subject_details.class_id')
+        ->join('board_details', 'subject_details.board_id', '=', 'board_details.board_id')
+        ->join('medium_details', 'subject_details.medium_id', '=', 'medium_details.medium_id')
+        ->orderBy('subject_details.subject_id', 'asc')
         ->get();
+        
         if($subject){
             $success_output = '<div class="alert alert-success">Get Subject Data !!!</div>';
         }else{
@@ -130,7 +130,7 @@ class SubjectController extends Controller
         $html = '';
         foreach ($mediumList as $mediumDet) {
             $isSelected = ($mediumDet->medium_id == $medium_id) ? 'selected' : '';
-            $html .= '<option value="' . $mediumDet->medium_id . '" ' . $isSelected . '>' . $mediumDet->medium_name . '</option>';
+            $html .= '<option value="' . $mediumDet->medium_id . '" ' . $isSelected . '>' . $mediumDet->medium. '</option>';
         }  
 
         $htmlClass = '';
@@ -140,13 +140,12 @@ class SubjectController extends Controller
         }  
 
         $subject_id  = $request->input('subject_id');
-        $subject  = Subject::find($subject_id);
+        $subject  = Subject::where('subject_id',$subject_id)->first();
         $output   = array(
             'board_id'       =>  $subject->board_id,
             'medium_id'      =>  $html,//$subject->medium_id,
             'class_id'       =>  $htmlClass,//$subject->class_id,
             'subject_name'   =>  $subject->subject_name,
-            'subject_description' =>  $subject->subject_description,
             'subject_status'   =>  $subject->subject_status,
         );
         echo json_encode($output);
@@ -156,12 +155,11 @@ class SubjectController extends Controller
         $subjectId = $request->subject_id;
         if (!is_null($subjectId)) {
             // $subject = Subject::where('subject_id', $subjectId)->first();
-
             // if ($subject) {
             //     $subject->delete();
             $subject = Subject::find($subjectId);
                 if ($subject) {
-                    $subject->update(['subject_status' => 'No']);
+                    $subject->update(['subject_status' => 'InActive']);
                 echo '<div class="alert alert-success">Subject Deleted</div>';
                 //return response()->json(['message' => 'Data Deleted'], 200);
             } else {

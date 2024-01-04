@@ -36,40 +36,12 @@
                         <h5 class="modal-title" id="mediumModalLabel">Create Medium</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     </div>
-                    <!-- <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">Medium Name:</label>
-                            <select class="form-control" name="boardname" id="boardname">
-                                <option value="">--Select Board--</option>
-                                <option value="BOARD_BF9351DAA">CBSE</option>
-                                <option value="BOARD_D50BE3EF0">ICSE</option>
-                                <option value="BOARD_0040B44E3">JEE</option>
-                                <option value="BOARD_F5DED60D5">MHCET</option>
-                                <option value="BOARD_33E77AEF9">MHSB</option>
-                                <option value="BOARD_2F32AB5FF">NEET</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="recipient-name" class="col-form-label">Medium Name:</label>
-                            <input type="text" class="form-control" id="recipient-name">
-                        </div>
-                        <div class="form-group">
-                            <label for="message-text" class="col-form-label">Message:</label>
-                            <textarea class="form-control" id="message-text"></textarea>
-                        </div>
-                    </form>
-                    </div> -->
                     <div class="modal-body">
                         <form id="addMedium" method="post">
                             {{ csrf_field() }}
                             <div class="form-group">
-                                <label for="medium_name" class="col-form-label">Medium Name:</label>
-                                <input type="text" class="form-control" id="medium_name"  name="medium_name">
-                            </div>
-                            <div class="form-group">
-                                <label for="medium_description" class="col-form-label"> Medium Description:</label>
-                                <textarea class="form-control" id="medium_description" name="medium_description"></textarea>
+                                <label for="medium" class="col-form-label">Medium Name:</label>
+                                <input type="text" class="form-control" id="medium"  name="medium">
                             </div>
                             <div class="form-group">
                                 <label for="medium_status" class="col-form-label"> Board Name:</label>
@@ -84,8 +56,8 @@
                                 <label for="medium_status" class="col-form-label"> Medium Status:</label>
                                 <select class="form-control" name="medium_status" id="medium_status">
                                 <option value="">--Select Status--</option>
-                                <option value="Yes">Yes</option>
-                                <option value="No">No</option>
+                                <option value="Active">Active</option>
+                                <option value="InActive">InActive</option>
                                 </select>
                             </div>
                             <div class="modal-footer">
@@ -96,10 +68,6 @@
                             </div>
                         </form>
                     </div>
-                    <!-- <div class="modal-footer">
-                        <button type="button" class="btn  btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn  btn-primary">Send message</button>
-                    </div> -->
                 </div>
             </div>
         </div>
@@ -112,7 +80,6 @@
                             <th>Sr.No</th>
                             <th>Medium Name</th>
                             <th>Board Name</th>
-                            <th>Medium Description</th>
                             <th>Medium Status</th>
                             <th>Created Date/Time</th>
                             <th>Action</th>
@@ -181,9 +148,8 @@ $(document).ready(function() {
             "pageLength": 10,
             columns: [
                 {data: 'medium_id', name: 'medium_id'},
+                {data: 'medium', name: 'medium',className: "text-center"},
                 {data: 'board_name', name: 'boards.board_name', className: 'text-center' },
-                {data: 'medium_name', name: 'medium_name',className: "text-center"},
-                {data: 'medium_description', name: 'medium_description',className: "text-center"},
                 {data: 'medium_status', name: 'medium_status',className: "text-center"},
                 {data: 'created_at', name: 'created_at',className: "text-center"},
                 {data: 'built_action_btns', name:'built_action_btns', className: 'text-center'}
@@ -197,29 +163,6 @@ $(document).ready(function() {
         $('#Medium_table').on('error.dt', function (e, settings, techNote, message) {
             console.log('An error has been reported by DataTables: ', message);
         });
-    // $.ajax({
-    //  url: base_url + "/admin/getMediumAllData",
-    //  dataType:"json",
-    //  success:function(data)
-    // {
-    //   var html = '';
-    // for(var count=0; count < data.length; count++)
-    //   {
-    //     html +='<tr>';
-    //     html +='<td contenteditable class="column_name" data-column_name="medium_id" data-id="'+data[count].medium_id+'">'+data[count].medium_id+'</td>';
-    //     html +='<td contenteditable class="column_name" data-column_name="medium_name" data-id="'+data[count].medium_id+'">'+data[count].medium_name+'</td>';
-    //     html += '<td contenteditable class="column_name" data-column_name="board_id" data-id="'+data[count].medium_id+'">'+data[count].board_name+'</td>';
-    //     html +='<td contenteditable class="column_name" data-column_name="medium_description" data-id="'+data[count].medium_id+'">'+data[count].medium_description+'</td>';
-    //     html += '<td contenteditable class="column_name" data-column_name="medium_status" data-id="'+data[count].medium_id+'">'+data[count].medium_status+'</td>';
-    //     html += '<td contenteditable class="column_name" data-column_name="created_at" data-id="'+data[count].medium_id+'">'+data[count].created_at+'</td>';
-    //     html += '<td>';
-    //     html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-id="'+data[count].medium_id+'" data-toggle="modal"  title="Update Board Details"><i class="fas fa-edit"></i></button>';
-    //     html += '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].medium_id+'" data-toggle="modal"  title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
-    //     html += '</td></tr>';
-    // }
-    //   $('tbody').html(html);
-    // }
-    // });
    }
 
     //Add Medium Using Ajax //
@@ -264,14 +207,13 @@ $(document).ready(function() {
          $('#form_output').html('');
          $.ajax({
             url: base_url + "/admin/updateGetMediumData",
-            method:'get',
-            data:{medium_id:medium_id},
+            method:'post',
+            data:{_token:_accessToken,medium_id:medium_id},
             dataType:'json',
             success:function(data)
             {
-                  $('#medium_name').val(data.medium_name);
+                  $('#medium').val(data.medium);
                   $('#board_id').val(data.board_id);
-                  $('#medium_description').val(data.medium_description);
                   $('#medium_status').val(data.medium_status);
                   $('#medium_id').val(medium_id);
                   $('#mediumModal').modal('show');

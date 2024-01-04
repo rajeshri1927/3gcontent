@@ -26,13 +26,13 @@ class TopicController extends Controller
         $data['BoardList']   = Board::get(["board_name", "board_id"]);
         $data['BoardList']   = $data['BoardList'] ?? collect();
 
-        $topic = Topic::select('topics.topic_id','topics.class_id','topics.board_id','topics.medium_id','topics.topic_name','topics.created_at','boards.board_name','mediums.medium_name','class.class_name','subjects.subject_name','chapters.chapter_name')
-        ->join('class', 'class.class_id', '=', 'topics.class_id')
-        ->join('boards', 'topics.board_id', '=', 'boards.board_id')
-        ->join('mediums', 'topics.medium_id', '=', 'mediums.medium_id')
-        ->join('subjects', 'topics.subject_id', '=', 'subjects.subject_id')
-        ->join('chapters', 'topics.chapter_id', '=', 'chapters.chapter_id')
-        ->orderBy('topics.topic_id', 'asc')
+        $topic = Topic::select('topic_details.topic_id','topic_details.class_id','topic_details.board_id','topic_details.medium_id','topic_details.topic_name','topic_details.created_on','board_details.board_name','medium_details.medium','class_details.class_name','subject_details.subject_name','chapter_details.chapter_name')
+        ->join('class_details', 'class_details.class_id', '=', 'topic_details.class_id')
+        ->join('board_details', 'topic_details.board_id', '=', 'board_details.board_id')
+        ->join('medium_details', 'topic_details.medium_id', '=', 'medium_details.medium_id')
+        ->join('subject_details', 'topic_details.subject_id', '=', 'subject_details.subject_id')
+        ->join('chapter_details', 'topic_details.chapter_id', '=', 'chapter_details.chapter_id')
+        ->orderBy('topic_details.topic_id', 'asc')
         ->get();
 
         $data['topicList'] = $topic;
@@ -40,10 +40,10 @@ class TopicController extends Controller
     }
 
     public function getMedium(Request $request){
-        $mediumList = Medium::where('board_id',$request->board_id)->orderBy('medium_name','ASC')->get();
+        $mediumList = Medium::where('board_id',$request->board_id)->orderBy('medium','ASC')->get();
         $html = '';
         foreach ($mediumList as $mediumDet) {
-            $html .= '<option value="' . $mediumDet->medium_id . '">' . $mediumDet->medium_name . '</option>';
+            $html .= '<option value="' . $mediumDet->medium_id . '">' . $mediumDet->medium. '</option>';
         }        
         echo $html;
     }
@@ -78,12 +78,12 @@ class TopicController extends Controller
     public function getTopicAllData(){
         $build_result = array();
 
-        $topic = Topic::select('topics.topic_id','topics.class_id','topics.board_id','topics.medium_id','topics.subject_id','topics.chapter_id','topics.topic_name','topics.created_at','topics.topic_status','boards.board_name','mediums.medium_name','class.class_name','chapters.chapter_name','subjects.subject_name')
-        ->join('class', 'class.class_id', '=', 'topics.class_id')
-        ->join('boards', 'topics.board_id', '=', 'boards.board_id')
-        ->join('mediums', 'topics.medium_id', '=', 'mediums.medium_id')
-        ->join('chapters', 'topics.chapter_id', '=', 'chapters.chapter_id')
-        ->join('subjects', 'topics.subject_id', '=', 'subjects.subject_id')
+        $topic = Topic::select('topic_details.topic_id','topic_details.class_id','topic_details.board_id','topic_details.medium_id','topic_details.subject_id','topic_details.chapter_id','topic_details.topic_name','topic_details.created_on','topic_details.topic_status','board_details.board_name','medium_details.medium','class_details.class_name','chapter_details.chapter_name','subject_details.subject_name')
+        ->join('class_details', 'class_details.class_id', '=', 'topic_details.class_id')
+        ->join('board_details', 'topic_details.board_id', '=', 'board_details.board_id')
+        ->join('medium_details', 'topic_details.medium_id', '=', 'medium_details.medium_id')
+        ->join('chapter_details', 'topic_details.chapter_id', '=', 'chapter_details.chapter_id')
+        ->join('subject_details', 'topic_details.subject_id', '=', 'subject_details.subject_id')
         ->get();
 
         /* $json_result = DataTables::of($topic)
@@ -128,15 +128,16 @@ class TopicController extends Controller
         } else {
             if($request->get('button_action') == "insert") {
                 $Topic = new Topic([
-                    'board_id'      =>  $request->get('board_id'),
-                    'medium_id'     =>  $request->get('medium_id'),
-                    'class_id'     =>  $request->get('class_id'),
-                    'subject_id' => $request->get('subject_id'),
-                    'chapter_id' => $request->get('chapter_id'),
-                    'topic_name'    =>  $request->get('topic_name'),
-                    'topic_status' => $request->get('topic_status'),
-                    'created_by' => $user->name,
-                    'creation_ip' => $_SERVER['REMOTE_ADDR']
+                    'topic_id'      => strtoupper(substr(uniqid("topic"."_".md5(uniqid("topic", true))), 0,15)),
+                    'board_id'      => $request->get('board_id'),
+                    'medium_id'     => $request->get('medium_id'),
+                    'class_id'      => $request->get('class_id'),
+                    'subject_id'    => $request->get('subject_id'),
+                    'chapter_id'    => $request->get('chapter_id'),
+                    'topic_name'    => $request->get('topic_name'),
+                    'topic_status'  => $request->get('topic_status'),
+                    'created_by'    => $user->emp_name,
+                    'creation_ip'   => $_SERVER['REMOTE_ADDR']
                 ]);
                 $Topic->save();
                 $success_output = '<div class="alert alert-success">Topic Data Added Successfully!! </div>';
@@ -186,7 +187,7 @@ class TopicController extends Controller
         $html = '';
         foreach ($mediumList as $mediumDet) {
             $isSelected = ($mediumDet->medium_id == $medium_id) ? 'selected' : '';
-            $html .= '<option value="' . $mediumDet->medium_id . '" ' . $isSelected . '>' . $mediumDet->medium_name . '</option>';
+            $html .= '<option value="' . $mediumDet->medium_id . '" ' . $isSelected . '>' . $mediumDet->medium. '</option>';
         }  
 
         $htmlClass = '';
@@ -208,7 +209,7 @@ class TopicController extends Controller
         }
 
         $topic_id = $request->input('topic_id');
-        $topicDetails  = Topic::find($topic_id);
+        $topicDetails  = Topic::where('topic_id',$topic_id)->first();
         $output   = array(
             'board_id'      =>  $topicDetails->board_id,
             'medium_id'     =>  $html,

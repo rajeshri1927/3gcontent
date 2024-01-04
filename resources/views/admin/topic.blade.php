@@ -89,8 +89,8 @@
                                 <label for="topic_status" class="col-form-label"> Topic Status:</label>
                                 <select class="form-control formField" name="topic_status" id="topic_status">
                                     <option value="">--Select Status--</option>
-                                    <option value="Yes">Yes</option>
-                                    <option value="No">No</option>
+                                    <option value="Active">Active</option>
+                                    <option value="InActive">InActive</option>
                                 </select>
                             </div>
                         </div>
@@ -287,18 +287,18 @@ $(document).ready(function() {
                 var html = '';
                 for(var count=0; count < data.length; count++) {
                     html +='<tr>';
-                    var createdAtDate = new Date(data[count].created_at);
+                    var createdAtDate = new Date(data[count].created_on);
                     var options = { day: 'numeric', month: 'short', year: 'numeric' };
                     var formattedCreatedAt = createdAtDate.toLocaleDateString('en-US', options);
 
-                    html +='<td contenteditable class="column_name" data-column_name="topic_id" data-id="'+data[count].topic_id+'">'+data[count].topic_id+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="board_name" data-id="'+data[count].topic_id+'">'+data[count].board_name+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="medium_name" data-id="'+data[count].topic_id+'">'+data[count].medium_name+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="class_name" data-id="'+data[count].topic_id+'">'+data[count].class_name+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="subject_name" data-id="'+data[count].topic_id+'">'+data[count].subject_name+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="chapter_name" data-id="'+data[count].topic_id+'">'+data[count].chapter_name+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="topic_name" data-id="'+data[count].topic_id+'">'+data[count].topic_name+'</td>';
-                    html += '<td contenteditable class="column_name" data-column_name="topic_status" data-id="'+data[count].topic_id+'">'+data[count].topic_status+'</td>';
+                    html +='<td data-column_name="topic_id" data-id="'+data[count].topic_id+'">'+data[count].topic_id+'</td>';
+                    html +='<td data-column_name="board_name" data-id="'+data[count].topic_id+'">'+data[count].board_name+'</td>';
+                    html +='<td data-column_name="medium_name" data-id="'+data[count].topic_id+'">'+data[count].medium+'</td>';
+                    html +='<td data-column_name="class_name" data-id="'+data[count].topic_id+'">'+data[count].class_name+'</td>';
+                    html +='<td data-column_name="subject_name" data-id="'+data[count].topic_id+'">'+data[count].subject_name+'</td>';
+                    html +='<td data-column_name="chapter_name" data-id="'+data[count].topic_id+'">'+data[count].chapter_name+'</td>';
+                    html +='<td data-column_name="topic_name" data-id="'+data[count].topic_id+'">'+data[count].topic_name+'</td>';
+                    html += '<td data-column_name="topic_status" data-id="'+data[count].topic_id+'">'+data[count].topic_status+'</td>';
                     html += '<td data-column_name="created_at" data-id="' + data[count].topic_id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
                     html += '<td>';
                     html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].topic_id+'" data-subject-id="'+data[count].subject_id+'" data-chapter-id="'+data[count].chapter_id+'" data-toggle="modal"  title="Update Question Type Details"><i class="fas fa-edit"></i></button>';
@@ -373,17 +373,17 @@ $(document).ready(function() {
 
     //Update data fetch Here//
     $(document).on('click', '.update', function(){
-        var topic_id = $(this).attr("data-id");
+        var topic_id   = $(this).attr("data-id");
         var board_id   = $(this).attr("data-board-id");
-        var medium_id = $(this).attr("data-medium-id");
-        var class_id = $(this).attr("data-class-id");
+        var medium_id  = $(this).attr("data-medium-id");
+        var class_id   = $(this).attr("data-class-id");
         var subject_id = $(this).attr("data-subject-id");
         var chapter_id = $(this).attr("data-chapter-id");
          $('#form_output').html('');
          $.ajax({
             url: base_url + "/admin/updateGetTopicData",
-            method:'get',
-            data:{topic_id:topic_id,board_id:board_id,medium_id:medium_id,class_id:class_id,subject_id:subject_id,chapter_id:chapter_id},
+            method:'post',
+            data:{_token:_accessToken,topic_id:topic_id,board_id:board_id,medium_id:medium_id,class_id:class_id,subject_id:subject_id,chapter_id:chapter_id},
             dataType:'json',
             success:function(data)
             {

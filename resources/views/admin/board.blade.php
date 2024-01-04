@@ -44,15 +44,11 @@
                         <input type="text" class="form-control" id="board_name"  name="board_name">
                      </div>
                      <div class="form-group">
-                        <label for="board_description" class="col-form-label"> Board Description:</label>
-                        <textarea class="form-control" id="board_description" name="board_description"></textarea>
-                     </div>
-                     <div class="form-group">
                         <label for="board_status" class="col-form-label"> Board Status:</label>
                         <select class="form-control" name="board_status" id="board_status">
                            <option value="">--Select Status--</option>
-                           <option value="Yes">Yes</option>
-                           <option value="No">No</option>
+                           <option value="Active">Active</option>
+                           <option value="InActive">InActive</option>
                         </select>
                      </div>
                      <div class="modal-footer">
@@ -74,7 +70,6 @@
                   <tr>
                      <th>Sr.No</th>
                      <th>Board Name</th>
-                     <th>Board Description</th>
                      <th>Board Status</th>
                      <th>Created Date / Time</th>
                      <th>Action</th>
@@ -114,7 +109,7 @@
 <script>
 $(document).ready(function() {
    
-   fetchBoardAllData();
+fetchBoardAllData();
 
 function fetchBoardAllData() {
     var binfo = true;
@@ -142,7 +137,7 @@ function fetchBoardAllData() {
         "columns": [
             {data: 'board_id', name: 'board_id'},
             {data: 'board_name', name: 'board_name', className: "text-center"},
-            {data: 'board_description', name: 'board_description', className: "text-center"},
+            // {data: 'board_description', name: 'board_description', className: "text-center"},
             {data: 'board_status', name: 'board_status', className: "text-center"},
             {data: 'created_at', name: 'created_at', className: "text-center"},
             {data: 'built_action_btns', name: 'built_action_btns', className: 'text-center'}
@@ -208,25 +203,25 @@ function fetchBoardAllData() {
        success:function(data)
        {
         $('#form_output').html(data);
-        fetchBoardData();
+        fetchBoardAllData();
        }
       });
      }
     });
      
    
-    $(document).on('click', '.update', function(){
+   
+   $(document).on('click', '.update', function(){
          var board_id = $(this).attr("data-id");
          $('#form_output').html('');
          $.ajax({
             url: base_url + "/admin/updateBoarddata",
-            method:'get',
-            data:{board_id:board_id},
+            method:'post',
+            data:{_token:_accessToken,board_id:board_id},
             dataType:'json',
             success:function(data)
             {
                   $('#board_name').val(data.board_name);
-                  $('#board_description').val(data.board_description);
                   $('#board_status').val(data.board_status);
                   $('#board_id').val(board_id);
                   $('#boardModal').modal('show');

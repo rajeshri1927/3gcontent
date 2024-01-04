@@ -57,7 +57,7 @@
                                 <option value="">--- Select Medium ---</option>
                                 @if(!empty($MediumList))
                                     @foreach($MediumList as $data)
-                                        <option value="{{$data->medium_id}}">{{$data->medium_name}}</option>
+                                        <option value="{{$data->medium_id}}">{{$data->medium}}</option>
                                     @endforeach
                                 @endif
                             </select>
@@ -69,19 +69,13 @@
                                 <input type="text" class="form-control" id="class_name"  name="class_name">
                             </div>
                             <div class="col-md-6 form-group">
-                                <label for="class_description" class="col-form-label">Class Description:</label>
-                                <input typ="text" class="form-control" id="class_description" name="class_description">
+                                <label for="medium_status" class="col-form-label"> Class Status:</label>
+                                <select class="form-control" name="class_status" id="class_status">
+                                    <option value="">--Select Status--</option>
+                                    <option value="Active">Active</option>
+                                    <option value="InActive">InActive</option>
+                                </select>
                             </div>
-                        </div>
-                        <div class="row">
-                        <div class="col-md-6 form-group">
-                            <label for="medium_status" class="col-form-label"> Class Status:</label>
-                            <select class="form-control" name="class_status" id="class_status">
-                                <option value="">--Select Status--</option>
-                                <option value="Yes">Yes</option>
-                                <option value="No">No</option>
-                            </select>
-                        </div>
                         </div>
                         <div class="modal-footer">
                             <input type="hidden" name="class_id" id="class_id" value="" />
@@ -104,7 +98,6 @@
                             <th>Board Name</th>
                             <th>Medium Name</th>
                             <th>Class Name</th>
-                            <th>Class Description</th>
                             <th>Class Status</th>
                             <th>Create Date / Time</th>
                             <th>Action</th>
@@ -178,9 +171,6 @@ $(document).ready(function() {
             ajax: {
                 url:  base_url + "/admin/getClassAllData",
                 data: function (d) {
-                    
-                    //console.log(data);
-                    //d.search = $('#search').val()
                 }
             },
         bAutoWidth: false,
@@ -192,13 +182,12 @@ $(document).ready(function() {
         bPaginate: true,
         pageLength: 10,
         columns: [
-            { data: 'class_id', name: 'class.class_id', className: 'text-center' },
-            { data: 'board_name', name: 'boards.board_name', className: 'text-center' },
-            { data: 'medium_name', name: 'mediums.medium_name', className: 'text-center' },
-            { data: 'class_name', name: 'class.class_name', className: 'text-center' },
-            { data: 'class_description', name: 'class.class_description', className: 'text-center' },
-            { data: 'class_status', name: 'class.class_status', className: 'text-center' },
-            { data: 'created_at', name: 'class.created_at', className: 'text-center' },
+            { data: 'class_id', name: 'class_details.class_id', className: 'text-center' },
+            { data: 'board_name', name: 'board_details.board_name', className: 'text-center' },
+            { data: 'medium', name: 'medium_details.medium', className: 'text-center' },
+            { data: 'class_name', name: 'class_details.class_name', className: 'text-center' },
+            { data: 'class_status', name: 'class_details.class_status', className: 'text-center' },
+            { data: 'created_at', name: 'class_details.created_on', className: 'text-center' },
             { data: 'built_action_btns', name: 'built_action_btns', className: 'text-center' }
         ],
         order: [[6, 'desc']],  // Assuming you want to sort by 'created_at' column, adjust the index if needed
@@ -206,13 +195,6 @@ $(document).ready(function() {
             header: true
         }
     });
-
-    // Uncomment the following lines if you want to enable client-side searching
-    // var oTable = $('.data-table').DataTable();
-    // $('#search').keyup(function () {
-    //     oTable.search($(this).val()).draw();
-    // });
-
     // Error handling
     $.fn.dataTable.ext.errMode = 'none';
     $('.data-table').on('error.dt', function (e, settings, techNote, message) {
@@ -257,57 +239,19 @@ $(document).ready(function() {
     });
 
     //Update data fetch Here//
-//     $(document).on('click', '.update', function(){
-//          var class_id = $(this).attr("data-id");
-//          var medium_id = $(this).attr('data-medium-id');
-//          alert(medium_id);
-//          var board_id = $(this).attr("data-board-id");
-//          $('#form_output').html('');
-//          $.ajax({
-//             url: base_url + "/admin/updateGetClassData",
-//             method:'get',
-//             data:{class_id:class_id,board_id:board_id,medium_id:medium_id},
-//             dataType:'json',
-//             success:function(data)
-//             {
-//                     // var htmlString = data.medium_id;
-//                     // var options = $(htmlString);
-
-//                     // // Iterate over the options
-//                     // options.each(function(index, option) {
-//                     //     options.filter(':contains("2")').prop('selected', true);
-//                     // });
-//                 $('#medium_id').html(data.medium_id);
-//                 $('#board_id').val(data.board_id);
-//                 $('#class_name').val(data.class_name);
-//                 $('#class_description').val(data.class_description);
-//                 $('#class_status').val(data.class_status);
-//                 $('#class_id').val(class_id);
-//                 $('#classModal').modal('show');
-//                 $('#action').val('Update');
-//                 $('.modal-title').text('Edit Data');
-//                 $('#button_action').val('update');
-//             }
-//          })
-//    });
-    //Update data fetch Here//
     $(document).on('click', '.update', function(){
          var class_id = $(this).attr("data-id");
          $('#form_output').html('');
          $.ajax({
             url: base_url + "/admin/updateGetClassData",
-            method:'get',
-            data:{class_id:class_id},
+            method:'post',
+            data:{_token:_accessToken,class_id:class_id},
             dataType:'json',
             success:function(data)
             {
                 $('#board_id').val(data.board_id);
                 $('#medium_id').val(data.medium_id);
                 $('#class_name').val(data.class_name);
-                // $('#subject_id').val(data.subject_id);
-                // $('#chapter_id').val(data.chapter_id);
-                // $('#topic_name').val(data.topic_name);
-                $('#class_description').val(data.class_description);
                 $('#class_status').val(data.class_status);
                 $('#class_id').val(class_id);
                 $('#classModal').modal('show');

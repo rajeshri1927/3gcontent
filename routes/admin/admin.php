@@ -20,15 +20,17 @@ Route::group(array('prefix' => '/admin','middleware' => ['web','admin']), functi
     Route::any('/board',['as'=>'','uses'=>$module_controller.'index']);
     Route::post('/addBoard',['as'=>'','uses'=>$module_controller.'addBoard']);
     Route::get('/getBoardAllData',['as'=>'','uses'=>$module_controller.'getBoardAllData']);
-    Route::get('/updateBoarddata',['as'=>'','uses'=>$module_controller.'updateBoarddata']);
+    Route::any('/updateBoarddata',['as'=>'','uses'=>$module_controller.'updateBoarddata']);
     Route::delete('/deleteBoarddata',['as'=>'','uses'=>$module_controller.'deleteBoarddata']);
+    //Route::any('/getNoOfBoards',['as'=>'','uses'=>$module_controller.'getNoOfBoards']);
+    
 
     //Medium Controller Route//
     $module_controller = "App\Http\Controllers\Admin\MediumController@";
     Route::any('/medium',['as'=>'','uses'=>$module_controller.'index']);
     Route::post('/addMedium',['as'=>'','uses'=>$module_controller.'addMedium']);
     Route::get('/getMediumAllData',['as'=>'','uses'=>$module_controller.'getMediumAllData']);
-    Route::get('/updateGetMediumData',['as'=>'','uses'=>$module_controller.'updateGetMediumData']);
+    Route::any('/updateGetMediumData',['as'=>'','uses'=>$module_controller.'updateGetMediumData']);
     Route::delete('/deleteMediumData',['as'=>'','uses'=>$module_controller.'deleteMediumData']);
 
     //Class Controller Route//
@@ -37,7 +39,7 @@ Route::group(array('prefix' => '/admin','middleware' => ['web','admin']), functi
     Route::get('/getMediums',['as'=>'','uses'=>$module_controller.'getMedium']);
     Route::post('/addClass',['as'=>'','uses'=>$module_controller.'addClass']);
     Route::get('/getClassAllData',['as'=>'','uses'=>$module_controller.'getClassAllData']);
-    Route::get('/updateGetClassData',['as'=>'','uses'=>$module_controller.'updateGetClassData']);
+    Route::any('/updateGetClassData',['as'=>'','uses'=>$module_controller.'updateGetClassData']);
     Route::delete('/deleteClassData',['as'=>'','uses'=>$module_controller.'deleteClassData']);
     
     //Subject Route Here//
@@ -97,10 +99,10 @@ Route::group(array('prefix' => '/admin','middleware' => ['web','admin']), functi
     Route::delete('/deleteEmployeeData',['as'=>'','uses'=>$module_controller.'deleteEmployeeData']);
 
      //Employee Managment Route Here//
-     $module_controller = "App\Http\Controllers\Admin\classesManagementController@";
+     $module_controller = "App\Http\Controllers\Admin\ClassesManagementController@";
      Route::any('/classesManagement',['as'=>'','uses'=>$module_controller.'index']);
-    //  Route::any('/addEmployee',['as'=>'','uses'=>$module_controller.'addEmployee']);
-    //  Route::any('/getEmpAllData',['as'=>'','uses'=>$module_controller.'getEmpAllData']);
+     Route::any('/addClasses',['as'=>'','uses'=>$module_controller.'addClasses']);
+     Route::any('/getclassesAllData',['as'=>'','uses'=>$module_controller.'getclassesAllData']);
     //  Route::any('/updateGetEmpData',['as'=>'','uses'=>$module_controller.'updateGetEmpData']);
     //  Route::delete('/deleteEmployeeData',['as'=>'','uses'=>$module_controller.'deleteEmployeeData']);
 });

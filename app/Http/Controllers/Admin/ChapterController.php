@@ -54,13 +54,14 @@ class ChapterController extends Controller
             if($request->get('button_action') == "insert")
             {
                 $chapter = new Chapter([
+                    'chapter_id'    => strtoupper(substr(uniqid("chptr"."_".md5(uniqid("chptr", true))), 0,15)),
                     'board_id'      => $request->get('board_id'),
                     'medium_id'     => $request->get('medium_id'),
                     'class_id'      => $request->get('class_id'),
                     'subject_id'    => $request->get('subject_id'),
                     'chapter_no'    => $request->get('chapter_no'),
                     'chapter_name'  => $request->get('chapter_name'),
-                    'chapter_description' => $request->get('chapter_description'),
+                    // 'chapter_description' => $request->get('chapter_description'),
                     'chapter_status' => $request->get('chapter_status'),
                     'created_by' => $user->name,
                     'creation_ip' => $_SERVER['REMOTE_ADDR']
@@ -78,9 +79,9 @@ class ChapterController extends Controller
                         'subject_id'    => $request->get('subject_id'),
                         'chapter_no'    => $request->get('chapter_no'),
                         'chapter_name' => $request->get('chapter_name'),
-                        'chapter_description' => $request->get('chapter_description'),
+                        // 'chapter_description' => $request->get('chapter_description'),
                         'chapter_status' => $request->get('chapter_status'),
-                        'modified_by' => $user->name,
+                        'modified_by' => $user->emp_name,
                         'modified_ip' => $_SERVER['REMOTE_ADDR']
                     ]);
                     //$id = $chapter->chapter_id;
@@ -102,21 +103,21 @@ class ChapterController extends Controller
         $error_array = array();
         $success_output = '';
         $chapters = Chapter::select(
-            'chapters.*',
-            'subjects.subject_id',
-            'subjects.subject_name',
-            'class.class_id',
-            'class.class_name',
-            'boards.board_id',
-            'boards.board_name',
-            'mediums.medium_id',
-            'mediums.medium_name'
+            'chapter_details.*',
+            'subject_details.subject_id',
+            'subject_details.subject_name',
+            'class_details.class_id',
+            'class_details.class_name',
+            'board_details.board_id',
+            'board_details.board_name',
+            'medium_details.medium_id',
+            'medium_details.medium'
         )
-        ->leftJoin('subjects', 'chapters.subject_id', '=', 'subjects.subject_id')
-        ->leftJoin('class', 'subjects.class_id', '=', 'class.class_id')
-        ->leftJoin('mediums', 'subjects.medium_id', '=', 'mediums.medium_id')
-        ->leftJoin('boards', 'class.board_id', '=', 'boards.board_id')
-        ->orderBy('subjects.subject_id', 'asc')
+        ->Join('subject_details', 'chapter_details.subject_id', '=', 'subject_details.subject_id')
+        ->Join('class_details', 'chapter_details.class_id', '=', 'class_details.class_id')
+        ->Join('medium_details', 'chapter_details.medium_id', '=', 'medium_details.medium_id')
+        ->Join('board_details', 'chapter_details.board_id', '=', 'board_details.board_id')
+        ->orderBy('chapter_details.chapter_id', 'asc')
         ->get();    
         if($chapters){
             $success_output = '<div class="alert alert-success">Get Chapter Data !!!</div>';
@@ -158,7 +159,7 @@ class ChapterController extends Controller
         }  
 
         $chapter_id = $request->input('chapter_id');
-        $chapter  = Chapter::find($chapter_id);
+        $chapter  = Chapter::where('chapter_id',$chapter_id)->first();
         $output   = array(
             'board_id'       =>  $chapter->board_id,
             'medium_id'      =>  $html,//$subject->medium_id,
@@ -166,7 +167,7 @@ class ChapterController extends Controller
             'subject_id'     =>  $htmlsubject,//$subject->subject_id,
             'chapter_no'     =>  $chapter->chapter_no,
             'chapter_name'   =>  $chapter->chapter_name,
-            'chapter_description' =>  $chapter->chapter_description,
+            // 'chapter_description' =>  $chapter->chapter_description,
             'chapter_status'   =>  $chapter->chapter_status,
         );
         echo json_encode($output);
@@ -178,7 +179,8 @@ class ChapterController extends Controller
             $chapter = Chapter::where('chapter_id', $chapterId)->first();
 
             if ($chapter) {
-                $chapter->delete();
+                $chapter->update(['chapter_status' => 'InActive']);
+                //$chapter->delete();
                 echo '<div class="alert alert-success">Chapter Deleted Successfully!!</div>';
                 //return response()->json(['message' => 'Data Deleted'], 200);
             } else {

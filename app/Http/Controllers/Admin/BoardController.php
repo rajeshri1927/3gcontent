@@ -40,9 +40,9 @@ class BoardController extends Controller
                 $i = $i + 1;
                 $build_result->data[$key]->board_id = $data->board_id;
                 $build_result->data[$key]->board_name = $data->board_name;
-                $build_result->data[$key]->board_description = $data->board_description;
+                // $build_result->data[$key]->board_description = $data->board_description;
                 $build_result->data[$key]->board_status = $data->board_status;
-                $build_result->data[$key]->created_at = date("d M Y", strtotime($data->created_at));
+                $build_result->data[$key]->created_at = date("d M Y", strtotime($data->created_on));
                 $action = '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-id="'.$data->board_id.'" data-toggle="modal"  title="Update Board Details"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'.$data->board_id.'" data-toggle="modal"  title="Delete Board Details"><i class="fas fa-trash-alt"></i></button>';
 				$build_result->data[$key]->built_action_btns = $action;
             }
@@ -71,11 +71,12 @@ class BoardController extends Controller
             if($request->get('button_action') == "insert")
             {
                 $board = new Board([
-                    'board_name'    =>  $request->get('board_name'),
-                    'board_description' =>  $request->get('board_description'),
-                    'board_status' => $request->get('board_status'),
-                    'created_by' => $user->name,
-                    'creation_ip' => $_SERVER['REMOTE_ADDR']
+                    'board_id'          => strtoupper(substr(uniqid("board"."_".md5(uniqid("board", true))), 0,15)),
+                    'board_name'        => $request->get('board_name'),
+                    'board_description' => $request->get('board_description'),
+                    'board_status'      => $request->get('board_status'),
+                    'created_by'        => $user->name,
+                    'creation_ip'       => $_SERVER['REMOTE_ADDR']
                 ]);
                 $board->save();
                 $success_output = '<div class="alert alert-success">Data Inserted</div>';
@@ -106,10 +107,10 @@ class BoardController extends Controller
         echo json_encode($output);
     }
 
-    function updateBoarddata(Request $request)
+    public function updateBoardData(Request $request)
     {
         $board_id = $request->input('board_id');
-        $board    = Board::find($board_id);
+        $board    = Board::where('board_id',$board_id)->first();
         $output   = array(
             'board_name'    =>  $board->board_name,
             'board_description' =>  $board->board_description,
@@ -126,7 +127,7 @@ class BoardController extends Controller
             $board = Board::find($boardId);
     
             if ($board) {
-                $board->update(['board_status' => 'No']);
+                $board->update(['board_status' => 'InActive']);
                 //$board->delete();
                 echo '<div class="alert alert-success">Data Deleted</div>';
                 // Alternatively, you can return a JSON response:
@@ -139,6 +140,17 @@ class BoardController extends Controller
         }
     }
     
-
+    // public function getNoOfBoards() {
+    //     $boards = Board::select('*')->orderBy('board_id', 'asc')->get();
+    
+    //     // Get the total count of boards
+    //     $totalBoards = $boards->count();
+    
+    //     // Merge the variables into $this->arr_view_data
+    //     $this->arr_view_data = array_merge($this->arr_view_data, compact('boards', 'totalBoards'));
+    
+    //     return view($this->module_view_folder . '.dashboard', $this->arr_view_data);
+    // }
+        
 
 }

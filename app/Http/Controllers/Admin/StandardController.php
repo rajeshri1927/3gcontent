@@ -21,47 +21,33 @@ class StandardController extends Controller
     {
         $data['BoardList']   = Board::get(["board_name", "board_id"]);
         $data['BoardList']   = $data['BoardList'] ?? collect();
-        $data['MediumList']  = Medium::get(["medium_name", "medium_id"]);
+        $data['MediumList']  = Medium::get(["medium", "medium_id"]);
         $data['MediumList']  = $data['MediumList'] ?? collect();
-        $class = Standard::select('class.class_id', 'class.board_id', 'class.medium_id' , 'class.class_name', 'class.class_description', 'class.class_status','class.created_at', 'class.updated_at', 'boards.board_name','mediums.medium_name')
-        ->join('boards', 'class.board_id', '=', 'boards.board_id')
-        ->join('mediums', 'class.medium_id', '=', 'mediums.medium_id')
-        ->orderBy('class.class_id', 'asc')
+        $class = Standard::select('class_details.class_id', 'class_details.board_id', 'class_details.medium_id' , 'class_details.class_name','class_details.class_status','class_details.created_on', 'class_details.modified_on', 'board_details.board_name','medium_details.medium')
+        ->join('board_details', 'class_details.board_id', '=', 'board_details.board_id')
+        ->join('medium_details', 'class_details.medium_id', '=', 'medium_details.medium_id')
+        ->orderBy('class_details.class_id', 'asc')
         ->get();
 
         $data['classList'] = $class;
         return view($this->module_view_folder.'.standard', $this->arr_view_data,$data);
     }
 
-    // public function getMedium(Request $request){
-    //     $mediumList = Medium::where('board_id',$request->board_id)->get();
-    //     $html = '';
-    //     foreach ($mediumList as $mediumDet) {
-    //         $html .= '<option value="' . $mediumDet->medium_id . '">' . $mediumDet->medium_name . '</option>';
-    //     }        
-    //     echo $html;
-    // }
     public function getMedium(Request $request){
         $mediumList = Medium::where('board_id',$request->board_id)->get();
         $html = '';
         foreach ($mediumList as $mediumDet) {
-            $html .= '<option value="' . $mediumDet->medium_id . '">' . $mediumDet->medium_name . '</option>';
+            $html .= '<option value="' . $mediumDet->medium_id . '">' . $mediumDet->medium. '</option>';
         }        
         echo $html;
     }
     
     public function getClassAllData(){
-        // $class= Standard::select('class.class_id', 'class.board_id', 'class.medium_id' , 'class.class_name', 'class.class_description', 'class.class_status','class.created_at', 'class.updated_at', 'boards.board_name','mediums.medium_name')
-        //     ->join('boards', 'class.board_id', '=', 'boards.board_id')
-        //     ->join('mediums', 'class.medium_id', '=', 'mediums.medium_id')
-        //     ->orderBy('class.class_id', 'asc')
-        //     ->get(); //toSql
-        // echo json_encode($class);
         $build_result = array();
-        $class= Standard::select('class.class_id', 'class.board_id', 'class.medium_id' , 'class.class_name', 'class.class_description', 'class.class_status','class.created_at', 'class.updated_at', 'boards.board_name','mediums.medium_name')
-                ->join('boards', 'class.board_id', '=', 'boards.board_id')
-                ->join('mediums', 'class.medium_id', '=', 'mediums.medium_id')
-                ->orderBy('class.class_id', 'asc')
+        $class= Standard::select('class_details.class_id', 'class_details.board_id', 'class_details.medium_id' , 'class_details.class_name', 'class_details.class_status','class_details.created_on', 'class_details.modified_on', 'board_details.board_name','medium_details.medium')
+                ->join('board_details', 'class_details.board_id', '=', 'board_details.board_id')
+                ->join('medium_details', 'class_details.medium_id', '=', 'medium_details.medium_id')
+                ->orderBy('class_details.class_id', 'asc')
                 ->latest();
         $json_result = DataTables::of($class)
             ->addColumn('built_action_btns', function ($data) {
@@ -75,11 +61,10 @@ class StandardController extends Controller
                 $i = $i + 1;
                 $build_result->data[$key]->class_id  = $data->class_id;
                 $build_result->data[$key]->board_name = $data->board_name;
-                $build_result->data[$key]->medium_name = $data->medium_name;
+                $build_result->data[$key]->medium = $data->medium;
                 $build_result->data[$key]->class_name = $data->class_name;
-                $build_result->data[$key]->class_description = $data->class_description;
                 $build_result->data[$key]->class_status = $data->class_status;
-                $build_result->data[$key]->created_at = date("d M Y", strtotime($data->created_at));
+                $build_result->data[$key]->created_at = date("d M Y", strtotime($data->created_on));
                 $action = '<button name="button" class="btn btn-sm btn-warning mt-1 update" type="button" data-medium-id="'.$data->medium_id.'" data-id="'.$data->class_id.'" data-toggle="modal"  title="Update Class Details"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'.$data->class_id.'" data-toggle="modal"   name="button" title="Delete Class Details"><i class="fas fa-trash-alt"></i></button>';
 				$build_result->data[$key]->built_action_btns = $action;
             }
@@ -108,13 +93,13 @@ class StandardController extends Controller
             if($request->get('button_action') == "insert")
             {
                 $Standard = new Standard([
+                    'class_id'      => strtoupper(substr(uniqid("class"."_".md5(uniqid("class", true))), 0,15)),
                     'board_id'      =>  $request->get('board_id'),
                     'medium_id'     =>  $request->get('medium_id'),
                     'class_name'    =>  $request->get('class_name'),
-                    'class_description' => $request->get('class_description'),
-                    'class_status'    => $request->get('class_status'),
-                    'created_by' => $user->name,
-                    'creation_ip' => $_SERVER['REMOTE_ADDR']
+                    'class_status'  =>  $request->get('class_status'),
+                    'created_by'    =>  $user->emp_name,
+                    'creation_ip'   =>  $_SERVER['REMOTE_ADDR']
                 ]);
                 $Standard->save();
                 $success_output = '<div class="alert alert-success">Class Data Added Successfully!! </div>';
@@ -155,33 +140,10 @@ class StandardController extends Controller
             'board_id'        =>  $classDetails->board_id,
             'medium_id'       =>  $classDetails->medium_id,
             'class_name'      =>  $classDetails->class_name,
-            'class_description' =>  $classDetails->class_description,
-            'class_status'      =>  $classDetails->class_status,
-            // 'topic_name'      =>  $topicDetails->topic_name,
-            // 'topic_status' => $topicDetails->topic_status
+            'class_status'    =>  $classDetails->class_status
         );
         echo json_encode($output);
         
-        
-        // $medium_id  = $request->input('medium_id');
-        // $selectedBoardId  = $request->input('board_id');
-        // $mediumList = Medium::where('board_id',$selectedBoardId)->get();
-        // $html = '';
-        // foreach ($mediumList as $mediumDet) {
-        //     $isSelected = ($mediumDet->medium_id == $medium_id) ? 'selected' : '';
-        //     $html .= '<option value="' . $mediumDet->medium_id . '" ' . $isSelected . '>' . $mediumDet->medium_name . '</option>';
-        // } 
-        // dd($html);
-        // $selectedClassId  = $request->input('class_id');     
-        // $standard  = Standard::find($selectedClassId);
-        // $output    = array(
-        //     'board_id'       =>  $standard->board_id,
-        //     'medium_id'      =>  $html,
-        //     'class_name'     =>  $standard->class_name,
-        //     'class_description' =>  $standard->class_description,
-        //     'class_status' => $standard->class_status
-        // );
-        // echo json_encode($output);
     }
 
     public function deleteClassData(Request $request)
@@ -189,10 +151,10 @@ class StandardController extends Controller
         $standard_id = $request->class_id;
 
         if (!is_null($standard_id)) {
-            $standard = Board::find($standard_id);
+            $standard = Standard::find($standard_id);
     
             if ($standard) {
-                $standard->update(['class_status' => 'No']);
+                $standard->update(['class_status' => 'InActive']);
                 echo '<div class="alert alert-success">Class Deleted</div>';
                 //return response()->json(['message' => 'Data Deleted'], 200);
             } else {

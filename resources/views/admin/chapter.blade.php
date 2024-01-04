@@ -91,20 +91,20 @@
                   </div>
                   <div class="col-sm-4">
                     <div class="form-group">
-                      <label for="chapter_description">Chapter Description</label>
-                      <input type="text" name="chapter_description" id="chapter_description" class="form-control" placeholder="Enter chapter Description. *">
-                    </div>
-                  </div>
-                  <div class="col-sm-4">
-                    <div class="form-group">
                       <label for="chapter_status">Subject Status</label>
                       <select class="form-control" name="chapter_status" id="chapter_status">
                           <option value="">--Select Status--</option>
-                          <option value="Yes">Yes</option>
-                          <option value="No">No</option>
+                          <option value="Active">Active</option>
+                          <option value="InActive">InActive</option>
                       </select>
                     </div>
                   </div>
+                  <!-- <div class="col-sm-4">
+                    <div class="form-group">
+                      <label for="chapter_description">Chapter Description</label>
+                      <input type="text" name="chapter_description" id="chapter_description" class="form-control" placeholder="Enter chapter Description. *">
+                    </div>
+                  </div> -->
                 </div>
               </div>
               <div class="card-footer">
@@ -257,7 +257,7 @@ $(document).ready(function() {
     for(var count=0; count < data.length; count++)
       {
         html +='<tr>';
-        var createdAtDate = new Date(data[count].created_at);
+        var createdAtDate = new Date(data[count].created_on);
           var formattedCreatedAt = createdAtDate.toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'short',
@@ -265,14 +265,11 @@ $(document).ready(function() {
           });
         html +='<td contenteditable class="column_name" data-column_name="chapter_id" data-id="'+data[count].chapter_id+'">'+data[count].chapter_id+'</td>';
         html +='<td contenteditable class="column_name" data-column_name="board_id" data-id="'+data[count].chapter_id+'">'+data[count].board_name+'</td>';
-        html += '<td contenteditable class="column_name" data-column_name="medium_id" data-id="'+data[count].chapter_id+'">'+data[count].medium_name+'</td>';
+        html += '<td contenteditable class="column_name" data-column_name="medium_id" data-id="'+data[count].chapter_id+'">'+data[count].medium+'</td>';
         html +='<td contenteditable class="column_name" data-column_name="class_id" data-id="'+data[count].chapter_id+'">'+data[count].class_name+'</td>';
         html +='<td contenteditable class="column_name" data-column_name="subject_id" data-id="'+data[count].chapter_id+'">'+data[count].subject_name+'</td>';
         html += '<td contenteditable class="column_name" data-column_name="chapter_no" data-id="'+data[count].chapter_id+'">'+data[count].chapter_no+'</td>';
         html += '<td contenteditable class="column_name" data-column_name="chapter_name" data-id="'+data[count].chapter_id+'">'+data[count].chapter_name+'</td>';
-       // html += '<td contenteditable class="column_name" data-column_name="chapter_description" data-id="'+data[count].chapter_id+'">'+data[count].chapter_description+'</td>';
-        //html += '<td contenteditable class="column_name" data-column_name="chapter_status" data-id="'+data[count].chapter_id+'">'+data[count].chapter_status+'</td>';
-        // html += '<td contenteditable class="column_name" data-column_name="created_at" data-id="'+data[count].chapter_id+'">'+data[count].created_at+'</td>';
         html += '<td data-column_name="created_at" data-id="' + data[count].chapter_id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
         html += '<td>';
         html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].chapter_id+'" data-subject-id="'+data[count].subject_id+'" data-toggle="modal"  title="Update Class Details"><i class="fas fa-edit"></i></button>';
@@ -331,13 +328,13 @@ $(document).ready(function() {
          var chapter_id = $(this).attr("data-id");
          var subject_id = $(this).attr("data-subject-id");
          var board_id   = $(this).attr("data-board-id");
-         var medium_id = $(this).attr("data-medium-id");
-         var class_id = $(this).attr("data-class-id");
+         var medium_id  = $(this).attr("data-medium-id");
+         var class_id   = $(this).attr("data-class-id");
          $('#form_output').html('');
          $.ajax({
             url: base_url + "/admin/updateGetChaptertData",
-            method:'get',
-            data:{chapter_id:chapter_id,subject_id:subject_id,board_id:board_id,medium_id:medium_id,class_id:class_id},
+            method:'post',
+            data:{_token:_accessToken,chapter_id:chapter_id,subject_id:subject_id,board_id:board_id,medium_id:medium_id,class_id:class_id},
             dataType:'json',
             success:function(data)
             {
@@ -359,10 +356,8 @@ $(document).ready(function() {
                 $('#class_id').html(optionsClass);
               
                 //Subject Data//
-              console.log(data.subject_id);
               var htmlSubjectString = data.subject_id;
               var optionSubject = $(htmlSubjectString);
-              console.log(optionSubject);
                 // Iterate over the options
                 optionSubject.each(function(index,subject) {
                     optionSubject.filter(':contains("2")').prop('selected', true);
@@ -373,7 +368,7 @@ $(document).ready(function() {
                 //$('#medium_id').val(data.medium_id);
                 $('#chapter_no').val(data.chapter_no);
                 $('#chapter_name').val(data.chapter_name);
-                $('#chapter_description').val(data.chapter_description);
+                // $('#chapter_description').val(data.chapter_description);
                 $('#chapter_status').val(data.chapter_status);
                 $('#chapter_id').val(chapter_id);
                 $('#chapterModal').modal('show');
