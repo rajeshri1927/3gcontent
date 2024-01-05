@@ -55,9 +55,8 @@ class QuestionBankController extends Controller
         ->join('chapter_details', 'question_list.chapter_id', '=', 'chapter_details.chapter_id')
         ->join('topic_details', 'question_list.topic_id', '=', 'topic_details.topic_id')
         ->orderBy('question_list.question_id', 'DESC')
-        ->take(500)
+        ->limit(500)
         ->get();
-        //dd($question);
         if($question){
             $success_output = '<div class="alert alert-success">Get Question Data !!!</div>';
         }else{
@@ -99,25 +98,92 @@ class QuestionBankController extends Controller
                     $solution = addslashes(trim($request->solution));
                 }
                 $questionBank = new QuestionBank([
-                    'question_id'      =>  $qId,
-                    'board_id'      =>  $request->board_id,
-                    'medium_id'     =>  $request->medium_id,
-                    'class_id'     =>  $request->class_id,
-                    'subject_id' => $request->subject_id,
-                    'chapter_id' => $request->chapter_id,
-                    'topic_id' => $request->topic_id,
-                    'marks'    =>  $request->marks,
-                    'question_type_id' =>  $request->question_type_id,
-                    'level' => $request->dificultyLevel,
-                    'question_status' => $request->question_status,
-                    'question' => $question,
-                    'solution' => $solution,
-                    'created_by' => $user->name,
-                    'creation_ip' => $_SERVER['REMOTE_ADDR']
+                    'question_id'   => strtoupper(substr(uniqid("mcq_qst"."_".md5(uniqid("mcq_qust", true))), 0,18)),
+                    'board_id'      => $request->board_id,
+                    'medium_id'     => $request->medium_id,
+                    'class_id'      => $request->class_id,
+                    'subject_id'    => $request->subject_id,
+                    'chapter_id'    => $request->chapter_id,
+                    'topic_id'      => $request->topic_id,
+                    'marks'         => $request->marks,
+                    'level'         => $request->dificultyLevel,
+                    'question_type' => $request->question_type_id,
+                    'question_status'=> $request->question_status,
+                    'question'      => $request->question,
+                    'solution'      => $request->solution,
+                    'created_by'    => $user->emp_name,
+                    'creation_ip'   => $_SERVER['REMOTE_ADDR']
                 ]);
-                $questionBank->save();
-                $Qb = QuestionBank::where('question_bank_id',$questionBank->getKey())->update(array('question_bank_id' => 'QST'));
-                $success_output = '<div class="alert alert-success">Question Bank Data Inserted</div>';
+                if ($request->question_type_id == 'MCQ') {
+                    $ans=$request['qOption'];  
+                    $questionBank->save();
+                    $lastInsertedId = $questionBank->question_id;
+                        if ($questionBank==true) {
+                            for ($i=1; $i<=4; $i++) {
+                                $option_id= strtoupper(substr(uniqid("mcq_qst" . "_" . md5(uniqid("mcq_qust", true))), 0, 18));
+                                $option=(isset($request['option'.$i]) && $request['option'.$i]!="")?$request['option'.$i]:"";
+                                if ($ans=="option".$i) {
+                                    $result = \DB::table('mcq_option_list')->insert([
+                                        'option_id'   => $option_id,
+                                        'question_id' => $lastInsertedId,
+                                        'option_detail'=> $option,
+                                        'option_sequence' => $i,
+                                        'is_answer'     => 'Yes',
+                                        'created_by'    => $user->emp_name,
+                                        'creation_ip'   => $_SERVER['REMOTE_ADDR']
+                                    ]);
+                                }
+                            }
+
+                        }
+                    }elseif($request->question_type_id == 'True or False'){
+                        $ans     = $request['trueFalse'];
+                        $trueFalseId = strtoupper(substr(uniqid("tf_qst"."_".md5(uniqid("tf_qst", true))), 0,18));
+                        $tfquestion  = addslashes(trim($request['tfQuestion']));
+                        $tfQStatus   =  new QuestionBank([
+                            'question_id' => $trueFalseId,
+                            'board_id'      => $request->board_id,
+                            'medium_id'     => $request->medium_id,
+                            'class_id'      => $request->class_id,
+                            'subject_id'    => $request->subject_id,
+                            'chapter_id'    => $request->chapter_id,
+                            'topic_id'      => $request->topic_id,
+                            'marks'         => $request->marks,
+                            'question_type' => 'True or False',
+                            'level'         => $request->dificultyLevel,
+                            'question_status'=> $request->question_status,
+                            'question'      => $tfquestion,
+                            'is_true'       => $ans,
+                            'created_by'    => $user->emp_name,
+                            'creation_ip'   => $_SERVER['REMOTE_ADDR']
+                        ]);
+                        $tfQStatus->save();
+                    }else{
+                        $qId         = strtoupper(substr(uniqid("qst"."_".md5(uniqid("qst", true))), 0,18));
+                        $question    = addslashes(trim($request['question']));
+                        $solution    = addslashes(trim($request['solution']));
+                        $aiosQStatus =  new QuestionBank([ 
+                            'question_id' => $qId,
+                            'board_id'      => $request->board_id,
+                            'medium_id'     => $request->medium_id,
+                            'class_id'      => $request->class_id,
+                            'subject_id'    => $request->subject_id,
+                            'chapter_id'    => $request->chapter_id,
+                            'topic_id'      => $request->topic_id,
+                            'marks'         => $request->marks,
+                            'question_type' => $request->question_type_id,
+                            'level'         => $request->dificultyLevel,
+                            'question_status'=> $request->question_status,
+                            'question'      => $question,
+                            'solution'      => $solution,
+                            'is_true'       => $ans,
+                            'created_by'    => $user->emp_name,
+                            'creation_ip'   => $_SERVER['REMOTE_ADDR']
+                        ]);
+                        $aiosQStatus->save();
+                    }
+                    $success_output = '<div class="alert alert-success">Question Bank Data Inserted</div>';
+                //}
             }
             if ($request->get('button_action') == 'update') {
                 $question_bank = QuestionBank::find($request->question_bank_id);
@@ -168,11 +234,12 @@ class QuestionBankController extends Controller
         $subjectList = Subject::where('subject_id',$subject_id)->get();
         $chapterList = Chapter::where('chapter_id',$chapter_id)->get();
         $topicList = Topic::where('topic_id',$topic_id)->get();
-        $questionTypeList = QuestionType::where('question_type_id',$questionType_id)->get();
+        $questionTypeList = QuestionType::where('qType_id',$questionType_id)->get();
+        dd($questionTypeList);
         $html = '';
         foreach ($mediumList as $mediumDet) {
             $isSelected = ($mediumDet->medium_id == $medium_id) ? 'selected' : '';
-            $html .= '<option value="' . $mediumDet->medium_id . '" ' . $isSelected . '>' . $mediumDet->medium_name . '</option>';
+            $html .= '<option value="' . $mediumDet->medium_id . '" ' . $isSelected . '>' . $mediumDet->medium. '</option>';
         }  
 
         $htmlClass = '';
@@ -201,16 +268,17 @@ class QuestionBankController extends Controller
 
         $htmlquestiontype = '';
         foreach ($questionTypeList as $questionTypeDet) {
-            $isSelected = ($questionTypeDet->question_type_id == $question_type_id) ? 'selected' : '';
+            dd($questionTypeDet);
+            $isSelected = ($questionTypeDet->question_id == $question_type_id) ? 'selected' : '';
             $htmlquestiontype .= '<option value="' . $questionTypeDet->question_type_id . '" ' . $isSelected . '>' . $questionTypeDet->question_type . '</option>';
         }
 
-        $question_bank_id = $request->input('question_bank_id');
-        $questionBank  = QuestionBank::find($question_bank_id);
+        $question_bank_id = $request->input('question_id');
+        $questionBank  = QuestionBank::where('question_id',$question_bank_id)->first();  
         $output   = array(
-            'board_id'      =>  $questionBank->board_id,
-            'medium_id'     =>  $html,
-            'class_id'     =>  $htmlClass,
+            'board_id'   =>  $questionBank->board_id,
+            'medium_id'  =>  $html,
+            'class_id'   =>  $htmlClass,
             'subject_id' => $htmlsubject,
             'chapter_id' => $htmlchapter,
             'topic_id' => $htmltopic,
@@ -222,12 +290,12 @@ class QuestionBankController extends Controller
         echo json_encode($output);
     }
     
-    public function deleteQuestionBankData(Request $request)
+    function deleteQuestionBankData(Request $request)
     {
         $questionBankID = $request->question_id;
 
         if (!is_null($questionBankID)) {
-            $questionBank = QuestionBank::where('question_bank_id', $questionBankID)->first();
+            $questionBank = QuestionBank::where('question_id', $questionBankID)->first();
             if ($questionBank) {
                 // $questionBank->update(['question_status' => 'No']);
                 $questionBank->delete();

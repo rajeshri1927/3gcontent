@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\Board;
 use Session;
 use Crypt;
 use Validator;
@@ -20,6 +21,8 @@ class DashboardController extends Controller{
 
     public function index(Request $request){
         if(Auth::check()){
+            $count = Board::count();
+            $this->arr_view_data['board_count'] = $count;
             return view($this->module_view_folder.'.dashboard', $this->arr_view_data);
         }       
         return Redirect('/admin')->withErrors([
