@@ -107,13 +107,31 @@ Route::group(array('prefix' => '/admin','middleware' => ['web','admin']), functi
     // Create question paper routes
     $module_controller = "App\Http\Controllers\Admin\QuestionPaperController@";
     Route::any('/getQuestionPaperAllData',['as'=>'','uses'=>$module_controller.'getQuestionPaperAllData']);
+    Route::any('/getAllChaptersAjax',['as'=>'','uses'=>$module_controller.'getAllChaptersAjax']);
     // MCQ question paper
+    $module_controller = "App\Http\Controllers\Admin\McqPaperController@";
     Route::any('/mcqpaper',['as'=>'','uses'=>$module_controller.'mcqpaperlist']);
     Route::any('/createmcqpaper',['as'=>'','uses'=>$module_controller.'createMcqPaper']);
     Route::any('/addmcqpaper',['as'=>'','uses'=>$module_controller.'addMcqPaperDetails']);
     Route::any('/deleteMCQPaper',['as'=>'','uses'=>$module_controller.'deleteMCQPaperData']);
     Route::any('/viewMCQPaper',['as'=>'','uses'=>$module_controller.'viewMCQPaper']);
     Route::any('/viewMCQPaper/{id}',['as'=>'','uses'=>$module_controller.'viewMCQPaper']);
+    Route::any('/viewMCQPaperSolution',['as'=>'','uses'=>$module_controller.'viewMCQSolution']);
+    Route::any('/viewMCQPaperSolution/{id}',['as'=>'','uses'=>$module_controller.'viewMCQSolution']);
+    Route::any('/getSelectedMCQChapterDetailsAjax',['as'=>'','uses'=>$module_controller.'getSelectedMCQChapterDataAjax']);
+    Route::any('/getAllMCQPaperData',['as'=>'','uses'=>$module_controller.'getAllMCQPaperData']);
+    // Objective question paper
+    $module_controller = "App\Http\Controllers\Admin\ObjectivePaperController@";
+    Route::any('/objectivepaper',['as'=>'','uses'=>$module_controller.'objectivepaperlist']);
+    Route::any('/createobjectivepaper',['as'=>'','uses'=>$module_controller.'createObjectivePaper']);
+    Route::any('/addobjectivepaper',['as'=>'','uses'=>$module_controller.'addObjectivePaperDetails']);
+    Route::any('/deleteObjectivePaper',['as'=>'','uses'=>$module_controller.'deleteObjectivePaperData']);
+    Route::any('/viewObjectivePaper',['as'=>'','uses'=>$module_controller.'viewObjectivePaper']);
+    Route::any('/viewObjectivePaper/{id}',['as'=>'','uses'=>$module_controller.'viewObjectivePaper']);
+    Route::any('/viewObjectivePaperSolution',['as'=>'','uses'=>$module_controller.'viewObjectiveSolution']);
+    Route::any('/viewObjectivePaperSolution/{id}',['as'=>'','uses'=>$module_controller.'viewObjectiveSolution']);
+    Route::any('/getSelectedChapterObjDetailsAjax',['as'=>'','uses'=>$module_controller.'getSelectedObjChapterDataAjax']);
+    Route::any('/getAllObjectivePaperData',['as'=>'','uses'=>$module_controller.'getAllObjectivePaperData']);
     // Subjective question paper
     Route::any('/subjectivepaper',['as'=>'','uses'=>$module_controller.'subjectivepaperlist']);
     Route::any('/createsubjectivepaper',['as'=>'','uses'=>$module_controller.'createSubjectivePaper']);
@@ -121,9 +139,7 @@ Route::group(array('prefix' => '/admin','middleware' => ['web','admin']), functi
     Route::any('/deleteSubjectivePaper',['as'=>'','uses'=>$module_controller.'deleteSubjectivePaperData']);
     Route::any('/viewSubjectivePaper',['as'=>'','uses'=>$module_controller.'viewSubjectivePaper']);
     Route::any('/viewSubjectivePaper/{id}',['as'=>'','uses'=>$module_controller.'viewSubjectivePaper']);
-    Route::any('/getAllChaptersAjax',['as'=>'','uses'=>$module_controller.'getAllChaptersAjax']);
-    Route::any('/getSelectedChapterDetailsAjax',['as'=>'','uses'=>$module_controller.'getSelectedChapterDataAjax']);
-
+    
     // Ready paper structure routes
     $module_controller = "App\Http\Controllers\Admin\ReadyPaperController@";
     Route::any('/ready_paper_structure',['as'=>'','uses'=>$module_controller.'readyPaperStructure']);

@@ -132,7 +132,7 @@
                                 <label for="mcqQuestion">Question (MCQs)</label>
                                 <textarea class="textarea formField" name="mcqQuestion" id="mcqQuestion" placeholder="Place some text here" style="width: 100%; height: 400px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
                             </div>
-                            <div class="col-md-4 form-group">
+                            <div class="col-md-4 form-group" id="mcqOptions">
                                 <label for="question">Options</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -431,14 +431,21 @@ $(document).ready(function() {
         if (questionType=="") {
             $("#mcqForm, #trueFalseFrom, #writtenQuestions").hide();
         } else if (questionType=="MCQ") {
-            $("#mcqFrom").show();
+            $("#mcqForm").show();
+            $("#solution").removeClass('question');
+            $("#solution").removeClass('formField');
+            $("#mcqForm").show();
             $("#trueFalseFrom, #writtenQuestions").hide();
-        } else if (questionType=="True or False") {
-            $("#mcqFrom").hide();
+        } else if (questionType=="True or False") { alert("TrueOrFalse");return false;
+            $("#mcqForm").hide();
+            $("#solution").removeClass('question');
+            $("#solution").removeClass('formField');
             $("#trueFalseFrom").show();
             $("#writtenQuestions").hide();
         } else{
-            $("#mcqFrom, #trueFalseFrom").hide();
+            $("#solution").addClass('question');
+            $("#solution").addClass('formField');
+            $("#mcqForm, #trueFalseFrom").hide();
             $("#qt").html("("+questionType+")");
             $("#writtenQuestions").show();
         }
@@ -520,6 +527,7 @@ $(document).ready(function() {
                 $("textarea#mcqQuestion").focus();
                 err = 1;
             }else if (!$("input[name='qOption']:checked").val()) {
+                $("#mcqOptions").css('border','1px solid #e60000');
                 err = 1;
             }
         } else if($("#question_type_id").val() == 'True or False'){

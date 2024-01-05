@@ -14,7 +14,7 @@
         <div class="row align-items-center">
             <div class="col-md-12">
                 <div class="page-header-title">
-                    <h5 class="m-b-10">{{ $paper_stack->question_paper->subject_name }} MCQ Paper</h5>
+                    <h5 class="m-b-10">{{ $paper_stack->question_paper->subject_name }} Objective Paper</h5>
                 </div>
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.php"><i class="feather icon-home"></i></a></li>
@@ -43,7 +43,7 @@
                                 <label></label>
                                 <h4 style="margin:0px; font-size: 20px;background-color: #000; padding: 3px; color: #fff;"><?= strtoupper($paper_stack->question_paper->subject_name) ?></h4>
                             </td>
-                            <td style="width: 15%; border-left:2px solid #000; border-bottom:2px solid #000;">DATE: <?= date("d-m-Y", strtotime($paper_stack->question_paper->created_at)) ?></td>
+                            <td style="width: 15%; border-left:2px solid #000; border-bottom:2px solid #000;">DATE: <?= date("d-m-Y", strtotime($paper_stack->question_paper->created_on)) ?></td>
                         </tr>
                         <tr><?php
                             if(!empty($paper_stack->questions)) {
@@ -91,7 +91,9 @@
                         $k=1; 
                         foreach ($paper_stack->questions as $key => $onequestion){ ?>                        
                             <tr>
-                                <td width="5"><b>Q.<?php echo $k.'. '; ?></b></td>
+                                <td width="5">
+                                    <b>Q.<?php echo $k.'. '; ?></b>
+                                </td>
                                 <td class="line-me" style='width: 100% !important;'><?= trim($onequestion['question']) ?></td>
                             </tr><?php
                             if (!empty($paper_stack['options'])){
@@ -99,13 +101,24 @@
                                     if($one_options['question_id'] == $onequestion['question_id']){ ?>
                                         <tr>
                                             <td width="5"></td>
-                                            <td class="line-me" style='width: 100% !important;'><?= $one_options['option_detail'];?></td>
+                                            <td class="line-me" style='width: 100% !important;'><?= $one_options['option_detail'];?></td><?php 
+                                            if($one_options->is_answer == "Yes"){
+                                                $actual_answer =  $one_options->option_detail;
+                                            } ?>
                                         </tr><?php
                                     }
                                 } 
                             }
                             $k++;
                         } ?>
+                        <tr>
+                            <td width="5"><b style="color: #20307b">Ans.</b></td>
+                            <td class="line-me" style='width: 100% !important;'>
+                                <?php if (!empty($actual_answer)) : ?>
+                                <?= trim($actual_answer) ?>
+                                <?php endif ; ?>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

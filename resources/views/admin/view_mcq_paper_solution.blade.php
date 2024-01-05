@@ -91,7 +91,9 @@
                         $k=1; 
                         foreach ($paper_stack->questions as $key => $onequestion){ ?>                        
                             <tr>
-                                <td width="5"><b>Q.<?php echo $k.'. '; ?></b></td>
+                                <td width="5">
+                                    <b>Q.<?php echo $k.'. '; ?></b>
+                                </td>
                                 <td class="line-me" style='width: 100% !important;'><?= trim($onequestion['question']) ?></td>
                             </tr><?php
                             if (!empty($paper_stack['options'])){
@@ -99,13 +101,24 @@
                                     if($one_options['question_id'] == $onequestion['question_id']){ ?>
                                         <tr>
                                             <td width="5"></td>
-                                            <td class="line-me" style='width: 100% !important;'><?= $one_options['option_detail'];?></td>
+                                            <td class="line-me" style='width: 100% !important;'><?= $one_options['option_detail'];?></td><?php 
+                                            if($one_options->is_answer == "Yes"){
+                                                $actual_answer =  $one_options->option_detail;
+                                            } ?>
                                         </tr><?php
                                     }
                                 } 
                             }
                             $k++;
                         } ?>
+                        <tr>
+                            <td width="5"><b style="color: #20307b">Ans.</b></td>
+                            <td class="line-me" style='width: 100% !important;'>
+                                <?php if (!empty($actual_answer)) : ?>
+                                <?= trim($actual_answer) ?>
+                                <?php endif ; ?>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
