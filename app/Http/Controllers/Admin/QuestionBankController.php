@@ -23,7 +23,7 @@ class QuestionBankController extends Controller
         $this->arr_view_data = [];
         $this->module_view_folder = 'admin';
     }
-
+    
     public function index()
     {     
         $this->arr_view_data['BoardList'] = Board::get(["board_name", "board_id"]);
@@ -31,6 +31,8 @@ class QuestionBankController extends Controller
 
         $this->arr_view_data['QuestionTypeList'] = QuestionType::get(["qType", "qType_status"]);
         $this->arr_view_data['QuestionTypeList'] = $this->arr_view_data['QuestionTypeList'] ?? collect();
+        $count = QuestionBank::count();
+        $this->arr_view_data['question_bank_count'] = $count;
         return view($this->module_view_folder.'.questionbank', $this->arr_view_data);
     }
     
@@ -44,7 +46,7 @@ class QuestionBankController extends Controller
     }
 
     public function getQuestionBankData(){
-        $error_array = array();
+        $error_array    = array();
         $success_output = '';
         $question = QuestionBank::select('question_list.*','topic_details.topic_name','question_list.created_on','board_details.board_name','medium_details.medium','class_details.class_name','subject_details.subject_name','chapter_details.chapter_name')
         ->join('class_details', 'class_details.class_id', '=', 'question_list.class_id')
@@ -53,6 +55,7 @@ class QuestionBankController extends Controller
         ->join('subject_details', 'question_list.subject_id', '=', 'subject_details.subject_id')
         ->join('chapter_details', 'question_list.chapter_id', '=', 'chapter_details.chapter_id')
         ->join('topic_details', 'question_list.topic_id', '=', 'topic_details.topic_id')
+        ->where('question_list.question_type', '=', 'MCQ') 
         ->orderBy('question_list.question_id', 'DESC')
         ->limit(500)
         ->get();
@@ -209,68 +212,141 @@ class QuestionBankController extends Controller
     {
         $medium_id  = $request->input('medium_id');
         $selectedBoardId  = $request->input('board_id');
-        $class_id   = $request->input('class_id');
+        $class_id     = $request->input('class_id');
         $subject_id   = $request->input('subject_id');
         $chapter_id   = $request->input('chapter_id');
         $topic_id   = $request->input('topic_id');
-        $questionType_id   = $request->input('questionType_id');
+        $questionType_id   = $request->input('question_type');
         $mediumList = Medium::where('board_id',$selectedBoardId)->get();
         $classList  = Standard::where('class_id',$class_id)->get();
         $subjectList = Subject::where('subject_id',$subject_id)->get();
         $chapterList = Chapter::where('chapter_id',$chapter_id)->get();
         $topicList = Topic::where('topic_id',$topic_id)->get();
-        $questionTypeList = QuestionType::where('qType_id',$questionType_id)->get();
-        dd($questionTypeList);
+        $questionTypeList = QuestionType::where('qType',$questionType_id)->get();
         $html = '';
         foreach ($mediumList as $mediumDet) {
+            if (isset($request->action) && $request->action == 'view') {
+                $html .= ($mediumDet->medium_id == $medium_id) ? $mediumDet->medium : '';
+            }else{
             $isSelected = ($mediumDet->medium_id == $medium_id) ? 'selected' : '';
             $html .= '<option value="' . $mediumDet->medium_id . '" ' . $isSelected . '>' . $mediumDet->medium. '</option>';
+            }
         }  
 
         $htmlClass = '';
         foreach ($classList as $classDet) {
-            $isSelected = ($classDet->class_id == $class_id) ? 'selected' : '';
-            $htmlClass .= '<option value="' . $classDet->class_id . '" ' . $isSelected . '>' . $classDet->class_name . '</option>';
-        }  
+            if (isset($request->action) && $request->action == 'view') {
+                $htmlClass = $classDet->class_name;
+            } else {
+                $isSelected = ($classDet->class_id == $class_id) ? 'selected' : '';
+                $htmlClass .= '<option value="' . $classDet->class_id . '" ' . $isSelected . '>' . $classDet->class_name . '</option>';
+            }
+        } 
 
         $htmlsubject = '';
         foreach ($subjectList as $subjectDet) {
-            $isSelected = ($subjectDet->subject_id == $subject_id) ? 'selected' : '';
-            $htmlsubject .= '<option value="' . $subjectDet->subject_id . '" ' . $isSelected . '>' . $subjectDet->subject_name . '</option>';
+            if (isset($request->action) && $request->action == 'view') {
+                $htmlsubject = $subjectDet->subject_name;
+            } else {
+                $isSelected = ($subjectDet->subject_id == $subject_id) ? 'selected' : '';
+                $htmlsubject .= '<option value="' . $subjectDet->subject_id . '" ' . $isSelected . '>' . $subjectDet->subject_name . '</option>';
+            }
         }
         
         $htmlchapter = '';
         foreach ($chapterList as $chapterDet) {
-            $isSelected = ($chapterDet->chapter_id == $chapter_id) ? 'selected' : '';
-            $htmlchapter .= '<option value="' . $chapterDet->chapter_id . '" ' . $isSelected . '>' . $chapterDet->chapter_name . '</option>';
+            if (isset($request->action) && $request->action == 'view') {
+                $htmlchapter = $chapterDet->chapter_name;
+            }else{
+                $isSelected = ($chapterDet->chapter_id == $chapter_id) ? 'selected' : '';
+                $htmlchapter .= '<option value="' . $chapterDet->chapter_id . '" ' . $isSelected . '>' . $chapterDet->chapter_name . '</option>';
+            }
         }
 
-        $htmltopic = '';
-        foreach ($topicList as $topicDet) {
-            $isSelected = ($topicDet->topic_id == $topic_id) ? 'selected' : '';
-            $htmltopic .= '<option value="' . $topicDet->topic_id . '" ' . $isSelected . '>' . $topicDet->topic_name . '</option>';
+        $htmltopic = (isset($request->action) && $request->action == 'view') ? 'NA' : '';
+        if(!empty($topicList)){
+            foreach ($topicList as $topicDet) {
+                if (isset($request->action) && $request->action == 'view') {
+                    $htmltopic = $topicDet->topic_name;
+                }else{
+                    $isSelected = ($topicDet->topic_id == $topic_id) ? 'selected' : '';
+                    $htmltopic .= '<option value="' . $topicDet->topic_id . '" ' . $isSelected . '>' . $topicDet->topic_name . '</option>';
+                }
+            }
         }
 
         $htmlquestiontype = '';
         foreach ($questionTypeList as $questionTypeDet) {
-            dd($questionTypeDet);
-            $isSelected = ($questionTypeDet->question_id == $question_type_id) ? 'selected' : '';
-            $htmlquestiontype .= '<option value="' . $questionTypeDet->question_type_id . '" ' . $isSelected . '>' . $questionTypeDet->question_type . '</option>';
+            if (isset($request->action) && $request->action == 'view') {
+                $htmlquestiontype = $questionTypeDet->qType;
+            }else{
+                $isSelected = ($questionTypeDet->question_id == $question_type_id) ? 'selected' : '';
+                $htmlquestiontype .= '<option value="' . $questionTypeDet->question_type_id . '" ' . $isSelected . '>' . $questionTypeDet->question_type . '</option>';
+            }
         }
 
         $question_bank_id = $request->input('question_id');
         $questionBank  = QuestionBank::where('question_id',$question_bank_id)->first();  
+        $created_on   = date('d M Y ',strtotime($questionBank->created_on));
+        $boardDetails = Board::where('board_id',$selectedBoardId)->first();
+        if (isset($request->action) && $request->action == 'view') {
+            $board_id = $boardDetails->board_name;
+        } else {
+            $board_id = $questionBank->board_id;
+        }
+
+        $soluation = (!empty($questionBank->solution)) ? $questionBank->solution : 'NA';
+        if($htmlquestiontype=='True or False'){
+            $check1 = ($questionBank->is_true=="Yes") ? 'checked' : '';
+            $check2 = ($questionBank->is_true=="No") ? 'checked' : '';
+
+            // $soluation = $questionBank->is_true;
+            $soluation = '<div class="form-group">                        
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><input type="checkbox" name="edittrueFalse" value="Yes" '.$check1.' readonly></span>
+                      </div>
+                      <input type="text" class="form-control" name="true" value="True" readonly>
+                    </div>
+                  </div>
+                  <div class="form-group">                        
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><input type="checkbox" name="edittrueFalse" value="No" '.$check2.' readonly></span>
+                      </div>
+                      <input type="text" class="form-control" name="False" value="False" readonly>
+                    </div>
+                  </div>'; 
+        }elseif ($htmlquestiontype == 'MCQ') {
+            $result = \DB::table('mcq_option_list')->where('question_id', $question_bank_id)->get();
+            // dd($result);
+            $i = 1;
+            foreach ($result as $key => $optvalue) {
+                $soluation = '<div class="input-group mt-1">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><input type="checkbox" name="editqOption" value="option' . $i . '" ' . (($optvalue->is_answer == "Yes") ? "checked" : "") . '></span>
+                    </div>
+                    <input type="text" class="form-control" name="option' . $i . '" id="option' . $i . '" value="' . $optvalue->option_detail . '" readonly>
+                </div>';
+                $i++;
+            }
+        } else {
+            $soluation = $questionBank->solution;
+        }                         
         $output   = array(
-            'board_id'   =>  $questionBank->board_id,
+            'board_id'   =>  $board_id,
             'medium_id'  =>  $html,
             'class_id'   =>  $htmlClass,
-            'subject_id' => $htmlsubject,
-            'chapter_id' => $htmlchapter,
-            'topic_id' => $htmltopic,
-            'marks'    =>  $questionBank->marks,
-            'question_type'  =>  $htmlquestiontype,
-            'level' => $questionBank->level,
-            'question_status' => $questionBank->question_status
+            'subject_id' =>  $htmlsubject,
+            'chapter_id' =>  $htmlchapter,
+            'topic_id'   =>  $htmltopic,
+            'marks'      =>  $questionBank->marks,
+            'question_type'  => $htmlquestiontype,
+            'level'      => $questionBank->level,
+            'question'   => $questionBank->question,
+            'solution'   => $soluation,
+            'question_status' => $questionBank->question_status,
+            'created_on' => $created_on,
         );
         echo json_encode($output);
     }

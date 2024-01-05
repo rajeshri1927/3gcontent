@@ -27,9 +27,9 @@
 		</div>
 		
 		<ul class="nav pcoded-inner-navbar ">
-			<!-- <li class="nav-item pcoded-menu-caption">
-				<label>Dashboard</label>
-			</li> -->
+			 <li class="nav-item pcoded-menu-caption">
+				<a href="dashboard" class="nav-link"><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
+			</li> 
 			<!-- <li class="nav-item">
 			    <a href="index.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
 			</li> -->
@@ -44,7 +44,7 @@
 				<label>Academic</label>
 			</li>
 			<li class="nav-item pcoded-hasmenu">
-				<a href="#!" class="nav-link "><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext">Academic List</span></a>
+				<a class="nav-link "><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext">Academic List</span></a>
 				<ul class="pcoded-submenu">
 					<li><a href="board">Board</a></li>
 					<li><a href="medium">Medium </a></li>
@@ -57,15 +57,15 @@
 				</ul>
 			</li>
 			<!-- Class Managment Here -->
-			<li class="nav-item pcoded-hasmenu">	
-			<a href="#!" class="nav-link "><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext"> User Management</span></a>
-				<ul class="pcoded-submenu">
-					<li><a href="employeeManagement">Employee Managment</a></li>
-					<li><a href="classesManagement">Classes Managment</a></li>
+			<!--<li class="nav-item pcoded-hasmenu">	-->
+			<!--<a href="#!" class="nav-link "><span class="pcoded-micon"><i class="feather icon-box"></i></span><span class="pcoded-mtext"> User Management</span></a>-->
+			<!--	<ul class="pcoded-submenu">-->
+			<!--		<li><a href="employeeManagement">Employee Managment</a></li>-->
+			<!--		<li><a href="classesManagement">Classes Managment</a></li>-->
 					<!--  <li><a href="test_details.php">Test List</a></li>
 					<li><a href="chapters_details.php">Attandance List</a></li> -->
-				</ul>
-			</li>
+			<!--	</ul>-->
+			<!--</li>-->
 			<!-- End Class Managment -->
 			<!-- Test Managment Here -->
 			<!-- <li class="nav-item pcoded-hasmenu">	
