@@ -435,29 +435,31 @@ $(document).ready(function() {
                     var createdAtDate = new Date(data[count].created_at);
                     var options = { day: 'numeric', month: 'short', year: 'numeric' };
                     var formattedCreatedAt = createdAtDate.toLocaleDateString('en-US', options);
-                    html +='<td contenteditable class="column_name" data-column_name="id" data-id="'+data[count].id+'">'+(parseInt(count+1))+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="board_name" data-id="'+data[count].id+'">'+data[count].board_name+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="medium" data-id="'+data[count].id+'">'+data[count].medium+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="class_name" data-id="'+data[count].id+'">'+data[count].class_name+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="subject_name" data-id="'+data[count].id+'">'+data[count].subject_name+'</td>';
-                    html += '<td contenteditable class="column_name" data-column_name="question_type_id" data-id="'+data[count].id+'">'+data[count].question_type_id+'</td>';
-                    html += '<td contenteditable class="column_name" data-column_name="total_paper_marks" data-id="'+data[count].id+'">'+data[count].total_paper_marks+'</td>';
-                    html += '<td contenteditable class="column_name" data-column_name="marks_per_each_question" data-id="'+data[count].id+'">'+data[count].marks_per_each_question+'</td>';
-                    html += '<td contenteditable class="column_name" data-column_name="question_type_order" data-id="'+data[count].id+'">'+data[count].question_type_order+'</td>';
-                    html += '<td data-column_name="created_at" data-id="' + data[count].id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
-                    html += '<td>';
-                    html += '<button class="btn btn-sm btn-secondary mt-1 view" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].id+'" data-subject-id="'+data[count].subject_id+'" data-total-marks="'+data[count].total_paper_marks+'" data-question-type-id="'+data[count].question_type_id+'" data-toggle="modal" title="Update Ready Paper Structure Details"><i class="fas fa-eye"></i></button>';
-                    html += '<button class="btn btn-sm btn-warning mt-1 ml-2 update" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].id+'" data-subject-id="'+data[count].subject_id+'" data-total-marks="'+data[count].total_paper_marks+'" data-question-type-id="'+data[count].question_type_id+'" data-toggle="modal" title="Update Ready Paper Structure Details"><i class="fas fa-edit"></i></button>';
-                    html += '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].id+'" data-toggle="modal"  title="Delete Ready Paper Structure Details"><i class="fas fa-trash-alt"></i></button>';
-                    html += '</td></tr>';
+                    html +='<td data-column_name="id" data-id="'+data[count].id+'">'+(parseInt(count+1))+'</td>';
+                    html +='<td data-column_name="board_name" data-id="'+data[count].id+'">'+data[count].board_name+'</td>';
+                    html +='<td data-column_name="medium" data-id="'+data[count].id+'">'+data[count].medium+'</td>';
+                    html +='<td data-column_name="class_name" data-id="'+data[count].id+'">'+data[count].class_name+'</td>';
+                    html +='<td data-column_name="subject_name" data-id="'+data[count].id+'">'+data[count].subject_name+'</td>';
+                    html +='<td data-column_name="question_type_id" data-id="'+data[count].id+'">'+data[count].question_type_id+'</td>';
+                    html +='<td data-column_name="total_paper_marks" data-id="'+data[count].id+'">'+data[count].total_paper_marks+'</td>';
+                    html +='<td data-column_name="marks_per_each_question" data-id="'+data[count].id+'">'+data[count].marks_per_each_question+'</td>';
+                    html +='<td  data-column_name="question_type_order" data-id="'+data[count].id+'">'+data[count].question_type_order+'</td>';
+                    html +='<td data-column_name="created_at" data-id="' + data[count].id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
+                    html +='<td>';
+                    html +='<button class="btn btn-sm btn-secondary mt-1 view" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].id+'" data-subject-id="'+data[count].subject_id+'" data-total-marks="'+data[count].total_paper_marks+'" data-question-type-id="'+data[count].question_type_id+'" data-toggle="modal" title="Update Ready Paper Structure Details"><i class="fas fa-eye"></i></button>';
+                    html +='<button class="btn btn-sm btn-warning mt-1 ml-2 update" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].id+'" data-subject-id="'+data[count].subject_id+'" data-total-marks="'+data[count].total_paper_marks+'" data-question-type-id="'+data[count].question_type_id+'" data-toggle="modal" title="Update Ready Paper Structure Details"><i class="fas fa-edit"></i></button>';
+                    html +='<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].id+'" data-toggle="modal"  title="Delete Ready Paper Structure Details"><i class="fas fa-trash-alt"></i></button>';
+                    html +='</td></tr>';
                 }
                 $('tbody').html(html);
-                $('#topic_table').DataTable({
-                    // DataTables configuration options here
-                    "order": [[0, "desc"]], // Example: Sort by the first column (subject_id) in descending order
+                var table =  $('#topic_table').DataTable({
+                    // "order": [[0, "ASC"]], 
+                    aaSorting: [[0, 'asc']],// Adjust the column index based on your actual table structure
                     "paging": true,
-                    "pageLength": 10,
-                    "bDestroy": true
+                    "pageLength": 50,
+                    "bDestroy": true,
+                    "autoWidth": false,
+                    "responsive": true,
                 });
             }
         });

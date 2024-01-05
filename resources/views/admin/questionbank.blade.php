@@ -32,8 +32,61 @@
         <div class="card-header text-right">
             <button type="button" class="btn  btn-primary" data-toggle="modal" data-target="#questionModal" > <i class="fa-solid fa-plus"></i> Add New Question </button>
         </div>
+        <div class="modal-body">
+        <form autocomplete="off" id="addQuestion" method="post">
+            {{ csrf_field() }}
+            <div class="row">
+            <div class="col-md-2 form-group">
+            <label for="recipient-name" class="col-form-label">Select Board </label>
+                <select class="form-control formField" name="board_id" id="board_id">
+                    <option value="">--- Select Board ---</option>
+                    @if(!empty($BoardList))
+                        @foreach($BoardList as $data)
+                            <option value="{{$data->board_id}}">{{$data->board_name}}</option>
+                        @endforeach
+                    @endif
+                </select>
+            </div>
+            <div class="col-md-2 form-group">
+                <label for="medium_id" class="col-form-label">Select Medium </label>
+                <select class="form-control formField" name="medium_id" id="medium_id">
+                    <option value="">--- Select Medium ---</option>
+                </select>
+            </div>
+            <div class="col-md-2 form-group">
+                <label for="class_id" class="col-form-label">Select Class:</label>
+                <select class="form-control formField" name="class_id" id="class_id">
+                    <option value="">--- Select Class ---</option>
+                </select>
+            </div>
+            <div class="col-md-2 form-group">
+                <label for="subject_id" class="col-form-label">Select Subject:</label>
+                <select class="form-control formField" name="subject_id" id="subject_id">
+                    <option value="">--- Select Subject ---</option>
+                </select>
+            </div>
+            <div class="col-md-2 form-group">
+                <label for="chapter_id" class="col-form-label">Select Chapter:</label>
+                <select class="form-control formField" name="chapter_id" id="chapter_id">
+                    <option value="">--- Select Chapter ---</option>
+                </select>
+            </div>
+            <div class="col-md-2 form-group">
+                <label for="topic_id" class="col-form-label">Select Topic:</label>
+                <select class="form-control formField" name="topic_id" id="topic_id">
+                    <option value="">--- Select Topic ---</option>
+                </select>
+            </div>
+            </div>
+            <div class="modal-footer">
+                <!-- <input type="hidden" name="question_id" id="question_id" value="" /> -->
+                <input type="hidden" name="button_action" id="button_action" value="insert" />
+                <input type="submit" name="submit" id="action" class="btn  btn-primary" value="Apply Filter">
+            </div>
+        </form>
+        </div>
         <div class="modal fade" id="questionModal" tabindex="-1" role="dialog" aria-labelledby="questionModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="questionModalLabel">Create Question</h5>
@@ -120,8 +173,8 @@
                                 <label for="question_status" class="col-form-label"> Question Status:</label>
                                 <select class="form-control formField" name="question_status" id="question_status">
                                     <option value="">--Select Status--</option>
-                                    <option value="Yes">Yes</option>
-                                    <option value="No">No</option>
+                                    <option value="Active">Active</option>
+                                    <option value="InActive">InActive</option>
                                 </select>
                             </div>
                         </div>
@@ -218,7 +271,7 @@
                         <!-- Written Question End -->
 
                         <div class="modal-footer">
-                            <input type="hidden" name="question_bank_id" id="question_bank_id" value="" />
+                            <input type="hidden" name="question_id" id="question_id" value="" />
                             <input type="hidden" name="button_action" id="button_action" value="insert" />
                             <button type="button" class="btn  btn-secondary" data-dismiss="modal">Close</button>
                             <input type="submit" name="submit" id="action" class="btn  btn-primary" value="Add Question">
@@ -231,7 +284,7 @@
         <div class="card-body table-border-style">
         <div class="table-responsive">
             <span id="form_output"></span>
-            <table class="table table-striped table-bordered example1" id="example1">
+            <table class="table table-striped table-bordered data-table example1" id="example1">
                 <thead>
                     <tr>
                         <th>Sr.No</th>
@@ -243,10 +296,11 @@
                         <th>Marks</th>
                         <th>Type</th>
                         <th>Question</th>
+                        <th>Date</th>
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody></tbody>
+                <tbody id="question_list_data"></tbody>
             </table>
 	    </div>
         <!-- Delete Class Modal -->
@@ -287,23 +341,12 @@
 </style>
 <script src="{{ asset('public/assets/summernote/summernote-bs4.js')}}"></script>
 <script src="{{ asset('public/assets/js/summernote-math.js')}}"></script>
+<!-- <script src="https://code.jquery.com/jquery-3.5.1.js"></script> -->
+<!-- <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>-->
+<!-- <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap.min.js"></script>-->
+<!-- <script src="https://cdn.datatables.net/fixedheader/3.3.2/js/dataTables.fixedHeader.min.js"></script>-->
 <script>
 $(document).ready(function() {
-    //  $(".example1").DataTable({
-    //   "responsive": true,
-    //   "autoWidth": false,
-    //   "pageLength": 50,
-    //   "language": {
-    //   "lengthMenu": 'Show <select class="form-control form-control-sm">'+
-    //   '<option value="10">10</option>'+
-    //   '<option value="50">50</option>'+
-    //   '<option value="100">100</option>'+
-    //   '<option value="500">500</option>'+
-    //   '<option value="1000">1000</option>'+
-    //   '<option value="-1">All</option>'+
-    //   '</select> entries'
-    //  }
-    // });
 
     $('.textarea').summernote({
         fontSizes: ['8', '9', '10', '11', '12', '13', '14','16', '18','20', '24'],
@@ -402,7 +445,7 @@ $(document).ready(function() {
         $(this).css('border','2px solid rgba(0, 0, 0, 0.15)');
         var board_id = $("#board_id").val();
         var medium_id = $("#medium_id").val();
-        var class_id = $("#class_id").val();
+        var class_id   = $("#class_id").val();
         var subject_id = $("#subject_id").val();
         var chapter_id = this.value;
         $.ajax({
@@ -410,6 +453,7 @@ $(document).ready(function() {
             method:"GET",
             data:{chapter_id:chapter_id},
             success:function(result){
+                console.log(result);
                 $('#topic_id').html('<option value="">--- Select Topic ---</option>');
                 if(result){
                     $('#topic_id').append(result);
@@ -427,18 +471,19 @@ $(document).ready(function() {
 
     $("#question_type_id").on('change', function(event){
         var questionType = $(this).val();
+        alert(questionType);
         $(this).css('border','2px solid rgba(0, 0, 0, 0.15)');
         if (questionType=="") {
             $("#mcqForm, #trueFalseFrom, #writtenQuestions").hide();
-        } else if (questionType=="MCQ") {
-            $("#mcqFrom").show();
+        } else if(questionType=="MCQ") {
+            $("#mcqForm").show();
             $("#trueFalseFrom, #writtenQuestions").hide();
         } else if (questionType=="True or False") {
-            $("#mcqFrom").hide();
+            $("#mcqForm").hide();
             $("#trueFalseFrom").show();
             $("#writtenQuestions").hide();
         } else{
-            $("#mcqFrom, #trueFalseFrom").hide();
+            $("#mcqForm, #trueFalseFrom").hide();
             $("#qt").html("("+questionType+")");
             $("#writtenQuestions").show();
         }
@@ -459,31 +504,43 @@ $(document).ready(function() {
                     var options = { day: 'numeric', month: 'short', year: 'numeric' };
                     var formattedCreatedAt = createdAtDate.toLocaleDateString('en-US', options);
 
-                    html +='<td contenteditable class="column_name" data-column_name="question_id" data-id="'+data[count].question_id+'">'+count+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="board_name" data-id="'+data[count].question_id+'">'+data[count].board_name+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="medium_name" data-id="'+data[count].question_id+'">'+data[count].medium+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="class_name" data-id="'+data[count].question_id+'">'+data[count].class_name+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="subject_name" data-id="'+data[count].question_id+'">'+data[count].subject_name+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="chapter_name" data-id="'+data[count].question_id+'">'+data[count].chapter_name+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="marks" data-id="'+data[count].question_id+'">'+data[count].marks+'</td>';
-                    html += '<td contenteditable class="column_name" data-column_name="question_type" data-id="'+data[count].question_id+'">'+data[count].question_type+'</td>';
-                    html += '<td contenteditable class="column_name" data-column_name="question_type" data-id="'+data[count].question_id+'">'+data[count].question+'</td>';
+                    html +='<td data-column_name="question_id" data-id="'+data[count].question_id+'">'+count+'</td>';
+                    html +='<td data-column_name="board_name" data-id="'+data[count].question_id+'">'+data[count].board_name+'</td>';
+                    html +='<td data-column_name="medium_name" data-id="'+data[count].question_id+'">'+data[count].medium+'</td>';
+                    html +='<td data-column_name="class_name" data-id="'+data[count].question_id+'">'+data[count].class_name+'</td>';
+                    html +='<td data-column_name="subject_name" data-id="'+data[count].question_id+'">'+data[count].subject_name+'</td>';
+                    html +='<td data-column_name="chapter_name" data-id="'+data[count].question_id+'">'+data[count].chapter_name+'</td>';
+                    html +='<td data-column_name="marks" data-id="'+data[count].question_id+'">'+data[count].marks+'</td>';
+                    html += '<td data-column_name="question_type" data-id="'+data[count].question_id+'">'+data[count].question_type+'</td>';
+                    html += '<td data-column_name="question_type" data-id="'+data[count].question_id+'">'+data[count].question+'</td>';
                     html += '<td data-column_name="created_at" data-id="' + data[count].question_id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
                     html += '<td>';
-                    html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].question_bank_id+'" data-subject-id="'+data[count].subject_id+'" data-topic-id="'+data[count].topic_id+'" data-chapter-id="'+data[count].chapter_id+'" data-questionType="'+data[count].question_type_id+'" data-toggle="modal" title="Update Question Bank Details"><i class="fas fa-edit"></i></button>';
+                    html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].question_id+'" data-subject-id="'+data[count].subject_id+'" data-topic-id="'+data[count].topic_id+'" data-chapter-id="'+data[count].chapter_id+'" data-questionType="'+data[count].question_type+'" data-toggle="modal" title="Update Question Bank Details"><i class="fas fa-edit"></i></button>';
                     html += '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].question_id+'" data-toggle="modal"  title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
                     html += '</td></tr>';
                 }
-                $('tbody').html(html);
-                $('#example1').DataTable({
-                    // DataTables configuration options here
-                    "order": [[0, "desc"]], // Example: Sort by the first column (subject_id) in descending order
+                $('#question_list_data').html(html);
+                // $('#example1').DataTable({
+                //     // DataTables configuration options here
+                //     "order": [[0, "desc"]], // Example: Sort by the first column (subject_id) in descending order
+                //     "paging": true,
+                //     "pageLength": 50,
+                //     "bDestroy": true,
+                //     "responsive": true,
+                //     "autoWidth": false,
+                // });
+                var table =  $('#example1').DataTable({
+                    // "order": [[0, "ASC"]], 
+                    aaSorting: [[0, 'asc']],// Adjust the column index based on your actual table structure
                     "paging": true,
-                    "pageLength": 10,
-                    "bDestroy": true
+                    "pageLength": 50,
+                    "bDestroy": true,
+                    "autoWidth": false,
+                    "responsive": true,
                 });
             }
         });
+        //new $.fn.dataTable.FixedHeader(table);
     }
 
     //Add Medium Using Ajax //
@@ -506,9 +563,9 @@ $(document).ready(function() {
         } else if($("#chapter_id").val() == ''){
             err = 1;
             fieldId = $("#chapter_id");
-        } else if($("#topic_id").val() == ''){
-            err = 1;
-            fieldId = $("#topic_id");
+        //} else if($("#topic_id").val() == ''){
+           // err = 1;
+            //fieldId = $("#topic_id");
         } else if($("#marks").val() == ''){
             err = 1;
             fieldId = $("#marks");
@@ -547,13 +604,15 @@ $(document).ready(function() {
             }).css('border','1px solid #e60000'); //#495057
             return false;
         } else {
-            var form_data = $(this).serialize();
+            var form_data = $(this).serializeArray();
+            console.log(form_data);
             $.ajax({ 
                 url: base_url + "/admin/addQuestion",
                 method:"POST",
                 data:form_data,
                 dataType:"json",
                 success:function(data){
+                    console.log(data);
                     if(data.error.length > 0) {
                         var error_html = '';
                         for(var count = 0; count < data.error.length; count++) {
@@ -591,19 +650,20 @@ $(document).ready(function() {
 
     //Update data fetch Here//
     $(document).on('click', '.update', function(){
-        var question_bank_id = $(this).attr("data-id");
-        var board_id   = $(this).attr("data-board-id");
-        var medium_id = $(this).attr("data-medium-id");
-        var class_id = $(this).attr("data-class-id");
-        var subject_id = $(this).attr("data-subject-id");
-        var chapter_id = $(this).attr("data-chapter-id");
-        var topic_id = $(this).attr("data-topic-id");
+        var question_id  = $(this).attr("data-id");
+        var board_id     = $(this).attr("data-board-id");
+        var medium_id    = $(this).attr("data-medium-id");
+        var class_id     = $(this).attr("data-class-id");
+        var subject_id   = $(this).attr("data-subject-id");
+        var chapter_id   = $(this).attr("data-chapter-id");
+        var topic_id     = $(this).attr("data-topic-id");
         var question_type_id = $(this).attr("data-questionType");
          $('#form_output').html('');
          $.ajax({
             url: base_url + "/admin/updateGetQuestionData",
             method:'post',
-            data:{_token:_accessToken,question_bank_id:question_bank_id,board_id:board_id,medium_id:medium_id,class_id:class_id,subject_id:subject_id,chapter_id:chapter_id,topic_id:topic_id,question_type_id:question_type_id},
+            data:{_token:_accessToken,question_id:question_id,board_id:board_id,medium_id:medium_id,class_id:class_id,subject_id:subject_id,chapter_id:chapter_id,topic_id:topic_id,question_type_id:question_type_id},
+            // data:{_token:_accessToken,question_bank_id:question_bank_id,board_id:board_id,medium_id:medium_id,class_id:class_id,subject_id:subject_id,chapter_id:chapter_id,topic_id:topic_id,question_type_id:question_type_id},
             dataType:'json',
             success:function(data)
             {
@@ -660,12 +720,11 @@ $(document).ready(function() {
                     optionQuestionType.filter(':contains("2")').prop('selected', true);
                 });
                 $('#question_type_id').html(optionQuestionType);
-
                 $('#board_id').val(data.board_id);
                 $('#dificultyLevel').val(data.level);
                 $('#question_status').val(data.question_status);
                 $('#marks').val(data.marks);
-                $('#question_bank_id').val(question_bank_id);
+                $('#question_id').val(question_id);
                 $('#questionModal').modal('show');
                 $('#action').val('Update');
                 $('.modal-title').text('Edit Data');
