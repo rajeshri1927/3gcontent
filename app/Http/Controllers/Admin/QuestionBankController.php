@@ -14,6 +14,7 @@ use App\Models\Chapter;
 use App\Models\Topic;
 use App\Models\QuestionType;
 use App\Models\QuestionBank;
+use App\Models\McqOptions;
 use Validator;
 use DB;
 
@@ -73,6 +74,7 @@ class QuestionBankController extends Controller
 
     public function addQuestionBank(Request $request){
         $user = Auth::user();
+        echo "<pre>";print_r($request->all());die;
         $validation = Validator::make($request->all(), [
             'marks'    => 'required'
         ]);
@@ -85,6 +87,19 @@ class QuestionBankController extends Controller
         } else {
             if($request->get('button_action') == "insert")
             {
+                $mcqAns = '';
+                if($request->question_type_id == 'MCQ'){
+                    $qId = strtoupper(substr(uniqid("mcq_qst"."_".md5(uniqid("mcq_qust", true))), 0,18));
+                    $question = addslashes(trim($request->question));
+                    $solution = $mcqAns = $request->qOption;
+                } elseif ($questionType=="True or False") {
+                    $qId = strtoupper(substr(uniqid("tf_qst"."_".md5(uniqid("tf_qst", true))), 0,18));
+                    $question = addslashes(trim($request->question));
+                } else {
+                    $qId = strtoupper(substr(uniqid("qst"."_".md5(uniqid("qst", true))), 0,18));
+                    $question = addslashes(trim($request->question));
+                    $solution = addslashes(trim($request->solution));
+                }
                 $questionBank = new QuestionBank([
                     'question_id'   => strtoupper(substr(uniqid("mcq_qst"."_".md5(uniqid("mcq_qust", true))), 0,18)),
                     'board_id'      => $request->board_id,

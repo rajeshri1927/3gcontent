@@ -79,6 +79,7 @@ class ReadyPaperController extends Controller
                         'sections_name' => $request->sections_name
                 ]);
                 $paperStructure->save();
+                die;
                 $success_output = '<div class="alert alert-success">Ready Paper Data Inserted</div>';
             }
             if ($request->get('button_action') == 'update') {

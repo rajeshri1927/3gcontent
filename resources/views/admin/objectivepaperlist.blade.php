@@ -14,12 +14,12 @@
         <div class="row align-items-center">
             <div class="col-md-12">
                 <div class="page-header-title">
-                    <h5 class="m-b-10">Manage MCQ Question Paper Here</h5>
+                    <h5 class="m-b-10">Manage Objective Question Paper Here</h5>
                 </div>
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.php"><i class="feather icon-home"></i></a></li>
-                    <li class="breadcrumb-item"><a href="#!">Manage MCQ Question Paper Info</a></li>
-                    <li class="breadcrumb-item"><a href="#!">Manage MCQ Question Paper Details</a></li>
+                    <li class="breadcrumb-item"><a href="#!">Manage Objective Question Paper Info</a></li>
+                    <li class="breadcrumb-item"><a href="#!">Manage Objective Question Paper Details</a></li>
                 </ul>
             </div>
         </div>
@@ -30,7 +30,7 @@
 <div class="col-xl-12">
     <div class="card">
         <div class="card-header text-right">
-            <a href="{{ url('/admin/createmcqpaper') }}" class="btn btn-primary"> <i class="fa-solid fa-plus"></i> Create Paper </a>
+            <a href="{{ url('/admin/createobjectivepaper') }}" class="btn btn-primary"> <i class="fa-solid fa-plus"></i> Create Paper </a>
         </div>
         <div class="card-body table-border-style">
             <div class="table-responsive">
@@ -43,7 +43,7 @@
                             <th>Medium</th>
                             <th>Class</th>
                             <th>Subject</th>
-                            <th>Created by</th>
+                            <th>Chapter</th>
                             <th>Create Date / Time</th>
                             <th>Action</th>
                         </tr>
@@ -89,34 +89,38 @@
 </style>
 <script>
 $(document).ready(function() {
+
     //View/Get data in html format Here//
     fetchQuestionPaperData();
     function fetchQuestionPaperData()
     {
         $.ajax({
-            url: base_url + "/admin/getAllMCQPaperData",
+            url: base_url + "/admin/getAllObjectivePaperData",
             dataType:"json",
             success:function(data) {
                 var html = '';
                 
                 for(var count=0; count < data.length; count++) {
                     html +='<tr>';
-                    var createdAtDate = new Date(data[count].created_at);
+                    var createdAtDate = new Date(data[count].created_on);
                     var options = { day: 'numeric', month: 'short', year: 'numeric' };
                     var formattedCreatedAt = createdAtDate.toLocaleDateString('en-US', options);
-                    console.log(count);
-                    html +='<td data-column_name="mcq_id" data-id="'+data[count].id+'">'+(parseInt(count))+'</td>';
-                    html +='<td data-column_name="board_name" data-id="'+data[count].id+'">'+data[count].board_name+'</td>';
-                    html +='<td data-column_name="medium_name" data-id="'+data[count].id+'">'+data[count].medium+'</td>';
-                    html +='<td data-column_name="class_name" data-id="'+data[count].id+'">'+data[count].class_name+'</td>';
-                    html +='<td data-column_name="subject_name" data-id="'+data[count].id+'">'+data[count].subject_name+'</td>';
-                    html +='<td data-column_name="created_by" data-id="'+data[count].id+'">'+data[count].created_by+'</td>';
-                    html +='<td data-column_name="created_at" data-id="' + data[count].id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
-                    html +='<td>';
-                    var viewOpen = '<?php echo url("/admin/viewMCQPaper");?>';
-                    html += '<button class="btn btn-sm btn-secondary mt-1 viewQP" onclick="window.open('+"'"+viewOpen+"/"+data[count].id+"'"+')" type="button" data-id="'+data[count].id+'" title="View Question Paper"><i class="fas fa-eye"></i></button>';
-                    html += '<button class="btn btn-sm btn-primary mt-1 ml-2 viewQPS" type="button" data-id="'+data[count].id+'" title="View Answer Paper"><i class="fas fa-eye"></i></button>';
-                    html += '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].id+'" data-toggle="modal"  title="Delete Question Paper"><i class="fas fa-trash-alt"></i></button>';
+                    html +='<td contenteditable class="column_name" data-column_name="id" data-id="'+data[count].question_id+'">'+(parseInt(count+1))+'</td>';
+                    html +='<td contenteditable class="column_name" data-column_name="board_name" data-id="'+data[count].question_id+'">'+data[count].board_name+'</td>';
+                    html +='<td contenteditable class="column_name" data-column_name="medium_name" data-id="'+data[count].question_id+'">'+data[count].medium+'</td>';
+                    html +='<td contenteditable class="column_name" data-column_name="class_name" data-id="'+data[count].question_id+'">'+data[count].class_name+'</td>';
+                    html +='<td contenteditable class="column_name" data-column_name="subject_name" data-id="'+data[count].question_id+'">'+data[count].subject_name+'</td>';
+                    html +='<td contenteditable class="column_name" data-column_name="chapter_name" data-id="'+data[count].question_id+'">'+data[count].chapter_name+'</td>';
+                    html += '<td data-column_name="created_at" data-id="' + data[count].question_id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
+                    html += '<td>';
+
+                    var viewPaper = '<?php echo url("/admin/viewObjectivePaper");?>';
+                    var viewPaperSolution = '<?php echo url("/admin/viewObjectivePaperSolution");?>';
+
+                    html += '<button class="btn btn-sm btn-secondary mt-1 viewQP" onclick="window.open('+"'"+viewPaper+"/"+data[count].question_id+"'"+')" type="button" data-id="'+data[count].question_id+'" title="View Question Paper"><i class="fas fa-eye"></i></button>';
+                    html += '<button class="btn btn-sm btn-primary mt-1 ml-2 viewQPS" onclick="window.open('+"'"+viewPaperSolution+"/"+data[count].question_id+"'"+')" type="button" data-id="'+data[count].question_id+'" title="View Answer Paper"><i class="fas fa-eye"></i></button>';
+
+                    html += '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].question_id+'" data-toggle="modal"  title="Delete Question Paper Details"><i class="fas fa-trash-alt"></i></button>';
                     html += '</td></tr>';
                 }
                 $('tbody').html(html);
@@ -132,18 +136,18 @@ $(document).ready(function() {
     }
     
     // Delete MCQ Question Paper Here//
-    // var _token = $('input[name="_token"]').val();
+    var _token = $('input[name="_token"]').val();
     $(document).on('click', '#delete', function(){
         var question_id = $(this).attr("data-id");
         if(confirm("Are you sure you want to delete this records?")) {
             $.ajax({
-                url: base_url + "/admin/deleteMCQPaper",
+                url: base_url + "/admin/deleteQuestionData",
                 method:"delete",
-                data:{question_id:question_id, _token:_accessToken},
+                data:{question_id:question_id, _token:_token},
                 success:function(data)
                 {
                     $('#form_output').html(data);
-                    fetchQuestionPaperData();
+                    fetchQuestionData();
                     window.location.reload();
                 }
             });

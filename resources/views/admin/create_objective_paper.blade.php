@@ -14,12 +14,12 @@
         <div class="row align-items-center">
             <div class="col-md-12">
                 <div class="page-header-title">
-                    <h5 class="m-b-10">Create MCQ Paper</h5>
+                    <h5 class="m-b-10">Create Objective Paper</h5>
                 </div>
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.php"><i class="feather icon-home"></i></a></li>
-                    <li class="breadcrumb-item"><a href="#!">Create MCQ Paper Info</a></li>
-                    <li class="breadcrumb-item"><a href="#!">Create MCQ Paper Details</a></li>
+                    <li class="breadcrumb-item"><a href="#!">Create Objective Paper Info</a></li>
+                    <li class="breadcrumb-item"><a href="#!">Create Objective Paper Details</a></li>
                 </ul>
             </div>
         </div>
@@ -31,10 +31,10 @@
     <div class="col-xl-12">
         <div class="card">
             <div class="card-header"></div>
-            <form autocomplete="off" id="addMCQPaper" method="post">
+            <form autocomplete="off" id="addObjectivePaper" method="post">
                 <div class="card-body">
                     {{ csrf_field() }}
-                    <div class="row mcqPaperOtherData">
+                    <div class="row objPaperOtherData">
                         <div class="col-md-3 form-group">
                             <label for="recipient-name" class="col-form-label">Select Board </label>
                             <select class="form-control formField" name="board_id" id="board_id">
@@ -65,13 +65,13 @@
                             </select>
                         </div>
                     </div>
-                    <div class="row mcqPaperOtherData">                            
+                    <div class="row objPaperOtherData">                            
                         <div class="col-md-3 form-group">
                             <label for="marks" class="col-form-label"> Select Date:</label>
                             <input type="text" class="form-control form-control-sm hasDatepicker" id="datepicker" placeholder="Select Date" name="selected_date">
                         </div>
                     </div>
-                    <div class="row mcqPaperOtherData">
+                    <div class="row objPaperOtherData">
                         <div class="col-md-6 form-group">
                             <label for="filterchaptername" class="col-form-label">All Chapter:</label>
                             <select class="form-control form-control-sm formField" name="filterchaptername" id="filterchaptername" multiple="" onchange="addToSelectBox2()" style="height:200px"></select>
@@ -97,14 +97,14 @@
                             </table>
                         </div>
                         <div style="text-align:center;">
-                            <button type="submit" name="submit" id="submitMCQPaper" class="btn btn-primary">Submit</button>
+                            <button type="submit" name="submit" id="submitObjectivePaper" class="btn btn-primary">Submit</button>
                         </div>
                     </div>
 
                     <div style="text-align:center;">
                         <input type="hidden" name="selectedChapters" id="selectedChapters" value="" />
                         <input type="hidden" name="allChapters" id="allChapters" value="" />
-                        <input type="hidden" name="mcq_question_paper_id" id="mcq_question_paper_id" value="" />
+                        <input type="hidden" name="obj_question_paper_id" id="obj_question_paper_id" value="" />
                         <input type="hidden" name="button_action" id="button_action" value="insert" />
                         <button type="button" name="submit" id="actionDataProcess" class="btn btn-primary">Data Process</button>
                     </div>
@@ -129,7 +129,7 @@
 <script src="{{ asset('public/assets/js/summernote-math.js')}}"></script>
 <script>
 $(document).ready(function() {
-    $(".mcqPaperOtherData").show();
+    $(".objPaperOtherData").show();
     $("#questionCounter").hide();
     $("#actionDataProcess").show();
 
@@ -218,7 +218,7 @@ $(document).ready(function() {
     });
 
     $("#actionDataProcess").on("click", function(){
-        // mcqPaperOtherData
+        // objPaperOtherData
         // questionCounter
         event.preventDefault();
         var err = 0;
@@ -254,11 +254,11 @@ $(document).ready(function() {
             });
             $('#filterchaptername2').val(values);
             $.ajax({
-                url: base_url + "/admin/getSelectedMCQChapterDetailsAjax",
+                url: base_url + "/admin/getSelectedChapterObjDetailsAjax",
                 method:"POST",
                 data:{_token:_accessToken,filterchapternames:$('#filterchaptername2').val()},
                 success:function(result){
-                    $(".mcqPaperOtherData").hide();
+                    $(".objPaperOtherData").hide();
                     $("#questionCounter").show();
                     $("#questionCounter tbody").html(result);
                     $("#actionDataProcess").hide();
@@ -268,7 +268,7 @@ $(document).ready(function() {
     });
 
     //Add Medium Using Ajax //
-    $('#addMCQPaper').on('submit', function(event){ 
+    $('#addObjectivePaper').on('submit', function(event){ 
         event.preventDefault();
         var err = 0;
         var fieldId = '';
@@ -285,7 +285,7 @@ $(document).ready(function() {
             $('#filterchaptername2').val(values);
             var form_data = $(this).serialize();
             $.ajax({ 
-                url: base_url + "/admin/addmcqpaper",
+                url: base_url + "/admin/addObjectivepaper",
                 method:"POST",
                 data:form_data,
                 dataType:"json",
@@ -298,7 +298,7 @@ $(document).ready(function() {
                         $('#form_output').html(error_html);
                     } else {
                         $('#form_output').html(data.success);
-                        $('#addMCQPaper')[0].reset(); 
+                        $('#addObjectivePaper')[0].reset(); 
                         window.location.href = data.redirect_url;
                     }
                 }

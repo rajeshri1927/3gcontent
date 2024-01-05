@@ -136,17 +136,38 @@ class QuestionPaperController extends Controller
         }
     }
 
-    public function getSelectedChapterDataAjax(Request $request){
+    public function getAllMCQPaperData(){
+        $error_array = array();
+        $success_output = '';
+        $question = McqModel::select('mcq_master.id', 'board_details.board_name', 'medium_details.medium', 'class_details.class_name', 'subject_details.subject_name', 'mcq_master.chepter_ids', 'mcq_master.question_counter', 'mcq_master.created_at', 'mcq_master.created_by')
+        ->join('board_details', 'mcq_master.fk_board_id', '=', 'board_details.board_id')
+        ->join('medium_details', 'mcq_master.fk_medium_id', '=', 'medium_details.medium_id')
+        ->join('class_details', 'mcq_master.fk_class_id', '=', 'class_details.class_id')
+        ->join('subject_details', 'mcq_master.fk_subject_id', '=', 'subject_details.subject_id')
+        // ->join('users', 'mcq_master.user_id', '=', 'users.admin_id')
+        ->orderBy('mcq_master.id', 'asc')
+        ->get();
+        if($question){
+            $success_output = '<div class="alert alert-success">Get MCQ Paper Data !!!</div>';
+        }else{
+            $success_output = '<div class="alert alert-danger">MCQ Paper Data Not Available !!!</div>';
+        }
+        $output = array(
+            'error'     =>  $error_array,
+            'success'   =>  $success_output
+        );
+        echo json_encode($question);
+    }
+
+    public function getSelectedMCQChapterDataAjax(Request $request){
         $chapterIDs = implode(",", $request->filterchapternames);
         $chapterIDs = [$chapterIDs];
-        // \DB::enableQueryLog();
         $results = \DB::table('chapter_details as cd')
-                    ->select('cd.chapter_id', 'cd.chapter_name', \DB::raw('(SELECT COUNT(1) FROM question_list ql LEFT JOIN question_type_details qt ON qt.qType_id = ql.qType_id WHERE ql.chapter_id = cd.chapter_id AND qt.question_type = "MCQ") AS question_counter'))
+                    ->select('cd.chapter_id', 'cd.chapter_name', \DB::raw('(SELECT COUNT(1) FROM question_list ql LEFT JOIN question_type_details qt ON qt.qType_id = ql.qType_id WHERE ql.chapter_id = cd.chapter_id AND qt.qType = "MCQ") AS question_counter'))
                     ->whereIn('cd.chapter_id', $chapterIDs)
                     ->orderByDesc('cd.chapter_id')
                     ->get();
-        // dd(\DB::getQueryLog());
-        // dd($results);
+
         $chaptersRow = '<tr>';
         foreach($results as $chapters){
             $chaptersRow .= '<td>'.$chapters->chapter_name.'<input type="hidden" name="chapter_id[]" value="'.$chapters->chapter_id.'" /></td>';
@@ -175,18 +196,17 @@ class QuestionPaperController extends Controller
     }
 
     public function viewMCQPaper($paper_id){
-        // SELECT mcq.id,bd.board_name, md.medium, cd.class_name, sd.subject_name, brdt.branch_name, mcq.created_at, mcq.paper_question_ids, mcq.user_id FROM mcq_master mcq LEFT JOIN board_details bd ON mcq.fk_board_id = bd.board_id LEFT JOIN medium_details md ON mcq.fk_medium_id = md.medium_id LEFT JOIN class_details cd ON mcq.fk_class_id = cd.class_id LEFT JOIN subject_details sd ON mcq.fk_subject_id = sd.subject_id LEFT JOIN branch_details brdt ON mcq.fk_branch_id = brdt.branch_id WHERE mcq.id
-        $question_paper = McqModel::select('mcq_master.id', 'mcq_master.user_id', 'boards.board_name', 'mediums.medium_name', 'class.class_name', 'subjects.subject_name', 'mcq_master.chepter_ids', 'mcq_master.paper_question_ids', 'mcq_master.created_at', 'mcq_master.created_by')
-                ->join('boards', 'mcq_master.fk_board_id', '=', 'boards.board_id')
-                ->join('mediums', 'mcq_master.fk_medium_id', '=', 'mediums.medium_id')
-                ->join('class', 'mcq_master.fk_class_id', '=', 'class.class_id')
-                ->join('subjects', 'mcq_master.fk_subject_id', '=', 'subjects.subject_id')
+        $question_paper = McqModel::select('mcq_master.id', 'mcq_master.user_id', 'board_details.board_name', 'medium_details.medium', 'class_details.class_name', 'subject_details.subject_name', 'mcq_master.chepter_ids', 'mcq_master.paper_question_ids', 'mcq_master.created_at', 'mcq_master.created_by')
+                ->join('board_details', 'mcq_master.fk_board_id', '=', 'board_details.board_id')
+                ->join('medium_details', 'mcq_master.fk_medium_id', '=', 'medium_details.medium_id')
+                ->join('class_details', 'mcq_master.fk_class_id', '=', 'class_details.class_id')
+                ->join('subject_details', 'mcq_master.fk_subject_id', '=', 'subject_details.subject_id')
                 ->where('mcq_master.id', $paper_id)
                 ->first();
         
         $inperms = implode("','", explode(",", $question_paper->paper_question_ids));
-        $options_data = McqOptions::select('question_id','option_sequence','option_detail','is_answer')->whereIn('question_id', [$inperms]);
-        $question_data = QuestionBank::whereIn('question_id', [$inperms]);
+        $options_data = McqOptions::select('question_id','option_sequence','option_detail','is_answer')->whereIn('question_id', [$inperms])->get()->toArray();
+        $question_data = QuestionBank::whereIn('question_id', [$inperms])->get()->toArray();
         $response = [
 			'question_paper' => $question_paper,
 			'questions' => $question_data,
@@ -198,6 +218,181 @@ class QuestionPaperController extends Controller
         $this->arr_view_data['paper_stack'] = $paper_stack;
         $this->arr_view_data['settings_result'] = $settings_result;
         return view($this->module_view_folder.'.view_mcq_paper', $this->arr_view_data);
+    }
+
+    public function viewMCQSolution($paper_id){
+        $question_paper = McqModel::select('mcq_master.id', 'mcq_master.user_id', 'board_details.board_name', 'medium_details.medium', 'class_details.class_name', 'subject_details.subject_name', 'mcq_master.chepter_ids', 'mcq_master.paper_question_ids', 'mcq_master.created_at', 'mcq_master.created_by')
+                ->join('board_details', 'mcq_master.fk_board_id', '=', 'board_details.board_id')
+                ->join('medium_details', 'mcq_master.fk_medium_id', '=', 'medium_details.medium_id')
+                ->join('class_details', 'mcq_master.fk_class_id', '=', 'class_details.class_id')
+                ->join('subject_details', 'mcq_master.fk_subject_id', '=', 'subject_details.subject_id')
+                ->where('mcq_master.id', $paper_id)
+                ->first();
+        
+        
+        $inperms = '';
+        $question_data = [];
+        if(!empty($question_paper->paper_question_ids)){
+            $inperms = implode("','", explode(",", $question_paper->paper_question_ids));
+            $question_data = QuestionBank::whereIn('question_id', [$inperms])->get()->toArray();
+        }
+        $options_data = McqOptions::select('question_id','option_sequence','option_detail','is_answer')->whereIn('question_id', [$inperms])->get()->toArray();
+        $response = [
+			'question_paper' => $question_paper,
+			'questions' => $question_data,
+			'options' => $options_data,
+            'user_id' => $question_paper->user_id
+		];
+        $paper_stack = json_decode(json_encode($response));
+        $settings_result = getPaperSettings($paper_stack->user_id);
+        $this->arr_view_data['paper_stack'] = $paper_stack;
+        $this->arr_view_data['settings_result'] = $settings_result;
+        return view($this->module_view_folder.'.view_mcq_paper_solution', $this->arr_view_data);
+    }
+
+    // Objective Paper List
+    public function objectivepaperlist(Request $request){
+        $this->arr_view_data['ObjectivePaperList'] = Board::get(["board_name", "board_id"]);
+        $this->arr_view_data['ObjectivePaperList'] = $this->arr_view_data['ObjectivePaperList'] ?? collect();
+        return view($this->module_view_folder.'.objectivepaperlist', $this->arr_view_data);
+    }
+
+    public function createObjectivePaper(Request $request){
+        $this->arr_view_data['BoardList'] = Board::get(["board_name", "board_id"]);
+        $this->arr_view_data['BoardList'] = $this->arr_view_data['BoardList'] ?? collect();
+
+        return view($this->module_view_folder.'.create_objective_paper', $this->arr_view_data);
+    }
+
+    public function addObjectivePaperDetails(Request $request){
+        $user = Auth::user();
+        $validation = Validator::make($request->all(), [
+            'board_id'    => 'required',
+            'medium_id'    => 'required',
+            'class_id'    => 'required',
+            'subject_id'    => 'required'
+        ]);
+        $error_array = array();
+        $success_output = '';
+        if ($validation->fails()){
+            foreach($validation->messages()->getMessages() as $field_name => $messages){
+                $error_array[] = $messages;
+            }
+        } else {
+            if($request->get('button_action') == "insert")
+            {
+                $objectiveQuestion = new McqModel([
+                                    'fk_board_id' => $request->board_id,
+                                    'fk_medium_id' => $request->medium_id,
+                                    'fk_class_id' => $request->class_id,
+                                    'fk_subject_id' => $request->subject_id,
+                                    'chepter_ids' => implode(",", $request->filterchaptername2),
+                                    'question_counter' => implode(",", $request->question_counter),
+                                    'user_id' => $user->id,
+                                    'status' => 1,
+                                    'created_by' => $user->name
+                                ]);
+                $objectiveQuestion->save();
+                $mcq_id = $objectiveQuestion->id;
+                $this->genrate_mcq_papers($request,$mcq_id);
+            }
+        }
+        $output = array(
+            'error'     =>  $error_array,
+            'success'   =>  $success_output,
+            'redirect_url'   =>  url('/admin/mcqpaper')
+        );
+        echo json_encode($output);        
+    }
+
+    public function deleteObjectivePaperData(Request $request)
+    {
+        $objectivePaperID = $request->question_id;
+
+        if (!is_null($objectivePaperID)) {
+            $objectiveQues = McqModel::where('id', $objectivePaperID)->first();
+            if ($objectiveQues) {
+                $objectiveQues->delete();
+                echo '<div class="alert alert-success">Data Deleted</div>';
+            } else {
+                return response()->json(['message' => 'Objective Question Paper not found'], 404);
+            }
+        } else {
+            return response()->json(['message' => 'Invalid Objective Question Paper ID'], 400);
+        }
+    }
+
+    public function viewObjectivePaper($paper_id){
+        $question_paper = McqModel::select('mcq_master.id', 'mcq_master.user_id', 'board_details.board_name', 'medium_details.medium', 'class_details.class_name', 'subject_details.subject_name', 'mcq_master.chepter_ids', 'mcq_master.paper_question_ids', 'mcq_master.created_at', 'mcq_master.created_by')
+                ->join('board_details', 'mcq_master.fk_board_id', '=', 'board_details.board_id')
+                ->join('medium_details', 'mcq_master.fk_medium_id', '=', 'medium_details.medium_id')
+                ->join('class_details', 'mcq_master.fk_class_id', '=', 'class_details.class_id')
+                ->join('subject_details', 'mcq_master.fk_subject_id', '=', 'subject_details.subject_id')
+                ->where('mcq_master.id', $paper_id)
+                ->first();
+        
+        $inperms = '';
+        $question_data = [];
+        if(!empty($question_paper->paper_question_ids)){
+            $inperms = implode("','", explode(",", $question_paper->paper_question_ids));
+            $question_data = QuestionBank::whereIn('question_id', [$inperms])->get()->toArray();
+        }
+        $options_data = McqOptions::select('question_id','option_sequence','option_detail','is_answer')->whereIn('question_id', [$inperms])->get()->toArray();
+        $response = [
+			'question_paper' => $question_paper,
+			'questions' => $question_data,
+			'options' => $options_data,
+            'user_id' => $question_paper->user_id
+		];
+        $paper_stack = json_decode(json_encode($response));
+        $settings_result = getPaperSettings($paper_stack->user_id);
+        $this->arr_view_data['paper_stack'] = $paper_stack;
+        $this->arr_view_data['settings_result'] = $settings_result;
+        return view($this->module_view_folder.'.view_objective_paper', $this->arr_view_data);
+    }
+
+    public function getSelectedObjChapterDataAjax(Request $request){
+        $chapterIDs = implode(",", $request->filterchapternames);
+        $chapterIDs = [$chapterIDs];
+        $results = \DB::table('chapter_details as cd')
+                    ->select('cd.chapter_id', 'cd.chapter_name', \DB::raw('(SELECT COUNT(1) FROM question_list ql LEFT JOIN question_type_details qt ON qt.qType_id = ql.qType_id WHERE ql.chapter_id = cd.chapter_id AND qt.qType = "MCQ") AS question_counter'))
+                    ->whereIn('cd.chapter_id', $chapterIDs)
+                    ->orderByDesc('cd.chapter_id')
+                    ->get();
+
+        $chaptersRow = '<tr>';
+        foreach($results as $chapters){
+            $chaptersRow .= '<td>'.$chapters->chapter_name.'<input type="hidden" name="chapter_id[]" value="'.$chapters->chapter_id.'" /></td>';
+            $chaptersRow .= '<td><input type="number" class="form-control formField" max="0" name="question_counter[]"></td>';
+            $chaptersRow .= '<td>'.$chapters->question_counter.'</td>';
+        }
+        $chaptersRow .= '</tr>';
+        return $chaptersRow;
+    }
+
+    public function viewObjectiveSolution($paper_id){
+        $question_paper = McqModel::select('mcq_master.id', 'mcq_master.user_id', 'board_details.board_name', 'medium_details.medium', 'class_details.class_name', 'subject_details.subject_name', 'mcq_master.chepter_ids', 'mcq_master.paper_question_ids', 'mcq_master.created_at', 'mcq_master.created_by')
+                ->join('board_details', 'mcq_master.fk_board_id', '=', 'board_details.board_id')
+                ->join('medium_details', 'mcq_master.fk_medium_id', '=', 'medium_details.medium_id')
+                ->join('class_details', 'mcq_master.fk_class_id', '=', 'class_details.class_id')
+                ->join('subject_details', 'mcq_master.fk_subject_id', '=', 'subject_details.subject_id')
+                ->where('mcq_master.id', $paper_id)
+                ->first();
+        
+        $inperms = implode("','", explode(",", $question_paper->paper_question_ids));
+        $options_data = McqOptions::select('question_id','option_sequence','option_detail','is_answer')->whereIn('question_id', [$inperms])->get()->toArray();
+        $question_data = QuestionBank::whereIn('question_id', [$inperms])->get()->toArray();
+        $response = [
+			'question_paper' => $question_paper,
+			'questions' => $question_data,
+			'options' => $options_data,
+            'user_id' => $question_paper->user_id
+		];
+        $paper_stack = json_decode(json_encode($response));
+        $settings_result = getPaperSettings($paper_stack->user_id);
+        $this->arr_view_data['paper_stack'] = $paper_stack;
+        $this->arr_view_data['settings_result'] = $settings_result;
+        return view($this->module_view_folder.'.view_objective_paper_solution', $this->arr_view_data);
     }
 
     // Subjective Paper List
