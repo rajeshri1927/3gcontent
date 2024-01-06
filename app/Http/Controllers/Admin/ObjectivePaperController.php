@@ -141,6 +141,7 @@ class ObjectivePaperController extends Controller
         ->join('chapter_details', 'question_list.chapter_id', '=', 'chapter_details.chapter_id')
         ->where('question_list.question_type','!=','MCQ')
         ->orderBy('question_list.created_on', 'asc')
+        ->take(50)
         ->get();
         if($question){
             $success_output = '<div class="alert alert-success">Get Objective Paper Data !!!</div>';

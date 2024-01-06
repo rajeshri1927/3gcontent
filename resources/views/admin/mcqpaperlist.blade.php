@@ -105,20 +105,17 @@ $(document).ready(function() {
                     var options = { day: 'numeric', month: 'short', year: 'numeric' };
                     var formattedCreatedAt = createdAtDate.toLocaleDateString('en-US', options);
                     console.log(count);
-                    html +='<td contenteditable class="column_name" data-column_name="mcq_id" data-id="'+data[count].id+'">'+(parseInt(count))+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="board_name" data-id="'+data[count].id+'">'+data[count].board_name+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="medium_name" data-id="'+data[count].id+'">'+data[count].medium+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="class_name" data-id="'+data[count].id+'">'+data[count].class_name+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="subject_name" data-id="'+data[count].id+'">'+data[count].subject_name+'</td>';
-                    html +='<td contenteditable class="column_name" data-column_name="created_by" data-id="'+data[count].id+'">'+data[count].created_by+'</td>';
-                    html += '<td data-column_name="created_at" data-id="' + data[count].id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
-                    html += '<td>';
-
-                    var viewPaper = '<?php echo url("/admin/viewMCQPaper");?>';
-                    var viewPaperSolution = '<?php echo url("/admin/viewMCQPaperSolution");?>';
-
-                    html += '<button class="btn btn-sm btn-secondary mt-1 viewQP" onclick="window.open('+"'"+viewPaper+"/"+data[count].id+"'"+')" type="button" data-id="'+data[count].id+'" title="View Question Paper"><i class="fas fa-eye"></i></button>';
-                    html += '<button class="btn btn-sm btn-primary mt-1 ml-2 viewQPS" onclick="window.open('+"'"+viewPaperSolution+"/"+data[count].id+"'"+')" type="button" data-id="'+data[count].id+'" title="View Answer Paper"><i class="fas fa-eye"></i></button>';
+                    html +='<td data-column_name="mcq_id" data-id="'+data[count].id+'">'+(parseInt(count))+'</td>';
+                    html +='<td data-column_name="board_name" data-id="'+data[count].id+'">'+data[count].board_name+'</td>';
+                    html +='<td data-column_name="medium_name" data-id="'+data[count].id+'">'+data[count].medium+'</td>';
+                    html +='<td data-column_name="class_name" data-id="'+data[count].id+'">'+data[count].class_name+'</td>';
+                    html +='<td data-column_name="subject_name" data-id="'+data[count].id+'">'+data[count].subject_name+'</td>';
+                    html +='<td data-column_name="created_by" data-id="'+data[count].id+'">'+data[count].created_by+'</td>';
+                    html +='<td data-column_name="created_at" data-id="' + data[count].id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
+                    html +='<td>';
+                    var viewOpen = '<?php echo url("/admin/viewMCQPaper");?>';
+                    html += '<button class="btn btn-sm btn-secondary mt-1 viewQP" onclick="window.open('+"'"+viewOpen+"/"+data[count].id+"'"+')" type="button" data-id="'+data[count].id+'" title="View Question Paper"><i class="fas fa-eye"></i></button>';
+                    html += '<button class="btn btn-sm btn-primary mt-1 ml-2 viewQPS" type="button" data-id="'+data[count].id+'" title="View Answer Paper"><i class="fas fa-eye"></i></button>';
                     html += '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].id+'" data-toggle="modal"  title="Delete Question Paper"><i class="fas fa-trash-alt"></i></button>';
                     html += '</td></tr>';
                 }

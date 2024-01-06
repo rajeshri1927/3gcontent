@@ -11,13 +11,13 @@
         <div class="row align-items-center">
             <div class="col-md-12">
                 <div class="page-header-title">
-                    <h5 class="m-b-10">Question Type Here</h5>
+                    <h5 class="m-b-10">Question Type (Total : <?php echo $question_type_count;?>)</h5>
                 </div>
-                <ul class="breadcrumb">
+                <!-- <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.php"><i class="feather icon-home"></i></a></li>
                     <li class="breadcrumb-item"><a href="#!">Question Type Info</a></li>
                     <li class="breadcrumb-item"><a href="#!">Question Type Details</a></li>
-                </ul>
+                </ul> -->
             </div>
         </div>
     </div>
@@ -27,6 +27,8 @@
 <div class="col-xl-12">
     <div class="card">
         <div class="card-header text-right">
+            <label><input type="checkbox" id="select_all" class="mt-2" style="cursor:pointer;"> Select All </label>
+            <button type="button" id="delete_records" class="btn btn-danger btn-xs"><i class="fas fa-trash"></i> Delete <span class="rows_selected" id="select_count">0 Selected</span></button>
             <button type="button" class="btn  btn-primary" data-toggle="modal" data-target="#questionTypeModal" > <i class="fa-solid fa-plus"></i> Add Question Type </button>
         </div>
         <div class="modal fade" id="questionTypeModal" tabindex="-1" role="dialog" aria-labelledby="questionTypeModalLabel" aria-hidden="true">
@@ -70,6 +72,7 @@
                 <table style="width: 100%;" class="table table-striped table-bordered data-table" id="topic_table">
                     <thead>
                         <tr>
+                            <th style="width:10px !important;text-align:center"></th>
                             <th>Sr.No</th>
                             <th>Question Type</th>
                             <th>status</th>
@@ -114,8 +117,8 @@ $(document).ready(function() {
         $(this).find('form').trigger('reset');
     });
     //View/Get data in html format Here//
-    fetchTopicData();
-    function fetchTopicData()
+    getQuestionTypeAllData();
+    function getQuestionTypeAllData()
     {
         $.ajax({
             url: base_url + "/admin/getQuestionTypeAllData",
@@ -127,7 +130,7 @@ $(document).ready(function() {
                     var createdAtDate = new Date(data[count].created_on);
                     var options = { day: 'numeric', month: 'short', year: 'numeric' };
                     var formattedCreatedAt = createdAtDate.toLocaleDateString('en-US', options);
-
+                    html += '<td><input type="checkbox" class="selectQuestionTypeCheckbox" data-qType-id="' + data[count].qType_id + '"></td>';
                     html +='<td contenteditable class="column_name" data-column_name="qType_id" data-id="'+data[count].qType_id+'">'+data[count].qType_id+'</td>';
                     html += '<td contenteditable class="column_name" data-column_name="question_type" data-id="'+data[count].qType_id+'">'+data[count].qType+'</td>';
                     html += '<td contenteditable class="column_name" data-column_name="question_type_status" data-id="'+data[count].qType_id+'">'+data[count].qType_status+'</td>';
@@ -139,8 +142,7 @@ $(document).ready(function() {
                 }
                 $('tbody').html(html);
                 $('#topic_table').DataTable({
-                    // DataTables configuration options here
-                    "order": [[0, "desc"]], // Example: Sort by the first column (subject_id) in descending order
+                    aaSorting: [[0, 'asc']],
                     "paging": true,
                     "pageLength": 10,
                     "bDestroy": true
@@ -246,6 +248,51 @@ $(document).ready(function() {
       });
      }
    });
+
+
+   $(document).on('click', '#select_all', function() {
+     $(".selectQuestionTypeCheckbox").prop("checked", this.checked);
+     $("#select_count").html($("input.selectQuestionTypeCheckbox:checked").length+" Selected");
+   });
+   $(document).on('click', '.selectQuestionTypeCheckbox', function() {
+     if ($('.selectQuestionTypeCheckbox:checked').length == $('.selectQuestionTypeCheckbox').length) {
+       $('#select_all').prop('checked', true);
+     } else {
+       $('#select_all').prop('checked', false);
+     }
+        $("#select_count").html($("input.selectQuestionTypeCheckbox:checked").length+" Selected");
+   });
+   
+   $('#delete_records').on('click', function(e) {
+     var question_type_delete = [];
+     $(".selectQuestionTypeCheckbox:checked").each(function() {
+      question_type_delete.push($(this).attr('data-qType-id'));
+   
+     });
+     if(question_type_delete.length <=0) {
+            alert("Please select records."); 
+         }else{
+            WRN_PROFILE_DELETE = "Are you sure you want to delete "+(question_type_delete.length>1?"these question type details":"this question type detail")+" ? \nNote:- After delete you can not access this data.";
+            var checked = confirm(WRN_PROFILE_DELETE);
+            if(checked == true) {
+            var selected_values = question_type_delete.join(",");
+            $.ajax({
+               url: base_url + "/admin/deleteMultipleQuestionTypeData",
+               method: 'post',
+               data: {_token:_accessToken,qType_ids:selected_values},
+               headers: {
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+               },
+               success: function (response) {
+                  $('#delete_records').prop('disabled', true);
+                  $('#form_output').html(response);
+                  setInterval('location.reload()', 1000);
+                  getQuestionTypeAllData();
+               }
+            });
+         }
+         }
+   });  
 });
 </script>
 </body>

@@ -36,6 +36,8 @@ class TopicController extends Controller
         ->get();
 
         $data['topicList'] = $topic;
+        $count = Topic::count();
+        $this->arr_view_data['topic_count'] = $count;
         return view($this->module_view_folder.'.topic', $this->arr_view_data,$data);
     }
 
@@ -239,6 +241,26 @@ class TopicController extends Controller
             }
         } else {
             return response()->json(['message' => 'Invalid Topic ID'], 400);
+        }
+    }
+
+    public function deleteMultipleTopicData(Request $request)
+    {
+        $ids = $request->input('topic_ids');
+        if (is_string($ids) && !empty($ids)) {
+            // Convert comma-separated string to an array
+            $topicIdsArray = explode(',', $ids);
+            // Remove any empty values
+            $topicIdsArray = array_filter($topicIdsArray);
+            if (!empty($topicIdsArray)) {
+                // Perform the delete operation based on the provided IDs
+                Topic::whereIn('topic_id', $topicIdsArray)->delete();
+                echo '<div class="alert alert-success">All Topic Deleted.</div>';
+            } else {
+                return response()->json(['error' => 'Invalid or empty Topic_ids provided'], 400);
+            }
+        } else {
+            return response()->json(['error' => 'Invalid or empty Topic_ids provided'], 400);
         }
     }
 }

@@ -11,13 +11,13 @@
         <div class="row align-items-center">
             <div class="col-md-12">
                 <div class="page-header-title">
-                    <h5 class="m-b-10">Topic Here</h5>
+                    <h5 class="m-b-10">Topic Here (Total : <?php echo $topic_count;?>)</h5>
                 </div>
-                <ul class="breadcrumb">
+                <!-- <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.php"><i class="feather icon-home"></i></a></li>
                     <li class="breadcrumb-item"><a href="#!">Topic Info</a></li>
                     <li class="breadcrumb-item"><a href="#!">Topic Details</a></li>
-                </ul>
+                </ul> -->
             </div>
         </div>
     </div>
@@ -27,6 +27,8 @@
 <div class="col-xl-12">
     <div class="card">
         <div class="card-header text-right">
+            <label><input type="checkbox" id="select_all" class="mt-2" style="cursor:pointer;"> Select All  </label>
+            <button type="button" id="delete_records" class="btn btn-danger btn-xs"><i class="fas fa-trash"></i> Delete <span class="rows_selected" id="select_count">0 Selected</span></button>
             <button type="button" class="btn  btn-primary" data-toggle="modal" data-target="#topicModal" > <i class="fa-solid fa-plus"></i> Add New Topic </button>
         </div>
         <div class="modal fade" id="topicModal" tabindex="-1" role="dialog" aria-labelledby="topicModalLabel" aria-hidden="true">
@@ -111,6 +113,7 @@
                 <table style="width: 100%;" class="table table-striped table-bordered data-table" id="topic_table">
                     <thead>
                         <tr>
+                            <th style="width:10px !important;text-align:center"></th>
                             <th>Sr.No</th>
                             <th>Board</th>
                             <th>Medium</th>
@@ -290,7 +293,7 @@ $(document).ready(function() {
                     var createdAtDate = new Date(data[count].created_on);
                     var options = { day: 'numeric', month: 'short', year: 'numeric' };
                     var formattedCreatedAt = createdAtDate.toLocaleDateString('en-US', options);
-
+                    html += '<td><input type="checkbox" class="selectTopicCheckbox" data-topic-id="' + data[count].topic_id + '"></td>';
                     html +='<td data-column_name="topic_id" data-id="'+data[count].topic_id+'">'+data[count].topic_id+'</td>';
                     html +='<td data-column_name="board_name" data-id="'+data[count].topic_id+'">'+data[count].board_name+'</td>';
                     html +='<td data-column_name="medium_name" data-id="'+data[count].topic_id+'">'+data[count].medium+'</td>';
@@ -454,6 +457,51 @@ $(document).ready(function() {
             });
         }
     });
+
+    ///Multiple Delete
+    $(document).on('click', '#select_all', function() {
+     $(".selectTopicCheckbox").prop("checked", this.checked);
+     $("#select_count").html($("input.selectTopicCheckbox:checked").length+" Selected");
+   });
+   $(document).on('click', '.selectTopicCheckbox', function() {
+     if ($('.selectTopicCheckbox:checked').length == $('.selectTopicCheckbox').length) {
+       $('#select_all').prop('checked', true);
+     } else {
+       $('#select_all').prop('checked', false);
+     }
+        $("#select_count").html($("input.selectTopicCheckbox:checked").length+" Selected");
+   });
+   
+   $('#delete_records').on('click', function(e) {
+     var topic_delete = [];
+     $(".selectTopicCheckbox:checked").each(function() {
+        topic_delete.push($(this).attr('data-topic-id'));
+   
+     });
+     if(topic_delete.length <=0) {
+            alert("Please select records."); 
+         }else{
+            WRN_PROFILE_DELETE = "Are you sure you want to delete "+(topic_delete.length>1?"these class details":"this Class detail")+" ? \nNote:- After delete you can not access this data.";
+            var checked = confirm(WRN_PROFILE_DELETE);
+            if(checked == true) {
+            var selected_values = topic_delete.join(",");
+            $.ajax({
+               url: base_url + "/admin/deleteMultipleTopicData",
+               method: 'post',
+               data: {_token:_accessToken,topic_ids:selected_values},
+               headers: {
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+               },
+               success: function (response) {
+                  $('#delete_records').prop('disabled', true);
+                  $('#form_output').html(response);
+                  setInterval('location.reload()', 1000);
+                  fetchTopicData();
+               }
+            });
+         }
+         }
+   });  
 });
 </script>
 </body>

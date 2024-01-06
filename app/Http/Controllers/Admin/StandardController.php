@@ -30,6 +30,8 @@ class StandardController extends Controller
         ->get();
 
         $data['classList'] = $class;
+        $count = Standard::count();
+        $this->arr_view_data['class_count'] = $count;
         return view($this->module_view_folder.'.standard', $this->arr_view_data,$data);
     }
 
@@ -59,6 +61,8 @@ class StandardController extends Controller
             $i = 0;
             foreach ($build_result->data as $key => $data) {
                 $i = $i + 1;
+                $delete = '<input type="checkbox" class="selectclassCheckbox" data-class-id="'.$data->class_id.'">';
+                $build_result->data[$key]->delete = $delete;
                 $build_result->data[$key]->class_id  = $data->class_id;
                 $build_result->data[$key]->board_name = $data->board_name;
                 $build_result->data[$key]->medium = $data->medium;
@@ -154,7 +158,7 @@ class StandardController extends Controller
             $standard = Standard::find($standard_id);
     
             if ($standard) {
-                $standard->update(['class_status' => 'InActive']);
+                $standard->delete();
                 echo '<div class="alert alert-success">Class Deleted</div>';
                 //return response()->json(['message' => 'Data Deleted'], 200);
             } else {
@@ -164,4 +168,25 @@ class StandardController extends Controller
             return response()->json(['message' => 'Invalid Class ID'], 400);
         }
     }
+
+    public function deleteMultipleClassData(Request $request)
+    {
+        $ids = $request->input('class_ids');
+        if (is_string($ids) && !empty($ids)) {
+            // Convert comma-separated string to an array
+            $classIdsArray = explode(',', $ids);
+            // Remove any empty values
+            $classIdsArray = array_filter($classIdsArray);
+            if (!empty($classIdsArray)) {
+                // Perform the delete operation based on the provided IDs
+                Standard::whereIn('class_id', $classIdsArray)->delete();
+                echo '<div class="alert alert-success">All Class Deleted.</div>';
+            } else {
+                return response()->json(['error' => 'Invalid or empty board_ids provided'], 400);
+            }
+        } else {
+            return response()->json(['error' => 'Invalid or empty board_ids provided'], 400);
+        }
+    }
+    
 }
