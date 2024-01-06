@@ -21,6 +21,8 @@ class SubjectController extends Controller
     public function index(){
         $data['BoardList'] = Board::get(["board_name", "board_id"]);
         $data['BoardList'] = $data['BoardList'] ?? collect();
+        $count = Subject::count();
+        $this->arr_view_data['subject_count'] = $count;
         return view($this->module_view_folder.'.subject', $this->arr_view_data,$data);
     }
 
@@ -159,7 +161,8 @@ class SubjectController extends Controller
             //     $subject->delete();
             $subject = Subject::find($subjectId);
                 if ($subject) {
-                    $subject->update(['subject_status' => 'InActive']);
+                    $subject->delete();
+                    //$subject->update(['subject_status' => 'InActive']);
                 echo '<div class="alert alert-success">Subject Deleted</div>';
                 //return response()->json(['message' => 'Data Deleted'], 200);
             } else {
@@ -167,6 +170,26 @@ class SubjectController extends Controller
             }
         } else {
             return response()->json(['message' => 'Invalid Subject ID'], 400);
+        }
+    }
+
+    public function deleteMultipleSubjectData(Request $request)
+    {
+        $ids = $request->input('subject_ids');
+        if (is_string($ids) && !empty($ids)) {
+            // Convert comma-separated string to an array
+            $subjectIdsArray = explode(',', $ids);
+            // Remove any empty values
+            $subjectIdsArray = array_filter($subjectIdsArray);
+            if (!empty($subjectIdsArray)) {
+                // Perform the delete operation based on the provided IDs
+                Subject::whereIn('subject_id', $subjectIdsArray)->delete();
+                echo '<div class="alert alert-success">All Subject Deleted.</div>';
+            } else {
+                return response()->json(['error' => 'Invalid or empty subject_ids provided'], 400);
+            }
+        } else {
+            return response()->json(['error' => 'Invalid or empty subject_ids provided'], 400);
         }
     }
 }

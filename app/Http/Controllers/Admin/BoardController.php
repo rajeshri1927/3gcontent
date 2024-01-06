@@ -21,36 +21,42 @@ class BoardController extends Controller
 
     public function index()
     {     
+        $count = Board::count();
+        $this->arr_view_data['board_count'] = $count;
         return view($this->module_view_folder.'.board', $this->arr_view_data);
     }
 
     public function getBoardAllData(){
-        $build_result = array();
-
         $boards = Board::select('*')->orderBy('board_id','asc')->get();
-
-        $json_result = DataTables::of($boards)->addColumn('built_action_btns', function ($data) {
-            return '<button name="button" class="btn btn-sm btn-warning mt-1 update" type="button" data-id="'.$data->board_id.'" data-toggle="modal" title="Update Board Details"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'.$data->board_id.'" data-toggle="modal" name="button" title="Delete Board Details"><i class="fas fa-trash-alt"></i></button>';
-        })->make(true);
-		$build_result = $json_result->getData();
-
-        if (isset($build_result->data) && sizeof($build_result->data) > 0) {
-            $i = 0;
-            foreach ($build_result->data as $key => $data) {
-                $i = $i + 1;
-                $build_result->data[$key]->board_id = $data->board_id;
-                $build_result->data[$key]->board_name = $data->board_name;
-                // $build_result->data[$key]->board_description = $data->board_description;
-                $build_result->data[$key]->board_status = $data->board_status;
-                $build_result->data[$key]->created_at = date("d M Y", strtotime($data->created_on));
-                $action = '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-id="'.$data->board_id.'" data-toggle="modal"  title="Update Board Details"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'.$data->board_id.'" data-toggle="modal"  title="Delete Board Details"><i class="fas fa-trash-alt"></i></button>';
-				$build_result->data[$key]->built_action_btns = $action;
-            }
-            return response()->json($build_result);
-        } else {
-            return response()->json($build_result);
-        }
+        echo json_encode($boards);
     }
+    // public function getBoardAllData(){
+    //     $build_result = array();
+
+    //     $boards = Board::select('*')->orderBy('board_id','asc')->get();
+
+    //     $json_result = DataTables::of($boards)->addColumn('built_action_btns', function ($data) {
+    //         return '<button name="button" class="btn btn-sm btn-warning mt-1 update" type="button" data-id="'.$data->board_id.'" data-toggle="modal" title="Update Board Details"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'.$data->board_id.'" data-toggle="modal" name="button" title="Delete Board Details"><i class="fas fa-trash-alt"></i></button>';
+    //     })->make(true);
+	// 	$build_result = $json_result->getData();
+
+    //     if (isset($build_result->data) && sizeof($build_result->data) > 0) {
+    //         $i = 0;
+    //         foreach ($build_result->data as $key => $data) {
+    //             $i = $i + 1;
+    //             $build_result->data[$key]->board_id = $data->board_id;
+    //             $build_result->data[$key]->board_name = $data->board_name;
+    //             // $build_result->data[$key]->board_description = $data->board_description;
+    //             $build_result->data[$key]->board_status = $data->board_status;
+    //             $build_result->data[$key]->created_at = date("d M Y", strtotime($data->created_on));
+    //             $action = '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-id="'.$data->board_id.'" data-toggle="modal"  title="Update Board Details"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'.$data->board_id.'" data-toggle="modal"  title="Delete Board Details"><i class="fas fa-trash-alt"></i></button>';
+	// 			$build_result->data[$key]->built_action_btns = $action;
+    //         }
+    //         return response()->json($build_result);
+    //     } else {
+    //         return response()->json($build_result);
+    //     }
+    // }
     
     public function addBoard(Request $request){
         $user = Auth::user();
@@ -127,8 +133,8 @@ class BoardController extends Controller
             $board = Board::find($boardId);
     
             if ($board) {
-                $board->update(['board_status' => 'InActive']);
-                //$board->delete();
+                //$board->update(['board_status' => 'InActive']);
+                $board->delete();
                 echo '<div class="alert alert-success">Data Deleted</div>';
                 // Alternatively, you can return a JSON response:
                 // return response()->json(['message' => 'Data Deleted'], 200);
@@ -139,6 +145,30 @@ class BoardController extends Controller
             return response()->json(['message' => 'Invalid board ID'], 400);
         }
     }
+    
+    public function deleteMultipleBoardData(Request $request)
+    {
+        $ids = $request->input('board_ids');
+
+        if (is_string($ids) && !empty($ids)) {
+            // Convert comma-separated string to an array
+            $boardIdsArray = explode(',', $ids);
+
+            // Remove any empty values
+            $boardIdsArray = array_filter($boardIdsArray);
+
+            if (!empty($boardIdsArray)) {
+                // Perform the delete operation based on the provided IDs
+                Board::whereIn('board_id', $boardIdsArray)->delete();
+                echo '<div class="alert alert-success">Data Deleted</div>';
+            } else {
+                return response()->json(['error' => 'Invalid or empty board_ids provided'], 400);
+            }
+        } else {
+            return response()->json(['error' => 'Invalid or empty board_ids provided'], 400);
+        }
+    }
+
     
     // public function getNoOfBoards() {
     //     $boards = Board::select('*')->orderBy('board_id', 'asc')->get();

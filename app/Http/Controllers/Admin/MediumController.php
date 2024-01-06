@@ -20,6 +20,8 @@ class MediumController extends Controller
 
     public function index()
     {
+        $count = Medium::count();
+        $this->arr_view_data['medium_count'] = $count;
         $data['BoardList'] = Board::get(["board_name", "board_id"]);
         $data['BoardList'] = $data['BoardList'] ?? collect();
         return view($this->module_view_folder.'.medium', $this->arr_view_data,$data);
@@ -33,7 +35,9 @@ class MediumController extends Controller
         ->latest();
         $json_result = DataTables::of($mediums)
         ->addColumn('built_action_btns', function ($data) {
-            return '<button name="button" class="btn btn-sm btn-warning mt-1 update" type="button" data-id="'.$data->medium_id.'" data-toggle="modal" title="Update Medium Details"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'.$data->medium_id.'" data-toggle="modal" name="button" title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
+            $updateButton = '<button name="button" class="btn btn-sm btn-warning mt-1 update" type="button" data-id="'.$data->medium_id.'" data-toggle="modal" title="Update Medium Details"><i class="fas fa-edit"></i></button>';
+            $deleteButton = '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'.$data->medium_id.'" data-toggle="modal" name="button" title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
+            return '<input type="checkbox" class="selectCheckbox" data-medium-id="'.$data->medium_id.'">' . $updateButton . $deleteButton;
         })->make(true);
 		$build_result = $json_result->getData();
 
@@ -41,6 +45,8 @@ class MediumController extends Controller
             $i = 0;
             foreach ($build_result->data as $key => $data) {
                 $i = $i + 1;
+                $delete = '<input type="checkbox" class="selectmediumCheckbox" data-medium-id="'.$data->medium_id.'">';
+                $build_result->data[$key]->delete = $delete;
                 $build_result->data[$key]->medium_id  = $data->medium_id;
                 $build_result->data[$key]->board_name = $data->board_name;
                 $build_result->data[$key]->medium = $data->medium;
@@ -139,6 +145,26 @@ class MediumController extends Controller
             }
         } else {
             return response()->json(['message' => 'Invalid Medium ID'], 400);
+        }
+    }
+
+    public function deleteMultipleMediumData(Request $request)
+    {
+        $ids = $request->input('medium_ids');
+        if (is_string($ids) && !empty($ids)) {
+            // Convert comma-separated string to an array
+            $mediumIdsArray = explode(',', $ids);
+            // Remove any empty values
+            $mediumIdsArray = array_filter($mediumIdsArray);
+            if (!empty($mediumIdsArray)) {
+                // Perform the delete operation based on the provided IDs
+                Medium::whereIn('medium_id', $mediumIdsArray)->delete();
+                echo '<div class="alert alert-success">All Medium Deleted.</div>';
+            } else {
+                return response()->json(['error' => 'Invalid or empty board_ids provided'], 400);
+            }
+        } else {
+            return response()->json(['error' => 'Invalid or empty board_ids provided'], 400);
         }
     }
 

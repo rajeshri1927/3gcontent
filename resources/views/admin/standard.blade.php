@@ -11,13 +11,13 @@
         <div class="row align-items-center">
             <div class="col-md-12">
                 <div class="page-header-title">
-                    <h5 class="m-b-10">Class Here</h5>
+                    <h5 class="m-b-10">Class Here (Total:<?php echo $class_count;?>)</h5>
                 </div>
-                <ul class="breadcrumb">
+                <!-- <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.php"><i class="feather icon-home"></i></a></li>
                     <li class="breadcrumb-item"><a href="#!">Class Info</a></li>
                     <li class="breadcrumb-item"><a href="#!">Class Details</a></li>
-                </ul>
+                </ul> -->
             </div>
         </div>
     </div>
@@ -27,6 +27,8 @@
 <div class="col-xl-12">
     <div class="card">
         <div class="card-header text-right">
+            <label><input type="checkbox" id="select_all" class="mt-2" style="cursor:pointer;"> Select All  </label>
+            <button type="button" id="delete_records" class="btn btn-danger btn-xs"><i class="fas fa-trash"></i> Delete <span class="rows_selected" id="select_count">0 Selected</span></button>
             <button type="button" class="btn  btn-primary" data-toggle="modal" data-target="#classModal" > <i class="fa-solid fa-plus"></i> Add New Class </button>
         </div>
         <div class="modal fade" id="classModal" tabindex="-1" role="dialog" aria-labelledby="classModalLabel" aria-hidden="true">
@@ -94,6 +96,7 @@
                 <table class="table table-striped table-bordered" id="standard_table">
                     <thead>
                         <tr>
+                            <th style="width:10px !important;text-align:center"></th>
                             <th>Sr.No</th>
                             <th>Board Name</th>
                             <th>Medium Name</th>
@@ -182,6 +185,7 @@ $(document).ready(function() {
         bPaginate: true,
         pageLength: 10,
         columns: [
+            { data: 'delete', name: 'delete'},
             { data: 'class_id', name: 'class_details.class_id', className: 'text-center' },
             { data: 'board_name', name: 'board_details.board_name', className: 'text-center' },
             { data: 'medium', name: 'medium_details.medium', className: 'text-center' },
@@ -281,6 +285,50 @@ $(document).ready(function() {
         });
         }
     });
+
+   $(document).on('click', '#select_all', function() {
+     $(".selectclassCheckbox").prop("checked", this.checked);
+     $("#select_count").html($("input.selectclassCheckbox:checked").length+" Selected");
+   });
+   $(document).on('click', '.selectclassCheckbox', function() {
+     if ($('.selectclassCheckbox:checked').length == $('.selectclassCheckbox').length) {
+       $('#select_all').prop('checked', true);
+     } else {
+       $('#select_all').prop('checked', false);
+     }
+        $("#select_count").html($("input.selectclassCheckbox:checked").length+" Selected");
+   });
+   
+   $('#delete_records').on('click', function(e) {
+     var class_delete = [];
+     $(".selectclassCheckbox:checked").each(function() {
+        class_delete.push($(this).attr('data-class-id'));
+   
+     });
+     if(class_delete.length <=0) {
+            alert("Please select records."); 
+         }else{
+            WRN_PROFILE_DELETE = "Are you sure you want to delete "+(class_delete.length>1?"these class details":"this Class detail")+" ? \nNote:- After delete you can not access this data.";
+            var checked = confirm(WRN_PROFILE_DELETE);
+            if(checked == true) {
+            var selected_values = class_delete.join(",");
+            $.ajax({
+               url: base_url + "/admin/deleteMultipleClassData",
+               method: 'post',
+               data: {_token:_accessToken,class_ids:selected_values},
+               headers: {
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+               },
+               success: function (response) {
+                  $('#delete_records').prop('disabled', true);
+                  $('#form_output').html(response);
+                  setInterval('location.reload()', 1000);
+                  fetchClassData();
+               }
+            });
+         }
+         }
+   });  
 });
 </script>
 </body>

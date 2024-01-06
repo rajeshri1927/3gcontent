@@ -23,6 +23,8 @@ class ChapterController extends Controller
     public function index(){
         $data['BoardList'] = Board::get(["board_name", "board_id"]);
         $data['BoardList'] = $data['BoardList'] ?? collect();
+        $count = Chapter::count();
+        $this->arr_view_data['chapter_count'] = $count;
         return view($this->module_view_folder.'.chapter', $this->arr_view_data,$data);
     }
 
@@ -188,6 +190,26 @@ class ChapterController extends Controller
             }
         } else {
             return response()->json(['message' => 'Invalid Chapter ID'], 400);
+        }
+    }
+    
+    public function deleteMultipleChapterData(Request $request)
+    {
+        $ids = $request->input('chapter_ids');
+        if (is_string($ids) && !empty($ids)) {
+            // Convert comma-separated string to an array
+            $chapterIdsArray = explode(',', $ids);
+            // Remove any empty values
+            $chapterIdsArray = array_filter($chapterIdsArray);
+            if (!empty($chapterIdsArray)) {
+                // Perform the delete operation based on the provided IDs
+                Chapter::whereIn('chapter_id', $chapterIdsArray)->delete();
+                echo '<div class="alert alert-success">All chapter Deleted.</div>';
+            } else {
+                return response()->json(['error' => 'Invalid or empty chapter_ids provided'], 400);
+            }
+        } else {
+            return response()->json(['error' => 'Invalid or empty chapterids provided'], 400);
         }
     }
 }

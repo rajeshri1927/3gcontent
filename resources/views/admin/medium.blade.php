@@ -11,13 +11,13 @@
         <div class="row align-items-center">
             <div class="col-md-12">
                 <div class="page-header-title">
-                    <h5 class="m-b-10">Medium Here</h5>
+                    <h5 class="m-b-10">Medium Here (Total : <?php echo $medium_count;?>)</h5>
                 </div>
-                <ul class="breadcrumb">
+                <!-- <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
                     <li class="breadcrumb-item"><a href="#!">Medium Info</a></li>
                     <li class="breadcrumb-item"><a href="#!">Medium Details</a></li>
-                </ul>
+                </ul> -->
             </div>
         </div>
     </div>
@@ -27,6 +27,8 @@
 <div class="col-xl-12">
     <div class="card">
         <div class="card-header text-right">
+            <label><input type="checkbox" id="select_all" class="mt-2" style="cursor:pointer;"> Select All  </label>
+            <button type="button" id="delete_records" class="btn btn-danger btn-xs"><i class="fas fa-trash"></i> Delete <span class="rows_selected" id="select_count">0 Selected</span></button>
             <button type="button" class="btn  btn-primary" data-toggle="modal" data-target="#mediumModal" > <i class="fa-solid fa-plus"></i> Add New Medium </button>
         </div>
         <div class="modal fade" id="mediumModal" tabindex="-1" role="dialog" aria-labelledby="mediumModalLabel" aria-hidden="true">
@@ -77,6 +79,7 @@
                 <table class="table table-striped table-bordered" id="Medium_table">
                     <thead>
                         <tr>
+                            <th style="width:10px !important;text-align:center"></th>
                             <th>Sr.No</th>
                             <th>Medium Name</th>
                             <th>Board Name</th>
@@ -147,12 +150,20 @@ $(document).ready(function() {
             "bPaginate": true,
             "pageLength": 10,
             columns: [
+                {data: 'delete', name: 'delete'},
                 {data: 'medium_id', name: 'medium_id'},
                 {data: 'medium', name: 'medium',className: "text-center"},
                 {data: 'board_name', name: 'boards.board_name', className: 'text-center' },
                 {data: 'medium_status', name: 'medium_status',className: "text-center"},
                 {data: 'created_at', name: 'created_at',className: "text-center"},
-                {data: 'built_action_btns', name:'built_action_btns', className: 'text-center'}
+                // {data: 'built_action_btns', name:'built_action_btns', className: 'text-center'},
+                {
+                    data: 'built_action_btns',
+                    name: 'built_action_btns',
+                    className: 'text-center',
+                    orderable: false, // Disable sorting for this column
+                    searchable: false, // Disable searching for this column
+                }
             ],
             "order": [[ 0, "desc" ]],
             fixedHeader: {
@@ -165,6 +176,51 @@ $(document).ready(function() {
         });
    }
 
+   $(document).on('click', '#select_all', function() {
+     $(".selectmediumCheckbox").prop("checked", this.checked);
+     $("#select_count").html($("input.selectmediumCheckbox:checked").length+" Selected");
+   });
+   $(document).on('click', '.selectmediumCheckbox', function() {
+     if ($('.selectmediumCheckbox:checked').length == $('.selectmediumCheckbox').length) {
+       $('#select_all').prop('checked', true);
+     } else {
+       $('#select_all').prop('checked', false);
+     }
+     $("#select_count").html($("input.selectmediumCheckbox:checked").length+" Selected");
+   });
+   
+   $('#delete_records').on('click', function(e) {
+     var medium_delete = [];
+     $(".selectmediumCheckbox:checked").each(function() {
+        medium_delete.push($(this).attr('data-medium-id'));
+   
+     });
+     if(medium_delete.length <=0) {
+            alert("Please select records."); 
+         }else{
+            WRN_PROFILE_DELETE = "Are you sure you want to delete "+(medium_delete.length>1?"these board details":"this board detail")+" ? \nNote:- After delete you can not access this data.";
+            var checked = confirm(WRN_PROFILE_DELETE);
+            if(checked == true) {
+            var selected_values = medium_delete.join(",");
+            $.ajax({
+               url: base_url + "/admin/deleteMultipleMediumData",
+               method: 'post',
+               data: {_token:_accessToken,medium_ids:selected_values},
+               headers: {
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+               },
+               success: function (response) {
+                  $('#delete_records').prop('disabled', true);
+                  $('#form_output').html(response);
+                  setInterval('location.reload()', 1000);
+                  fetchMediumData();
+               }
+            });
+         }
+         }
+   });
+   
+   
     //Add Medium Using Ajax //
     $('#addMedium').on('submit', function(event){ 
         event.preventDefault();

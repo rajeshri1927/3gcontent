@@ -47,6 +47,8 @@ class QuestionTypeController extends Controller
         // ->orderBy('question_types.question_type_id', 'asc')
         // ->toSql();
         // $data['questionTypeList'] = $questionType;
+        $count = QuestionType::count();
+        $this->arr_view_data['question_type_count'] = $count;
         return view($this->module_view_folder.'.questiontype', $this->arr_view_data);
     }
 
@@ -213,7 +215,8 @@ class QuestionTypeController extends Controller
             //     $questionType->delete();
             $questionType = QuestionType::find($questionTypeID);
             if ($questionType) {
-                $questionType->update(['qType_status' => 'InActive']);
+                $questionType->delete();
+                //$questionType->update(['qType_status' => 'InActive']);
                 echo '<div class="alert alert-success">Data Deleted</div>';
                 //return response()->json(['message' => 'Data Deleted'], 200);
             } else {
@@ -221,6 +224,26 @@ class QuestionTypeController extends Controller
             }
         } else {
             return response()->json(['message' => 'Invalid Question Type ID'], 400);
+        }
+    }
+
+    public function deleteMultipleQuestionTypeData(Request $request)
+    {
+        $ids = $request->input('qType_ids');
+        if (is_string($ids) && !empty($ids)) {
+            // Convert comma-separated string to an array
+            $qTypeIdsArray = explode(',', $ids);
+            // Remove any empty values
+            $qTypeIdsArray = array_filter($qTypeIdsArray);
+            if (!empty($qTypeIdsArray)) {
+                // Perform the delete operation based on the provided IDs
+                QuestionType::whereIn('qType_id', $qTypeIdsArray)->delete();
+                echo '<div class="alert alert-success">All QuestionType Deleted.</div>';
+            } else {
+                return response()->json(['error' => 'Invalid or empty QuestionType_ids provided'], 400);
+            }
+        } else {
+            return response()->json(['error' => 'Invalid or empty QuestionType_ids provided'], 400);
         }
     }
 

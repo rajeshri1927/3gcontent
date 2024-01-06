@@ -16,11 +16,11 @@
         <div class="page-header-title">
           <h5 class="m-b-10">Manage Questions ( Total : <?php echo $question_bank_count;?>)</h5>
         </div>
-        <ul class="breadcrumb">
+        <!-- <ul class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.php"><i class="feather icon-home"></i></a></li>
           <li class="breadcrumb-item"><a href="#!">Manage Questions Info</a></li>
           <li class="breadcrumb-item"><a href="#!">Manage Questions Details</a></li>
-        </ul>
+        </ul> -->
       </div>
     </div>
   </div>
@@ -30,7 +30,9 @@
 <div class="col-xl-12">
   <div class="card">
     <div class="card-header text-right">
-      <button type="button" class="btn  btn-primary" data-toggle="modal" data-target="#questionModal" > <i class="fa-solid fa-plus"></i> Add New Question </button>
+          <label><input type="checkbox" id="select_all" class="mt-2" style="cursor:pointer;"> Select All </label>
+          <button type="button" id="delete_records" class="btn btn-danger btn-xs"><i class="fas fa-trash"></i> Delete <span class="rows_selected" id="select_count">0 Selected</span></button>
+          <button type="button" class="btn  btn-primary" data-toggle="modal" data-target="#questionModal" > <i class="fa-solid fa-plus"></i> Add New Question </button>
     </div>
     <div class="modal-body">
       <form autocomplete="off" id="addQuestion" method="post">
@@ -73,16 +75,18 @@
           </div>
           <div class="col-md-2 form-group">
             <label for="topic_id" class="col-form-label">Select Topic:</label>
-            <select class="form-control formField" name="topic_id" id="topic_id">
+            <select class="form-control" name="topic_id" id="topic_id">
               <option value="">--- Select Topic ---</option>
             </select>
           </div>
         </div>
-        <div class="modal-footer">
+        <!-- <div class="modal-footer"> -->
           <!-- <input type="hidden" name="question_id" id="question_id" value="" /> -->
           <input type="hidden" name="button_action" id="button_action" value="insert" />
-          <input type="submit" name="submit" id="action" class="btn  btn-primary" value="Apply Filter">
-        </div>
+          <button type="button" name="button" id="filterBtn" class="btn  btn-primary">Apply</button>
+          <a href="#"> <button type="button" name="button" id="filterresetBtn" class="btn  btn-primary">Reset</button></a>
+         <!-- <input type="reset" name="reset" id="reset" class="btn  btn-primary" value="Reset"></a> -->
+        <!-- </div> -->
       </form>
     </div>
     <div class="modal fade" id="questionModal" tabindex="-1" role="dialog" aria-labelledby="questionModalLabel" aria-hidden="true">
@@ -280,7 +284,7 @@
     <div class="card-body table-border-style">
       <div class="table-responsive">
         <span id="form_output"></span>
-        <table class="table table-striped table-bordered data-table example1" id="example1">
+        <table class="table table-striped table-bordered data-table example1" id="question_table">
           <thead>
             <tr>
               <th>Sr.No</th>
@@ -551,8 +555,68 @@
   
       //View/Get data in html format Here//
       fetchQuestionData();
-      function fetchQuestionData()
+      function fetchQuestionData(filterClicked='')
       {
+        if (filterClicked){
+          var table =  $('#question_table').DataTable({
+            // "order": [[0, "ASC"]], 
+            aaSorting: [[0, 'asc']],// Adjust the column index based on your actual table structure
+            "paging": true,
+            "pageLength": 50,
+            "bDestroy": true,
+            "autoWidth": false,
+            "responsive": true,
+          });
+          var board  =($("#board_id").val()!="")?$("#board_id").val():" ";
+          var medium =($("#medium_id").val()!="")?$("#medium_id").val():" ";
+          var classname=($("#class_id").val()!="")?$("#class_id").val():" ";
+          var subject =($("#subject_id").val()!="")?$("#subject_id").val():" ";
+          var chapter =($("#chapter_id").val()!="")?$("#chapter_id").val():" ";
+          var topic   =($("#topic_id").val()!="")?$("#topic_id").val():" ";
+          $.ajax({
+              url: base_url + "/admin/getQuestionAllData",
+              dataType:"json",
+              data: {_token:_accessToken,board:board,medium:medium,classname:classname,subject:subject,chapter:chapter,topic:topic},
+              success:function(data) {
+                  console.log(data);
+                  var html = '';
+                  for(var count=1; count < data.length; count++) {
+                      html +='<tr>';
+                      var createdAtDate = new Date(data[count].created_on);
+                      var options = { day: 'numeric', month: 'short', year: 'numeric' };
+                      var formattedCreatedAt = createdAtDate.toLocaleDateString('en-US', options);
+  
+                      html +='<td data-column_name="question_id" data-id="'+data[count].question_id+'"><input type="checkbox" class="selectQuestionCheckbox" data-question-id="' + data[count].question_id + '"> '+ count +' </td>';
+                      html +='<td data-column_name="board_name" data-id="'+data[count].question_id+'">'+data[count].board_name+'</td>';
+                      html +='<td data-column_name="medium_name" data-id="'+data[count].question_id+'">'+data[count].medium+'</td>';
+                      html +='<td data-column_name="class_name" data-id="'+data[count].question_id+'">'+data[count].class_name+'</td>';
+                      html +='<td data-column_name="subject_name" data-id="'+data[count].question_id+'">'+data[count].subject_name+'</td>';
+                      html +='<td data-column_name="chapter_name" data-id="'+data[count].question_id+'">'+data[count].chapter_name+'</td>';
+                      html +='<td data-column_name="marks" data-id="'+data[count].question_id+'">'+data[count].marks+'</td>';
+                      html +='<td data-column_name="question_type" data-id="'+data[count].question_id+'">'+data[count].question_type+'</td>';
+                      html +='<td data-column_name="question_type" data-id="'+data[count].question_id+'">'+data[count].question+'</td>';
+                      html +='<td data-column_name="created_at" data-id="' + data[count].question_id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
+                      html +='<td>';
+                      html +='<button class="btn btn-sm btn-secondary mt-1 view" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].question_id+'" data-subject-id="'+data[count].subject_id+'" data-topic-id="'+data[count].topic_id+'" data-chapter-id="'+data[count].chapter_id+'" data-questionType="'+data[count].question_type+'" data-toggle="modal" title="View Question Bank Details"><i class="fas fa-eye"></i></button>';
+                      html +='<button class="btn btn-sm btn-warning mt-1 ml-2 update" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].question_id+'" data-subject-id="'+data[count].subject_id+'" data-topic-id="'+data[count].topic_id+'" data-chapter-id="'+data[count].chapter_id+'" data-questionType="'+data[count].question_type+'" data-toggle="modal" title="Update Question Bank Details"><i class="fas fa-edit"></i></button>';
+                      html +='<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].question_id+'" data-toggle="modal"  title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
+                      html +='</td></tr>';
+                  }
+                  console.log(html);
+                  $('#question_list_data').html(html);
+
+                  if(filterClicked){
+                    // $('#question_list_data').html("");
+                    $('#question_list_data').html(html);
+                    table.rows.add(html).draw();
+                    // table.clear();
+                    // table.rows.add(html);
+                    // table.settings();
+                    // table.draw();
+                  }
+              }
+          });
+        } else {
           $.ajax({
               url: base_url + "/admin/getQuestionAllData",
               dataType:"json",
@@ -564,7 +628,7 @@
                       var options = { day: 'numeric', month: 'short', year: 'numeric' };
                       var formattedCreatedAt = createdAtDate.toLocaleDateString('en-US', options);
   
-                      html +='<td data-column_name="question_id" data-id="'+data[count].question_id+'">'+count+'</td>';
+                      html +='<td data-column_name="question_id" data-id="'+data[count].question_id+'"><input type="checkbox" class="selectQuestionCheckbox" data-question-id="' + data[count].question_id + '"> '+ count +' </td>';
                       html +='<td data-column_name="board_name" data-id="'+data[count].question_id+'">'+data[count].board_name+'</td>';
                       html +='<td data-column_name="medium_name" data-id="'+data[count].question_id+'">'+data[count].medium+'</td>';
                       html +='<td data-column_name="class_name" data-id="'+data[count].question_id+'">'+data[count].class_name+'</td>';
@@ -592,6 +656,7 @@
                   });
               }
           });
+        }
       }
   
       //Add Medium Using Ajax //
@@ -614,9 +679,6 @@
           } else if($("#chapter_id").val() == ''){
               err = 1;
               fieldId = $("#chapter_id");
-          //} else if($("#topic_id").val() == ''){
-             // err = 1;
-              //fieldId = $("#topic_id");
           } else if($("#marks").val() == ''){
               err = 1;
               fieldId = $("#marks");
@@ -862,8 +924,79 @@
                   }
               });
           }
+    });
+      
+    $(document).on('click', '#select_all', function() {
+      $(".selectQuestionCheckbox").prop("checked", this.checked);
+      $("#select_count").html($("input.selectQuestionCheckbox:checked").length+" Selected");
+    });
+    $(document).on('click', '.selectQuestionCheckbox', function() {
+      if ($('.selectQuestionCheckbox:checked').length == $('.selectQuestionCheckbox').length) {
+        $('#select_all').prop('checked', true);
+      } else {
+        $('#select_all').prop('checked', false);
+      }
+          $("#select_count").html($("input.selectQuestionCheckbox:checked").length+" Selected");
+    });
+    
+    $('#delete_records').on('click', function(e) {
+      var question_delete = [];
+      $(".selectQuestionCheckbox:checked").each(function() {
+        question_delete.push($(this).attr('data-question-id'));
+    
       });
-  });
+      if(question_delete.length <=0) {
+              alert("Please select records."); 
+          }else{
+              WRN_PROFILE_DELETE = "Are you sure you want to delete "+(question_delete.length>1?"these question details":"this question detail")+" ? \nNote:- After delete you can not access this data.";
+              var checked = confirm(WRN_PROFILE_DELETE);
+              if(checked == true) {
+              var selected_values = question_delete.join(",");
+              $.ajax({
+                url: base_url + "/admin/deleteMultipleQuestionData",
+                method: 'post',
+                data: {_token:_accessToken,question_ids:selected_values},
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function (response) {
+                    $('#delete_records').prop('disabled', true);
+                    $('#form_output').html(response);
+                    setInterval('location.reload()', 1000);
+                    fetchQuestionData();
+                }
+              });
+          }
+          }
+  })
+  
+  $("#filterBtn").on("click",function(){ 
+          var filterClicked = 1;
+          fetchQuestionData(filterClicked);
+          /* var board  =($("#board_id").val()!="")?$("#board_id").val():"NA";
+          var medium =($("#medium_id").val()!="")?$("#medium_id").val():"NA";
+          var classname=($("#class_id").val()!="")?$("#class_id").val():"NA";
+          var subject =($("#subject_id").val()!="")?$("#subject_id").val():"NA";
+          var chapter =($("#chapter_id").val()!="")?$("#chapter_id").val():"NA";
+          var topic   =($("#topic_id").val()!="")?$("#topic_id").val():"NA";
+
+          if (board=="NA"){
+            alert("Please select board");
+          }else{
+            $.ajax({
+              url: base_url + "/admin/getQuestionDetailsAsPerFilterVariable",
+              method: 'POST',
+              headers: {
+                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              },
+              data: {_token:_accessToken,board:board,medium:medium,classname:classname,subject:subject,chapter:chapter,topic:topic},
+              success:function(data) {
+                    $('#question_list_data').html(data);
+                }
+          });
+        } */
+    });  
+});
 </script>
 </body>
 </html>

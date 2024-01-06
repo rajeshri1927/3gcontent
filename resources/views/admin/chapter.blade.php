@@ -11,13 +11,13 @@
     <div class="row align-items-center">
       <div class="col-md-12">
         <div class="page-header-title">
-          <h5 class="m-b-10">Chapter Here</h5>
+          <h5 class="m-b-10">Chapter Here ( Total : <?php echo $chapter_count;?>)</h5>
         </div>
-        <ul class="breadcrumb">
+        <!-- <ul class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
           <li class="breadcrumb-item"><a href="#!">Chapter Info</a></li>
           <li class="breadcrumb-item"><a href="#!">Chapter Details</a></li>
-        </ul>
+        </ul> -->
       </div>
     </div>
   </div>
@@ -27,7 +27,9 @@
 <div class="col-xl-12">
   <div class="card">
     <div class="card-header text-right">
-      <button type="button" class="btn  btn-primary" data-toggle="modal" data-target="#chapterModal" > <i class="fa-solid fa-plus"></i> Add Chapter </button>
+        <label><input type="checkbox" id="select_all" class="mt-2" style="cursor:pointer;"> Select All </label>
+        <button type="button" id="delete_records" class="btn btn-danger btn-xs"><i class="fas fa-trash"></i> Delete <span class="rows_selected" id="select_count">0 Selected</span></button>
+        <button type="button" class="btn  btn-primary" data-toggle="modal" data-target="#chapterModal" > <i class="fa-solid fa-plus"></i> Add Chapter </button>
     </div>
     <div class="modal fade" id="chapterModal" tabindex="-1" role="dialog" aria-labelledby="chapterModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg" role="document">
@@ -134,6 +136,7 @@
         <table class="table table-striped table-bordered data-table">
           <thead>
             <tr>
+              <th style="width:10px !important;text-align:center"></th>
               <th>Sr.No</th>
               <th>Board Name</th>
               <th>Medium Name</th>
@@ -263,13 +266,14 @@ $(document).ready(function() {
               month: 'short',
               day: 'numeric'
           });
-        html +='<td contenteditable class="column_name" data-column_name="chapter_id" data-id="'+data[count].chapter_id+'">'+data[count].chapter_id+'</td>';
-        html +='<td contenteditable class="column_name" data-column_name="board_id" data-id="'+data[count].chapter_id+'">'+data[count].board_name+'</td>';
-        html += '<td contenteditable class="column_name" data-column_name="medium_id" data-id="'+data[count].chapter_id+'">'+data[count].medium+'</td>';
-        html +='<td contenteditable class="column_name" data-column_name="class_id" data-id="'+data[count].chapter_id+'">'+data[count].class_name+'</td>';
-        html +='<td contenteditable class="column_name" data-column_name="subject_id" data-id="'+data[count].chapter_id+'">'+data[count].subject_name+'</td>';
-        html += '<td contenteditable class="column_name" data-column_name="chapter_no" data-id="'+data[count].chapter_id+'">'+data[count].chapter_no+'</td>';
-        html += '<td contenteditable class="column_name" data-column_name="chapter_name" data-id="'+data[count].chapter_id+'">'+data[count].chapter_name+'</td>';
+        html += '<td><input type="checkbox" class="selectchapterCheckbox" data-chapter-id="' + data[count].chapter_id + '"></td>';
+        html +='<td data-column_name="chapter_id" data-id="'+data[count].chapter_id+'">'+data[count].chapter_id+'</td>';
+        html +='<td data-column_name="board_id" data-id="'+data[count].chapter_id+'">'+data[count].board_name+'</td>';
+        html +='<td data-column_name="medium_id" data-id="'+data[count].chapter_id+'">'+data[count].medium+'</td>';
+        html +='<td data-column_name="class_id" data-id="'+data[count].chapter_id+'">'+data[count].class_name+'</td>';
+        html +='<td data-column_name="subject_id" data-id="'+data[count].chapter_id+'">'+data[count].subject_name+'</td>';
+        html += '<td data-column_name="chapter_no" data-id="'+data[count].chapter_id+'">'+data[count].chapter_no+'</td>';
+        html += '<td data-column_name="chapter_name" data-id="'+data[count].chapter_id+'">'+data[count].chapter_name+'</td>';
         html += '<td data-column_name="created_at" data-id="' + data[count].chapter_id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
         html += '<td>';
         html += '<button class="btn btn-sm btn-warning mt-1 update" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].chapter_id+'" data-subject-id="'+data[count].subject_id+'" data-toggle="modal"  title="Update Class Details"><i class="fas fa-edit"></i></button>';
@@ -397,6 +401,51 @@ $(document).ready(function() {
         });
         }
     });
+
+    $(document).on('click', '#select_all', function() {
+     $(".selectchapterCheckbox").prop("checked", this.checked);
+     $("#select_count").html($("input.selectchapterCheckbox:checked").length+" Selected");
+   });
+   $(document).on('click', '.selectchapterCheckbox', function() {
+     if ($('.selectchapterCheckbox:checked').length == $('.selectchapterCheckbox').length) {
+       $('#select_all').prop('checked', true);
+     } else {
+       $('#select_all').prop('checked', false);
+     }
+        $("#select_count").html($("input.selectchapterCheckbox:checked").length+" Selected");
+   });
+   
+   $('#delete_records').on('click', function(e) {
+     var chapter_delete = [];
+     $(".selectchapterCheckbox:checked").each(function() {
+      chapter_delete.push($(this).attr('data-chapter-id'));
+   
+     });
+     if(chapter_delete.length <=0) {
+            alert("Please select records."); 
+         }else{
+            WRN_PROFILE_DELETE = "Are you sure you want to delete "+(chapter_delete.length>1?"these chapter details":"this chapter detail")+" ? \nNote:- After delete you can not access this data.";
+            var checked = confirm(WRN_PROFILE_DELETE);
+            if(checked == true) {
+            var selected_values = chapter_delete.join(",");
+            $.ajax({
+               url: base_url + "/admin/deleteMultipleChapterData",
+               method: 'post',
+               data: {_token:_accessToken,chapter_ids:selected_values},
+               headers: {
+                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+               },
+               success: function (response) {
+                  $('#delete_records').prop('disabled', true);
+                  $('#form_output').html(response);
+                  setInterval('location.reload()', 1000);
+                  fetchChapterData();
+               }
+            });
+         }
+         }
+   });  
+
 
   });
 </script>

@@ -46,21 +46,46 @@ class QuestionBankController extends Controller
         echo $html;
     }
 
-    public function getQuestionBankData(){
+    public function getQuestionBankData(Request $request){
         $error_array    = array();
         $success_output = '';
+
+        $board     = $request->board;
+        $medium    = $request->medium;
+        $classname = $request->classname;
+        $subject   = $request->subject;
+        $chapter   = $request->chapter;
+        //\DB::enableQueryLog();
         $question = QuestionBank::select('question_list.*','topic_details.topic_name','question_list.created_on','board_details.board_name','medium_details.medium','class_details.class_name','subject_details.subject_name','chapter_details.chapter_name')
         ->join('class_details', 'class_details.class_id', '=', 'question_list.class_id')
         ->join('board_details', 'question_list.board_id', '=', 'board_details.board_id')
         ->join('medium_details', 'question_list.medium_id', '=', 'medium_details.medium_id')
         ->join('subject_details', 'question_list.subject_id', '=', 'subject_details.subject_id')
         ->join('chapter_details', 'question_list.chapter_id', '=', 'chapter_details.chapter_id')
-        ->join('topic_details', 'question_list.topic_id', '=', 'topic_details.topic_id')
-        ->where('question_list.question_type', '=', 'MCQ') 
-        ->orderBy('question_list.question_id', 'DESC')
-        ->limit(500)
-        ->get();
-        if($question){
+        ->join('topic_details', 'question_list.topic_id', '=', 'topic_details.topic_id');
+        //->where('question_list.question_type', '=', 'MCQ')
+        if($board) {
+            $question->where('question_list.board_id', $board);
+        }
+        if($medium){
+            $question->where('question_list.medium_id', $medium);
+        }
+        if($classname){
+            $question->where('question_list.class_id', $classname);
+        }
+        if($subject){
+            $question->where('question_list.subject_id', $subject);
+        }
+        if($chapter){
+            $question->where('question_list.chapter_id', $chapter);
+        }
+        
+        $result = $question->orderBy('question_list.question_id', 'DESC')
+            ->limit(500)
+            ->get();
+        
+        //dd(\DB::getQueryLog());
+        if($result){
             $success_output = '<div class="alert alert-success">Get Question Data !!!</div>';
         }else{
             $success_output = '<div class="alert alert-danger">Question Data Not Available !!!</div>';
@@ -69,7 +94,7 @@ class QuestionBankController extends Controller
             'error'     =>  $error_array,
             'success'   =>  $success_output
         );
-        echo json_encode($question);
+        echo json_encode($result);
     }
 
     public function addQuestionBank(Request $request){
@@ -383,6 +408,55 @@ class QuestionBankController extends Controller
         } else {
             return response()->json(['message' => 'Invalid Question Bank ID'], 400);
         }
+    }
+
+    public function deleteMultipleQuestionData(Request $request)
+    {
+        $ids = $request->input('question_ids');
+        if (is_string($ids) && !empty($ids)) {
+            // Convert comma-separated string to an array
+            $questionIdsArray = explode(',', $ids);
+            // Remove any empty values
+            $questionIdsArray = array_filter($questionIdsArray);
+            if (!empty($questionIdsArray)) {
+                // Perform the delete operation based on the provided IDs
+                QuestionBank::whereIn('question_id', $questionIdsArray)->delete();
+                echo '<div class="alert alert-success">All Questions Deleted.</div>';
+            } else {
+                return response()->json(['error' => 'Invalid or empty Question_ids provided'], 400);
+            }
+        } else {
+            return response()->json(['error' => 'Invalid or empty Question_ids provided'], 400);
+        }
+    }
+
+    public function getQuestionDetailsAsPerFilterVariable(Request $request)
+    {
+        $board     = $request->board;
+        $medium    = $request->medium;
+        $classname = $request->classname;
+        $subject   = $request->subject;
+        $chapter   = $request->chapter;
+        $data = QuestionBank::select(
+                'question_list.*',
+                'board_details.board_name',
+                'class_details.class_name',
+                'subject_details.subject_name',
+                'chapter_details.chapter_no',
+                'chapter_details.chapter_name'
+            )
+            ->join('board_details', 'question_list.board_id', '=', 'board_details.board_id')
+            ->join('class_details', 'question_list.class_id', '=', 'class_details.class_id')
+            ->join('subject_details', 'question_list.subject_id', '=', 'subject_details.subject_id')
+            ->join('chapter_details', 'question_list.chapter_id', '=', 'chapter_details.chapter_id')
+            ->where('question_list.board_id', $board)
+            ->where('question_list.medium_id', $medium)
+            ->where('question_list.class_id', $classname)
+            ->where('question_list.subject_id', $subject)
+            ->where('question_list.chapter_id', $chapter)
+            ->orderBy('question_list.created_on', 'DESC')
+            ->get();
+        return $data->isEmpty() ? false : $data->toArray();
     }
 
 }
