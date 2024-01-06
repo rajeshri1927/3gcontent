@@ -68,7 +68,7 @@
                     <div class="row mcqPaperOtherData">                            
                         <div class="col-md-3 form-group">
                             <label for="marks" class="col-form-label"> Select Date:</label>
-                            <input type="text" class="form-control form-control-sm hasDatepicker" id="datepicker" placeholder="Select Date" name="selected_date">
+                            <input type="date" class="form-control form-control-sm hasDatepicker" id="datepicker" placeholder="Select Date" name="selected_date" value="<?= date('Y-m-d');?>">
                         </div>
                     </div>
                     <div class="row mcqPaperOtherData">
@@ -125,8 +125,13 @@
     }
 </style>
 <script src="{{ asset('public/assets/js/plugins/jquery-ui.min.js')}}"></script>
+<script>
+  $.widget.bridge('uibutton', $.ui.button)
+</script>
 <script src="{{ asset('public/assets/summernote/summernote-bs4.js')}}"></script>
 <script src="{{ asset('public/assets/js/summernote-math.js')}}"></script>
+<!-- <script src="{{ asset('public/assets/js/datepicker/date-picker/datepicker.js')}}"></script> -->
+
 <script>
 $(document).ready(function() {
     $(".mcqPaperOtherData").show();

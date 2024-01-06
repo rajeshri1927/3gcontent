@@ -147,4 +147,5 @@ Route::group(array('prefix' => '/admin','middleware' => ['web','admin']), functi
     Route::any('/addPaperStructureDetails',['as'=>'','uses'=>$module_controller.'readyPaperStructureCreate']);
     Route::any('/updateGetReadyPaperStructureData',['as'=>'','uses'=>$module_controller.'updateReadyPaperStructureData']);
     Route::any('/deleteReadyPaperStructureData',['as'=>'','uses'=>$module_controller.'deletReadyPaperStructure']);
+    Route::any('/getBoardWiseQT',['as'=>'','uses'=>$module_controller.'getBoardWiseQuestionTypes']);
 });

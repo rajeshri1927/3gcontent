@@ -66,6 +66,7 @@ class ReadyPaperController extends Controller
                         'medium_id'     =>  $request->medium_id,
                         'class_id'     =>  $request->class_id,
                         'subject_id' => $request->subject_id,
+                        'paper_type' => $request->paper_type,
                         'total_paper_marks' => $request->total_paper_marks,
                         'question_type_id' => $request->qType_id,
                         'total_marks_as_per_question_type' =>  $request->total_marks_as_per_question_type,
@@ -79,7 +80,6 @@ class ReadyPaperController extends Controller
                         'sections_name' => $request->sections_name
                 ]);
                 $paperStructure->save();
-                die;
                 $success_output = '<div class="alert alert-success">Ready Paper Data Inserted</div>';
             }
             if ($request->get('button_action') == 'update') {
@@ -91,6 +91,7 @@ class ReadyPaperController extends Controller
                         'medium_id'     =>  $request->medium_id,
                         'class_id'      =>  $request->class_id,
                         'subject_id'    => $request->subject_id,
+                        'paper_type'    => $request->paper_type,
                         'total_paper_marks' => $request->total_paper_marks,
                         'question_type_id'  => $request->qType_id,
                         'total_marks_as_per_question_type' =>  $request->total_marks_as_per_question_type,
@@ -269,6 +270,7 @@ class ReadyPaperController extends Controller
             'medium_id'     =>  $html,
             'class_id'     =>  $htmlClass,
             'subject_id' => $htmlsubject,
+            'paper_type' => $readyPaperStructure->paper_type,
             'total_paper_marks' => $htmlTotalMarks,
             'question_type'  =>  $request->input('question_type_id'),
             'total_marks_as_per_question_type' => $readyPaperStructure->total_marks_as_per_question_type,
@@ -282,5 +284,32 @@ class ReadyPaperController extends Controller
             'sections_name' => $sections_name
         );
         echo json_encode($output);
+    }
+
+    public function getBoardWiseQuestionTypes(Request $request){
+        $paperType = (!empty($request->paper_type)) ? $request->paper_type : '';
+        $board_id = (!empty($request->board_id)) ? $request->board_id : '';
+        $result = QuestionBank ::select('marks', 'question_type')
+                ->distinct();
+        if($request->board_id=='BOARD_BF9351DAA'){ // For board CBSE
+            $result->where('board_id', 'BOARD_BF9351DAA');
+            $result->whereIn('marks', [1, 2]);
+            if(!empty($paperType) && $paperType == 'MCQ'){
+                $result->whereIn('question_type', ['MCQ', 'MCQ with Reason']);
+            }
+        } elseif($request->board_id=='BOARD_33E77AEF9') { // For board MHSB
+            $result->where('board_id', 'BOARD_33E77AEF9');
+            if(!empty($paperType) && $paperType == 'Objective'){
+                $result->whereIn('marks', [1]);
+            }
+        }
+        $resultList = $result->get()->toArray();
+        $html = '';
+        $questionTypeList = QuestionType::get();
+        $html .= '<option value="">---Select Question Type ---</option>';
+        foreach ($resultList as $qtDet) {
+            $html .= '<option value="' . $qtDet['question_type'] . '">' . $qtDet['question_type']. '</option>';
+        }
+        echo $html;
     }
 }

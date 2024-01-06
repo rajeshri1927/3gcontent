@@ -75,6 +75,15 @@
                                     </select>
                                 </div>
                                 <div class="col-md-4 form-group">
+                                    <label for="subject_id" class="col-form-label">Paper Type:</label>
+                                    <select class="form-control formField" name="paper_type" id="paper_type">
+                                        <option value="">--- Select Paper Type ---</option>
+                                        <option value="MCQ">MCQ</option>
+                                        <option value="Objective">Objective</option>
+                                        <option value="Subjective">Subjective</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 form-group">
                                     <label for="total_paper_marks" class="col-form-label">Total Paper Marks:</label>
                                     <select class="form-control formField" name="total_paper_marks" id="total_paper_marks">
                                         <option value="">--Select Total Paper Marks--</option>
@@ -91,6 +100,8 @@
                                         <option value="100">100</option>
                                     </select>
                                 </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-md-4 form-group">
                                     <label for="qType_id" class="col-form-label">Select Question Type:</label>
                                     <select class="form-control formField" name="qType_id" id="qType_id">
@@ -101,9 +112,7 @@
                                             @endforeach
                                         @endif
                                     </select>
-                                </div>
-                            </div>
-                            <div class="row">                            
+                                </div>                            
                                 <div class="col-md-4 form-group">
                                     <label for="total_marks_as_per_question_type" class="col-form-label">Total Marks As Per Question Type:</label>
                                     <input type="text" class="form-control formField" id="total_marks_as_per_question_type" placeholder="Enter Marks" name="total_marks_as_per_question_type">
@@ -112,12 +121,12 @@
                                     <label for="marks_per_each_question" class="col-form-label">Marks Per Each Question:</label>
                                     <input type="text" class="form-control formField" id="marks_per_each_question" placeholder="Enter Marks" name="marks_per_each_question">
                                 </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-md-4 form-group">
                                     <label for="total_no_of_questions_to_ask" class="col-form-label">Total No. Of Questions To Ask:</label>
                                     <input type="text" class="form-control formField" id="total_no_of_questions_to_ask" placeholder="Enter number" name="total_no_of_questions_to_ask">
-                                </div>
-                            </div>
-                            <div class="row">                            
+                                </div>                            
                                 <div class="col-md-4 form-group">
                                     <label for="total_no_of_questions_to_ans" class="col-form-label">Total No. Of Questions To Answer:</label>
                                     <input type="text" class="form-control formField" id="total_no_of_questions_to_ans" placeholder="Enter Number" name="total_no_of_questions_to_ans">
@@ -126,12 +135,12 @@
                                     <label for="question_type_order" class="col-form-label">Question Type Order in Paper:</label>
                                     <input type="text" class="form-control formField" id="question_type_order" placeholder="Enter Order" name="question_type_order">
                                 </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-md-4 form-group">
                                     <label for="sections" class="col-form-label">Sections:</label>
                                     <input type="text" class="form-control" id="sections" placeholder="Enter sections" name="sections">
                                 </div>
-                            </div>
-                            <div class="row">
                                 <div class="col-md-4 form-group">
                                     <label for="sections_name" class="col-form-label">Sections Name:</label>
                                     <input type="text" class="form-control" id="sections_name" placeholder="Sections Heading here" name="sections_name">
@@ -140,6 +149,8 @@
                                     <label for="sub_question_type_order" class="col-form-label">Sub Question Order in Paper:</label>
                                     <input type="text" class="form-control" id="sub_question_type_order" placeholder="Sub Question Order" name="sub_question_type_order">
                                 </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-md-4 form-group">
                                     <label for="child_sub_question_type_order" class="col-form-label">Child Sub Question Order in Paper:</label>
                                     <input type="text" class="form-control" id="child_sub_question_type_order" placeholder="Child Sub Question Order" name="child_sub_question_type_order">
@@ -304,6 +315,28 @@
 <script src="{{ asset('public/assets/summernote/summernote-bs4.js')}}"></script>
 <script src="{{ asset('public/assets/js/summernote-math.js')}}"></script>
 <script>
+    function getBoardWiseQuestionType(board_id){
+        // Get board wise question type
+        var paper_type = $("#paper_type").val();
+        $.ajax({
+            url: base_url + "/admin/getBoardWiseQT",
+            method:"GET",
+            data:{board_id:board_id,paper_type:paper_type},
+            success:function(result){
+                if(result){
+                    //question type Data//
+                    var htmlQuestionTypeString = result;
+                    var optionQuestionType = $(htmlQuestionTypeString);
+                    optionQuestionType.each(function(index,question_type) {
+                        optionQuestionType.filter(':contains("2")').prop('selected', true);
+                    });
+                    $('#qType_id').html(optionQuestionType);
+                }else{
+                    $('#qType_id').html('<option value="">--- No Question Type ---</option>');
+                }
+            }
+        });
+    }
 $(document).ready(function() {
     $('#total_marks_as_per_question_type,#marks_per_each_question,#total_no_of_questions_to_ask,#total_no_of_questions_to_ans').keypress(function(event) {
         // Check if the pressed key is a number or not
@@ -336,6 +369,8 @@ $(document).ready(function() {
                 }else{
                     $('#medium_id').html('<option value="">--- No Medium ---</option>');
                 }
+                var paper_type = $("#paper_type").val();
+                getBoardWiseQuestionType(board_id,paper_type);
             }
         });
     });
@@ -383,7 +418,7 @@ $(document).ready(function() {
         });
     });
 
-    $('#subject_id').on('change', function(event){ 
+    $('#subject_id').on('change', function(event){
         event.preventDefault();
         $(this).css('border','2px solid rgba(0, 0, 0, 0.15)');
         var board_id = $("#board_id").val();
@@ -404,6 +439,12 @@ $(document).ready(function() {
                 }
             }
             });
+    });
+
+    $('#paper_type').on('change', function(event){
+        var board_id = $("#board_id").val();
+        var paper_type = $(this).val();
+        getBoardWiseQuestionType(board_id,paper_type);
     });
 
     $('#total_paper_marks').on('change', function(event){ 
@@ -601,6 +642,7 @@ $(document).ready(function() {
                 $('#total_paper_marks').html(optionTotalMarks);
 
                 $('#board_id').val(data.board_id);
+                $('#paper_type').val(data.paper_type);
                 $('#ready_paper_id').val(ready_paper_id);
                 $('#paperStructureModal').modal('show');
                 $('#action').val('Update');
