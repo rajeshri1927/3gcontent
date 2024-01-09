@@ -16,6 +16,7 @@ use App\Models\QuestionType;
 use App\Models\QuestionBank;
 use App\Models\McqOptions;
 use Validator;
+use DataTables;
 use DB;
 
 class QuestionBankController extends Controller
@@ -30,13 +31,13 @@ class QuestionBankController extends Controller
         $this->arr_view_data['BoardList'] = Board::get(["board_name", "board_id"]);
         $this->arr_view_data['BoardList'] = $this->arr_view_data['BoardList'] ?? collect();
 
-        $this->arr_view_data['QuestionTypeList'] = QuestionType::get(["qType", "qType_status"]);
+        $this->arr_view_data['QuestionTypeList'] = QuestionType::get(["qType_id","qType", "qType_status"]);
         $this->arr_view_data['QuestionTypeList'] = $this->arr_view_data['QuestionTypeList'] ?? collect();
         $count = QuestionBank::count();
         $this->arr_view_data['question_bank_count'] = $count;
         return view($this->module_view_folder.'.questionbank', $this->arr_view_data);
     }
-    
+
     public function getTopicAjax(Request $request){
         $topicList = Topic::where('chapter_id',$request->chapter_id)->get();
         $html = '';
@@ -46,24 +47,72 @@ class QuestionBankController extends Controller
         echo $html;
     }
 
-    public function getQuestionBankData(Request $request){
-        $error_array    = array();
-        $success_output = '';
+    // public function getQuestionBankData(Request $request){
+    //     $error_array    = array();
+    //     $success_output = '';
 
+    //     $board     = $request->board;
+    //     $medium    = $request->medium;
+    //     $classname = $request->classname;
+    //     $subject   = $request->subject;
+    //     $chapter   = $request->chapter;
+    //     //\DB::enableQueryLog();
+    //     $question = QuestionBank::select('question_list.*','topic_details.topic_name','question_list.created_on','board_details.board_name','medium_details.medium','class_details.class_name','subject_details.subject_name','chapter_details.chapter_name')
+    //     ->join('class_details', 'class_details.class_id', '=', 'question_list.class_id')
+    //     ->join('board_details', 'question_list.board_id', '=', 'board_details.board_id')
+    //     ->join('medium_details', 'question_list.medium_id', '=', 'medium_details.medium_id')
+    //     ->join('subject_details', 'question_list.subject_id', '=', 'subject_details.subject_id')
+    //     ->join('chapter_details', 'question_list.chapter_id', '=', 'chapter_details.chapter_id')
+    //     ->join('topic_details', 'question_list.topic_id', '=', 'topic_details.topic_id');
+    //     //->where('question_list.question_type', '=', 'MCQ')
+    //     if($board) {
+    //         $question->where('question_list.board_id', $board);
+    //     }
+    //     if($medium){
+    //         $question->where('question_list.medium_id', $medium);
+    //     }
+    //     if($classname){
+    //         $question->where('question_list.class_id', $classname);
+    //     }
+    //     if($subject){
+    //         $question->where('question_list.subject_id', $subject);
+    //     }
+    //     if($chapter){
+    //         $question->where('question_list.chapter_id', $chapter);
+    //     }
+        
+    //     $result = $question->orderBy('question_list.question_id', 'DESC')
+    //         ->limit(500)
+    //         ->get();
+        
+    //     //dd(\DB::getQueryLog());
+    //     if($result){
+    //         $success_output = '<div class="alert alert-success">Get Question Data !!!</div>';
+    //     }else{
+    //         $success_output = '<div class="alert alert-danger">Question Data Not Available !!!</div>';
+    //     }
+    //     $output = array(
+    //         'error'     =>  $error_array,
+    //         'success'   =>  $success_output
+    //     );
+    //     echo json_encode($result);
+    // }
+    
+    public function getQuestionBankData(Request $request){
+        $build_result = array();
         $board     = $request->board;
         $medium    = $request->medium;
         $classname = $request->classname;
         $subject   = $request->subject;
         $chapter   = $request->chapter;
         //\DB::enableQueryLog();
-        $question = QuestionBank::select('question_list.*','topic_details.topic_name','question_list.created_on','board_details.board_name','medium_details.medium','class_details.class_name','subject_details.subject_name','chapter_details.chapter_name')
+        $question = QuestionBank::select('question_list.*','topic_details.topic_name','board_details.board_name','medium_details.medium','class_details.class_name','subject_details.subject_name','chapter_details.chapter_name')
         ->join('class_details', 'class_details.class_id', '=', 'question_list.class_id')
         ->join('board_details', 'question_list.board_id', '=', 'board_details.board_id')
         ->join('medium_details', 'question_list.medium_id', '=', 'medium_details.medium_id')
         ->join('subject_details', 'question_list.subject_id', '=', 'subject_details.subject_id')
         ->join('chapter_details', 'question_list.chapter_id', '=', 'chapter_details.chapter_id')
         ->join('topic_details', 'question_list.topic_id', '=', 'topic_details.topic_id');
-        //->where('question_list.question_type', '=', 'MCQ')
         if($board) {
             $question->where('question_list.board_id', $board);
         }
@@ -82,24 +131,52 @@ class QuestionBankController extends Controller
         
         $result = $question->orderBy('question_list.question_id', 'DESC')
             ->limit(500)
-            ->get();
+            ->latest();
         
-        //dd(\DB::getQueryLog());
-        if($result){
-            $success_output = '<div class="alert alert-success">Get Question Data !!!</div>';
-        }else{
-            $success_output = '<div class="alert alert-danger">Question Data Not Available !!!</div>';
+        $json_result = DataTables::of($result)
+        ->addColumn('built_action_btns', function ($data) {
+            $updateButton = '<button name="button" class="btn btn-sm btn-warning mt-1 update" type="button" data-id="'.$data->question_id.'" data-toggle="modal" title="Update Medium Details"><i class="fas fa-edit"></i></button>';
+            $deleteButton = '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'.$data->question_id.'" data-toggle="modal" name="button" title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
+            return '<input type="checkbox" class="selectCheckbox" data-medium-id="'.$data->question_id.'">' . $updateButton . $deleteButton;
+        })->make(true);
+		$build_result = $json_result->getData();
+
+        if (isset($build_result->data) && sizeof($build_result->data) > 0) {
+            $i = 0;
+            foreach ($build_result->data as $key => $data) {
+                $i = $i + 1;
+                $decodedHtml  = html_entity_decode($data->question); 
+                $strippedHtml = strip_tags($decodedHtml);
+                $questionType = html_entity_decode($data->question_type); 
+                $strippedQuestionTypeHtml = strip_tags($questionType);
+                $delete = '<input type="checkbox" class="selectmediumCheckbox" data-medium-id="'.$data->question_id.'">';
+                $build_result->data[$key]->delete = $delete;
+                // $build_result->data[$key]->question_id  = $data->question_id;
+                $build_result->data[$key]->board_name = $data->board_name;
+                $build_result->data[$key]->medium = $data->medium;
+                $build_result->data[$key]->class_name = $data->class_name;
+                $build_result->data[$key]->subject_name = $data->subject_name;
+                $build_result->data[$key]->chapter_name = $data->chapter_name;
+                $build_result->data[$key]->marks = $data->marks;
+                $build_result->data[$key]->question_type = $strippedQuestionTypeHtml;
+                $build_result->data[$key]->question = $strippedHtml;
+                $build_result->data[$key]->created_at = date("d M Y", strtotime($data->created_on));
+                $action = '<button class="btn btn-sm btn-secondary mt-1 view" type="button" data-class-id ="'.$data->class_id.'" data-medium-id ="'.$data->medium_id.'" data-board-id ="'.$data->board_id.'" data-id="'.$data->question_id.'" data-subject-id="'.$data->subject_id.'" data-topic-id="'.$data->topic_id.'" data-chapter-id="'.$data->chapter_id.'" data-questionType="'.$data->question_type.'" data-toggle="modal" title="View Question Bank Details"><i class="fas fa-eye"></i></button>
+                <button name="button" class="btn btn-sm btn-warning mt-1 update" type="button" data-id="'.$data->question_id.'"  data-class-id ="'.$data->class_id.'" data-medium-id ="'.$data->medium_id.'" data-board-id ="'.$data->board_id.'" data-id="'.$data->question_id.'" data-subject-id="'.$data->subject_id.'" data-topic-id="'.$data->topic_id.'" data-chapter-id="'.$data->chapter_id.'" data-questionType="'.$data->question_type.'"  data-toggle="modal"  title="Update Topic Details"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'.$data->question_id.'"  data-toggle="modal" name="button" title="Delete Topic Details"><i class="fas fa-trash-alt"></i></button>';
+				$build_result->data[$key]->built_action_btns = $action;
+            }
+           // dd($build_result);
+            return response()->json($build_result);
+        } else {
+            return response()->json($build_result);
         }
-        $output = array(
-            'error'     =>  $error_array,
-            'success'   =>  $success_output
-        );
-        echo json_encode($result);
+ 
     }
 
     public function addQuestionBank(Request $request){
         $user = Auth::user();
-        echo "<pre>";print_r($request->all());die;
+        // echo "<pre>";print_r($request->all());die;
         $validation = Validator::make($request->all(), [
             'marks'    => 'required'
         ]);
@@ -320,8 +397,8 @@ class QuestionBankController extends Controller
             if (isset($request->action) && $request->action == 'view') {
                 $htmlquestiontype = $questionTypeDet->qType;
             }else{
-                $isSelected = ($questionTypeDet->question_id == $question_type_id) ? 'selected' : '';
-                $htmlquestiontype .= '<option value="' . $questionTypeDet->question_type_id . '" ' . $isSelected . '>' . $questionTypeDet->question_type . '</option>';
+                $isSelected = ($questionTypeDet->qType == $questionType_id) ? 'selected' : '';
+                $htmlquestiontype .= '<option value="' . $questionTypeDet->questionType_id . '" ' . $isSelected . '>' . $questionTypeDet->qType . '</option>';
             }
         }
 
@@ -329,6 +406,17 @@ class QuestionBankController extends Controller
         $questionBank  = QuestionBank::where('question_id',$question_bank_id)->first();  
         $created_on   = date('d M Y ',strtotime($questionBank->created_on));
         $boardDetails = Board::where('board_id',$selectedBoardId)->first();
+        //dd($questionBank->board_id);
+        $htmlBoards   = '';
+        //foreach ($boardDetails as $boardDet) {
+            //dd($boardDet);
+            // if (isset($request->action) && $request->action == 'view') {
+            //     $htmlBoards = $boardDetails->board_name;
+            // }else{
+            //     $isSelected = ($boardDetails->board_id == $questionBank->board_id) ? 'selected' : '';
+            //     $htmlBoards .= '<option value="' . $boardDetails->board_id . '" ' . $isSelected . '>' . $boardDetails->board_name . '</option>';
+            // }
+        //}
         if (isset($request->action) && $request->action == 'view') {
             $board_id = $boardDetails->board_name;
         } else {
@@ -430,33 +518,33 @@ class QuestionBankController extends Controller
         }
     }
 
-    public function getQuestionDetailsAsPerFilterVariable(Request $request)
-    {
-        $board     = $request->board;
-        $medium    = $request->medium;
-        $classname = $request->classname;
-        $subject   = $request->subject;
-        $chapter   = $request->chapter;
-        $data = QuestionBank::select(
-                'question_list.*',
-                'board_details.board_name',
-                'class_details.class_name',
-                'subject_details.subject_name',
-                'chapter_details.chapter_no',
-                'chapter_details.chapter_name'
-            )
-            ->join('board_details', 'question_list.board_id', '=', 'board_details.board_id')
-            ->join('class_details', 'question_list.class_id', '=', 'class_details.class_id')
-            ->join('subject_details', 'question_list.subject_id', '=', 'subject_details.subject_id')
-            ->join('chapter_details', 'question_list.chapter_id', '=', 'chapter_details.chapter_id')
-            ->where('question_list.board_id', $board)
-            ->where('question_list.medium_id', $medium)
-            ->where('question_list.class_id', $classname)
-            ->where('question_list.subject_id', $subject)
-            ->where('question_list.chapter_id', $chapter)
-            ->orderBy('question_list.created_on', 'DESC')
-            ->get();
-        return $data->isEmpty() ? false : $data->toArray();
-    }
+    // public function getQuestionDetailsAsPerFilterVariable(Request $request)
+    // {
+    //     $board     = $request->board;
+    //     $medium    = $request->medium;
+    //     $classname = $request->classname;
+    //     $subject   = $request->subject;
+    //     $chapter   = $request->chapter;
+    //     $data = QuestionBank::select(
+    //             'question_list.*',
+    //             'board_details.board_name',
+    //             'class_details.class_name',
+    //             'subject_details.subject_name',
+    //             'chapter_details.chapter_no',
+    //             'chapter_details.chapter_name'
+    //         )
+    //         ->join('board_details', 'question_list.board_id', '=', 'board_details.board_id')
+    //         ->join('class_details', 'question_list.class_id', '=', 'class_details.class_id')
+    //         ->join('subject_details', 'question_list.subject_id', '=', 'subject_details.subject_id')
+    //         ->join('chapter_details', 'question_list.chapter_id', '=', 'chapter_details.chapter_id')
+    //         ->where('question_list.board_id', $board)
+    //         ->where('question_list.medium_id', $medium)
+    //         ->where('question_list.class_id', $classname)
+    //         ->where('question_list.subject_id', $subject)
+    //         ->where('question_list.chapter_id', $chapter)
+    //         ->orderBy('question_list.created_on', 'DESC')
+    //         ->get();
+    //     return $data->isEmpty() ? false : $data->toArray();
+    // }
 
 }
