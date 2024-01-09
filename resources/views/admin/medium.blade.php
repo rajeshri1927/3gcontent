@@ -127,7 +127,7 @@ $(document).ready(function() {
    fetchMediumData();
    function fetchMediumData()
    {
-    var binfo = true;
+        var binfo = true;
         var paging = true;
         var table = $('#Medium_table').DataTable({
             "destroy": true,

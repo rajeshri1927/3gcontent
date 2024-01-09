@@ -314,7 +314,8 @@ $(document).ready(function() {
                     "order": [[0, "desc"]], // Example: Sort by the first column (subject_id) in descending order
                     "paging": true,
                     "pageLength": 10,
-                    "bDestroy": true
+                    "bDestroy": true,
+                    "responsive": true,
                 });
             }
         });

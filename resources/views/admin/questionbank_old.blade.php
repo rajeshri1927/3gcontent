@@ -35,12 +35,12 @@
           <button type="button" class="btn  btn-primary" data-toggle="modal" data-target="#questionModal" > <i class="fa-solid fa-plus"></i> Add New Question </button>
     </div>
     <div class="modal-body">
-      <form autocomplete="off" id="filterAddQuestion" method="post">
+      <form autocomplete="off" id="addQuestion" method="post">
         {{ csrf_field() }}
         <div class="row">
           <div class="col-md-2 form-group">
             <label for="recipient-name" class="col-form-label">Select Board </label>
-            <select class="form-control formField" name="board_id" id="filter_board_id">
+            <select class="form-control formField" name="board_id" id="board_id">
               <option value="">--- Select Board ---</option>
               @if(!empty($BoardList))
               @foreach($BoardList as $data)
@@ -51,40 +51,40 @@
           </div>
           <div class="col-md-2 form-group">
             <label for="medium_id" class="col-form-label">Select Medium </label>
-            <select class="form-control formField" name="medium_id" id="filter_medium_id">
+            <select class="form-control formField" name="medium_id" id="medium_id">
               <option value="">--- Select Medium ---</option>
             </select>
           </div>
           <div class="col-md-2 form-group">
             <label for="class_id" class="col-form-label">Select Class:</label>
-            <select class="form-control formField" name="class_id" id="filter_class_id">
+            <select class="form-control formField" name="class_id" id="class_id">
               <option value="">--- Select Class ---</option>
             </select>
           </div>
           <div class="col-md-2 form-group">
             <label for="subject_id" class="col-form-label">Select Subject:</label>
-            <select class="form-control formField" name="subject_id" id="filter_subject_id">
+            <select class="form-control formField" name="subject_id" id="subject_id">
               <option value="">--- Select Subject ---</option>
             </select>
           </div>
           <div class="col-md-2 form-group">
             <label for="chapter_id" class="col-form-label">Select Chapter:</label>
-            <select class="form-control formField" name="chapter_id" id="filter_chapter_id">
+            <select class="form-control formField" name="chapter_id" id="chapter_id">
               <option value="">--- Select Chapter ---</option>
             </select>
           </div>
           <div class="col-md-2 form-group">
             <label for="topic_id" class="col-form-label">Select Topic:</label>
-            <select class="form-control" name="topic_id" id="filter_topic_id">
+            <select class="form-control" name="topic_id" id="topic_id">
               <option value="">--- Select Topic ---</option>
             </select>
           </div>
         </div>
         <!-- <div class="modal-footer"> -->
           <!-- <input type="hidden" name="question_id" id="question_id" value="" /> -->
-          <input type="hidden" name="filter_button_action" id="filter_button_action" value="insert" />
+          <input type="hidden" name="button_action" id="button_action" value="insert" />
           <button type="button" name="button" id="filterBtn" class="btn  btn-primary">Apply</button>
-          <a href="{{ url('/admin/questionBank') }}"> <button type="button" name="button" id="filterresetBtn" class="btn  btn-primary">Reset</button></a>
+          <a href="#"> <button type="button" name="button" id="filterresetBtn" class="btn  btn-primary">Reset</button></a>
          <!-- <input type="reset" name="reset" id="reset" class="btn  btn-primary" value="Reset"></a> -->
         <!-- </div> -->
       </form>
@@ -105,9 +105,9 @@
                   <select class="form-control formField" name="board_id" id="board_id">
                     <option value="">--- Select Board ---</option>
                     @if(!empty($BoardList))
-                      @foreach($BoardList as $data)
-                        <option value="{{$data->board_id}}">{{$data->board_name}}</option>
-                      @endforeach
+                    @foreach($BoardList as $data)
+                    <option value="{{$data->board_id}}">{{$data->board_name}}</option>
+                    @endforeach
                     @endif
                   </select>
                 </div>
@@ -153,11 +153,11 @@
                 </div>
                 <div class="col-md-6 form-group">
                   <label for="question_type_id" class="col-form-label">Select Question Type:</label>
-                  <select class="form-control formField" name="question_type" id="question_type_id">
+                  <select class="form-control formField" name="question_type_id" id="question_type_id">
                     <option value="">--- Select Question Type ---</option>
                     @if(!empty($QuestionTypeList))
                     @foreach($QuestionTypeList as $data)
-                    <option value="{{ $data->qType }}">{{ $data->qType}}</option>
+                    <option value="{{ $data->qType }}">{{ $data->qType }}</option>
                     @endforeach
                     @endif
                   </select>
@@ -259,7 +259,7 @@
                 <div class="col-sm-12">
                   <div class="form-group">
                     <label for="question">Question <span id="qt"></span></label>
-                    <textarea class="textarea formField question-editor" name="question" id="question" placeholder="Place some text here" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">text</textarea>
+                    <textarea class="textarea formField question-editor" name="question" id="question" placeholder="Place some text here" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
                   </div>
                 </div>
                 <div class="col-sm-12">
@@ -284,10 +284,9 @@
     <div class="card-body table-border-style">
       <div class="table-responsive">
         <span id="form_output"></span>
-        <table class="table table-striped table-bordered data-table" id="question_table">
+        <table class="table table-striped table-bordered data-table example1" id="question_table">
           <thead>
             <tr>
-              <th></th>
               <th>Sr.No</th>
               <th>Board</th>
               <th>Medium</th>
@@ -328,7 +327,6 @@
 
     </div>
     <!-- /.modal -->
-
     <!---  View Model Question Bank -->
     <div class="modal fade" id="ViewQuestionModal" tabindex="-1" role="dialog" aria-labelledby="ViewQuestionModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-xl" role="document">
@@ -442,30 +440,9 @@
               method:"GET",
               data:{board_id:board_id},
               success:function(result){
+                  $('#medium_id').html('<option value="">--- Select Medium ---</option>');
                   if(result){
-                      $('#medium_id').html('<option value="">--- Select Medium ---</option>');
                       $('#medium_id').append(result);
-                  }else{
-                      $('#medium_id').html('<option value="">--- No Medium ---</option>');
-                  }
-              }
-          });
-      });
-
-      $('#filter_board_id').on('change', function(event){ 
-          event.preventDefault();
-          $(this).css('border','2px solid rgba(0, 0, 0, 0.15)');
-          var board_id = this.value;
-          $.ajax({
-              url: base_url + "/admin/getTopicMediums",
-              method:"GET",
-              data:{board_id:board_id},
-              success:function(result){
-                  if(result){
-                      $('#filter_medium_id').html('<option value="">--- Select Medium ---</option>');
-                      $('#filter_medium_id').append(result);
-                  }else{
-                      $('#filter_medium_id').html('<option value="">--- No Medium ---</option>');
                   }
               }
           });
@@ -480,30 +457,9 @@
               method:"GET",
               data:{medium_id:medium_id},
               success:function(result){
+                  $('#class_id').html('<option value="">--- Select Class ---</option>');
                   if(result){
-                      $('#class_id').html('<option value="">--- Select Class ---</option>');
                       $('#class_id').append(result);
-                  }else{
-                     $('#class_id').html('<option value="">--- No Class ---</option>');
-                  }
-              }
-          });
-      });
-
-      $('#filter_medium_id').on('change', function(event){ 
-          event.preventDefault();
-          $(this).css('border','2px solid rgba(0, 0, 0, 0.15)');
-          var medium_id = this.value;
-          $.ajax({
-              url: base_url + "/admin/getClass",
-              method:"GET",
-              data:{medium_id:medium_id},
-              success:function(result){
-                  if(result){
-                    $('#filter_class_id').html('<option value="">--- Select Class ---</option>');
-                    $('#filter_class_id').append(result);
-                  }else{
-                    $('#filter_class_id').html('<option value="">--- No Class ---</option>');
                   }
               }
           });
@@ -528,25 +484,6 @@
           });
       });
   
-      $('#filter_class_id').on('change', function(event){ 
-          event.preventDefault();
-          $(this).css('border','2px solid rgba(0, 0, 0, 0.15)');
-          var class_id = this.value;
-          $.ajax({
-              url: base_url + "/admin/getSubjectsAjax",
-              method:"GET",
-              data:{class_id:class_id},
-              success:function(result){
-                  if(result){
-                    $('#filter_subject_id').html('<option value="">--- Select Subject ---</option>');
-                    $('#filter_subject_id').append(result);
-                  }else{
-                    $('#filter_subject_id').html('<option value="">--- No Subject ---</option>');
-                  }
-              }
-          });
-      });
-
       $('#subject_id').on('change', function(event){ 
           event.preventDefault();
           $(this).css('border','2px solid rgba(0, 0, 0, 0.15)');
@@ -559,38 +496,14 @@
               method:"GET",
               data:{subject_id:subject_id},
               success:function(result){
+                  $('#chapter_id').html('<option value="">--- Select Chapter ---</option>');
                   if(result){
-                      $('#chapter_id').html('<option value="">--- Select Chapter ---</option>');
                       $('#chapter_id').append(result);
-                  }else{
-                      $('#chapter_id').html('<option value="">--- No Chapter ---</option>');
                   }
               }
           });
       });
-      
-      $('#filter_subject_id').on('change', function(event){ 
-          event.preventDefault();
-          $(this).css('border','2px solid rgba(0, 0, 0, 0.15)');
-          var board_id = $("#filter_board_id").val();
-          var medium_id = $("#filter_medium_id").val();
-          var class_id = $("#filter_class_id").val();
-          var subject_id = this.value;
-          $.ajax({
-              url: base_url + "/admin/getChapterAjax",
-              method:"GET",
-              data:{subject_id:subject_id},
-              success:function(result){
-                  if(result){
-                    $('#filter_chapter_id').html('<option value="">--- Select Chapter ---</option>');
-                    $('#filter_chapter_id').append(result);
-                  }else{
-                    $('#filter_chapter_id').html('<option value="">--- No Chapter ---</option>');
-                  }
-              }
-          });
-      });
-
+  
       $('#chapter_id').on('change', function(event){ 
           event.preventDefault();
           $(this).css('border','2px solid rgba(0, 0, 0, 0.15)');
@@ -612,31 +525,7 @@
               }
           });
       });
-      
-      $('#filter_chapter_id').on('change', function(event){ 
-          event.preventDefault();
-          $(this).css('border','2px solid rgba(0, 0, 0, 0.15)');
-          var board_id = $("#filter_board_id").val();
-          var medium_id = $("#filter_medium_id").val();
-          var class_id   = $("#filter_class_id").val();
-          var subject_id = $("#filter_subject_id").val();
-          var chapter_id = this.value;
-          $.ajax({
-              url: base_url + "/admin/getTopicAjax",
-              method:"GET",
-              data:{chapter_id:chapter_id},
-              success:function(result){
-                  console.log(result);
-                  if(result){
-                    $('#filter_topic_id').html('<option value="">--- Select Topic ---</option>');
-                    $('#filter_topic_id').append(result);
-                  }else{
-                    $('#filter_topic_id').html('<option value="">--- No Topic ---</option>');
-                  }
-              }
-          });
-      });
-
+  
       $("#topic_id, #dificultyLevel, #question_status").on('change', function(){
           $(this).css('border','2px solid rgba(0, 0, 0, 0.15)');
       });
@@ -646,6 +535,7 @@
   
       $("#question_type_id").on('change', function(event){
           var questionType = $(this).val();
+          alert(questionType);
           $(this).css('border','2px solid rgba(0, 0, 0, 0.15)');
           if (questionType=="") {
               $("#mcqForm, #trueFalseFrom, #writtenQuestions").hide();
@@ -664,216 +554,110 @@
       });
   
       //View/Get data in html format Here//
-    fetchQuestionData();
-    function fetchQuestionData(filterClicked='')
-       {
+      fetchQuestionData();
+      function fetchQuestionData(filterClicked='')
+      {
         if (filterClicked){
-            var binfo    = true;
-            var paging   = true;
-            var board    = ($("#filter_board_id").val()!="")?$("#filter_board_id").val():" ";
-            var medium   = ($("#filter_medium_id").val()!="")?$("#filter_medium_id").val():" ";
-            var classname = ($("#filter_class_id").val()!="")?$("#filter_class_id").val():" ";
-            var subject = ($("#filter_subject_id").val()!="")?$("#filter_subject_id").val():" ";
-            var chapter = ($("#filter_chapter_id").val()!="")?$("#filter_chapter_id").val():" ";
-            var topic   = ($("#filter_topic_id").val()!="")?$("#filter_topic_id").val():" ";
-            var table   = $('#question_table').DataTable({
-                "destroy": true,
-                "processing": true,
-                "serverSide": true,
-                ajax: {
-                    url:  base_url + "/admin/getQuestionAllData",
-                    data: {_token:_accessToken,board:board,medium:medium,classname:classname,subject:subject,chapter:chapter,topic:topic},
-                },
-                "bAutoWidth": false,
-                "searching": true,
-                "ordering": false,
-                "bInfo": binfo,
-                "bLengthChange": true,
-                "paging": paging,
-                "bPaginate": true,
-                "pageLength": 10,
-                "responsive": true,
-                columns: [
-                    {data: 'delete', name: 'delete'},
-                    // {data: 'question_id', name: 'question_id'},
-                    {data: 'board_name', name: 'board_details.board_name', className: 'text-center' },
-                    {data: 'medium', name: 'medium_details.medium',className: "text-center"},
-                    {data: 'class_name', name: 'class_details.class_name',className: "text-center"},
-                    {data: 'subject_name', name: 'subject_details.subject_name',className: "text-center"},
-                    {data: 'chapter_name', name: 'chapter_details.chapter_name',className: "text-center"},
-                    {data: 'marks', name: 'marks',className: "text-center"},
-                    {data: 'question_type', name: 'question_type',className: "text-center"},
-                    {data: 'question', name: 'question',className: "text-center"},
-                    {data: 'created_at', name: 'created_at',className: "text-center"},
-                    {
-                        data: 'built_action_btns',
-                        name: 'built_action_btns',
-                        className: 'text-center',
-                        orderable: false, // Disable sorting for this column
-                        searchable: false, // Disable searching for this column
-                    }
-                ],
-                "order": [[ 0, "desc" ]],
-                fixedHeader: {
-                    header: true
-                }
-            });
-        }else{
-            var binfo    = true;
-            var paging   = true;
-            var table   = $('#question_table').DataTable({
-                "destroy": true,
-                "processing": true,
-                "serverSide": true,
-                ajax: {
-                    url:  base_url + "/admin/getQuestionAllData",
-                    data: {
+          var table =  $('#question_table').DataTable({
+            // "order": [[0, "ASC"]], 
+            aaSorting: [[0, 'asc']],// Adjust the column index based on your actual table structure
+            "paging": true,
+            "pageLength": 50,
+            "bDestroy": true,
+            "autoWidth": false,
+            "responsive": true,
+          });
+          var board  =($("#board_id").val()!="")?$("#board_id").val():" ";
+          var medium =($("#medium_id").val()!="")?$("#medium_id").val():" ";
+          var classname=($("#class_id").val()!="")?$("#class_id").val():" ";
+          var subject =($("#subject_id").val()!="")?$("#subject_id").val():" ";
+          var chapter =($("#chapter_id").val()!="")?$("#chapter_id").val():" ";
+          var topic   =($("#topic_id").val()!="")?$("#topic_id").val():" ";
+          $.ajax({
+              url: base_url + "/admin/getQuestionAllData",
+              dataType:"json",
+              data: {_token:_accessToken,board:board,medium:medium,classname:classname,subject:subject,chapter:chapter,topic:topic},
+              success:function(data) {
+                  console.log(data);
+                  var html = '';
+                  for(var count=1; count < data.length; count++) {
+                      html +='<tr>';
+                      var createdAtDate = new Date(data[count].created_on);
+                      var options = { day: 'numeric', month: 'short', year: 'numeric' };
+                      var formattedCreatedAt = createdAtDate.toLocaleDateString('en-US', options);
+  
+                      html +='<td data-column_name="question_id" data-id="'+data[count].question_id+'"><input type="checkbox" class="selectQuestionCheckbox" data-question-id="' + data[count].question_id + '"> '+ count +' </td>';
+                      html +='<td data-column_name="board_name" data-id="'+data[count].question_id+'">'+data[count].board_name+'</td>';
+                      html +='<td data-column_name="medium_name" data-id="'+data[count].question_id+'">'+data[count].medium+'</td>';
+                      html +='<td data-column_name="class_name" data-id="'+data[count].question_id+'">'+data[count].class_name+'</td>';
+                      html +='<td data-column_name="subject_name" data-id="'+data[count].question_id+'">'+data[count].subject_name+'</td>';
+                      html +='<td data-column_name="chapter_name" data-id="'+data[count].question_id+'">'+data[count].chapter_name+'</td>';
+                      html +='<td data-column_name="marks" data-id="'+data[count].question_id+'">'+data[count].marks+'</td>';
+                      html +='<td data-column_name="question_type" data-id="'+data[count].question_id+'">'+data[count].question_type+'</td>';
+                      html +='<td data-column_name="question_type" data-id="'+data[count].question_id+'">'+data[count].question+'</td>';
+                      html +='<td data-column_name="created_at" data-id="' + data[count].question_id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
+                      html +='<td>';
+                      html +='<button class="btn btn-sm btn-secondary mt-1 view" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].question_id+'" data-subject-id="'+data[count].subject_id+'" data-topic-id="'+data[count].topic_id+'" data-chapter-id="'+data[count].chapter_id+'" data-questionType="'+data[count].question_type+'" data-toggle="modal" title="View Question Bank Details"><i class="fas fa-eye"></i></button>';
+                      html +='<button class="btn btn-sm btn-warning mt-1 ml-2 update" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].question_id+'" data-subject-id="'+data[count].subject_id+'" data-topic-id="'+data[count].topic_id+'" data-chapter-id="'+data[count].chapter_id+'" data-questionType="'+data[count].question_type+'" data-toggle="modal" title="Update Question Bank Details"><i class="fas fa-edit"></i></button>';
+                      html +='<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].question_id+'" data-toggle="modal"  title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
+                      html +='</td></tr>';
+                  }
+                  console.log(html);
+                  $('#question_list_data').html(html);
 
-                    },
-                },
-                "bAutoWidth": false,
-                "searching": true,
-                "ordering": false,
-                "bInfo": binfo,
-                "bLengthChange": true,
-                "paging": paging,
-                "bPaginate": true,
-                "pageLength": 10,
-                "responsive": true,
-                columns: [
-                    {data: 'delete', name: 'delete'},
-                    // {data: 'question_id', name: 'question_id'},
-                    {data: 'board_name', name: 'board_details.board_name', className: 'text-center' },
-                    {data: 'medium', name: 'medium_details.medium',className: "text-center"},
-                    {data: 'class_name', name: 'class_details.class_name',className: "text-center"},
-                    {data: 'subject_name', name: 'subject_details.subject_name',className: "text-center"},
-                    {data: 'chapter_name', name: 'chapter_details.chapter_name',className: "text-center"},
-                    {data: 'marks', name: 'marks',className: "text-center"},
-                    {data: 'question_type', name: 'question_type',className: "text-center"},
-                    {data: 'question', name: 'question',className: "text-center"},
-                    {data: 'created_at', name: 'created_at',className: "text-center"},
-                    {
-                        data: 'built_action_btns',
-                        name: 'built_action_btns',
-                        className: 'text-center',
-                        orderable: false, // Disable sorting for this column
-                        searchable: false, // Disable searching for this column
-                    }
-                ],
-                "order": [[ 0, "desc" ]],
-                fixedHeader: {
-                    header: true
-                }
-            });
+                  if(filterClicked){
+                    // $('#question_list_data').html("");
+                    $('#question_list_data').html(html);
+                    table.rows.add(html).draw();
+                    // table.clear();
+                    // table.rows.add(html);
+                    // table.settings();
+                    // table.draw();
+                  }
+              }
+          });
+        } else {
+          $.ajax({
+              url: base_url + "/admin/getQuestionAllData",
+              dataType:"json",
+              success:function(data) {
+                  var html = '';
+                  for(var count=1; count < data.length; count++) {
+                      html +='<tr>';
+                      var createdAtDate = new Date(data[count].created_on);
+                      var options = { day: 'numeric', month: 'short', year: 'numeric' };
+                      var formattedCreatedAt = createdAtDate.toLocaleDateString('en-US', options);
+  
+                      html +='<td data-column_name="question_id" data-id="'+data[count].question_id+'"><input type="checkbox" class="selectQuestionCheckbox" data-question-id="' + data[count].question_id + '"> '+ count +' </td>';
+                      html +='<td data-column_name="board_name" data-id="'+data[count].question_id+'">'+data[count].board_name+'</td>';
+                      html +='<td data-column_name="medium_name" data-id="'+data[count].question_id+'">'+data[count].medium+'</td>';
+                      html +='<td data-column_name="class_name" data-id="'+data[count].question_id+'">'+data[count].class_name+'</td>';
+                      html +='<td data-column_name="subject_name" data-id="'+data[count].question_id+'">'+data[count].subject_name+'</td>';
+                      html +='<td data-column_name="chapter_name" data-id="'+data[count].question_id+'">'+data[count].chapter_name+'</td>';
+                      html +='<td data-column_name="marks" data-id="'+data[count].question_id+'">'+data[count].marks+'</td>';
+                      html +='<td data-column_name="question_type" data-id="'+data[count].question_id+'">'+data[count].question_type+'</td>';
+                      html +='<td data-column_name="question_type" data-id="'+data[count].question_id+'">'+data[count].question+'</td>';
+                      html +='<td data-column_name="created_at" data-id="' + data[count].question_id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
+                      html +='<td>';
+                      html +='<button class="btn btn-sm btn-secondary mt-1 view" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].question_id+'" data-subject-id="'+data[count].subject_id+'" data-topic-id="'+data[count].topic_id+'" data-chapter-id="'+data[count].chapter_id+'" data-questionType="'+data[count].question_type+'" data-toggle="modal" title="View Question Bank Details"><i class="fas fa-eye"></i></button>';
+                      html +='<button class="btn btn-sm btn-warning mt-1 ml-2 update" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].question_id+'" data-subject-id="'+data[count].subject_id+'" data-topic-id="'+data[count].topic_id+'" data-chapter-id="'+data[count].chapter_id+'" data-questionType="'+data[count].question_type+'" data-toggle="modal" title="Update Question Bank Details"><i class="fas fa-edit"></i></button>';
+                      html +='<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].question_id+'" data-toggle="modal"  title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
+                      html +='</td></tr>';
+                  }
+                  $('#question_list_data').html(html);
+                  var table =  $('#example1').DataTable({
+                      // "order": [[0, "ASC"]], 
+                      aaSorting: [[0, 'asc']],// Adjust the column index based on your actual table structure
+                      "paging": true,
+                      "pageLength": 50,
+                      "bDestroy": true,
+                      "autoWidth": false,
+                      "responsive": true,
+                  });
+              }
+          });
         }
-        $.fn.dataTable.ext.errMode = 'none';
-        $('#question_table').on('error.dt', function (e, settings, techNote, message) {
-            console.log('An error has been reported by DataTables: ', message);
-        });
-    };
-    //   function fetchQuestionData(filterClicked='')
-    //   {
-    //     if (filterClicked){
-    //       var table =  $('#question_table').DataTable({
-    //         // "order": [[0, "ASC"]], 
-    //         aaSorting: [[0, 'asc']],// Adjust the column index based on your actual table structure
-    //         "paging": true,
-    //         "pageLength": 50,
-    //         "bDestroy": true,
-    //         "autoWidth": false,
-    //         "responsive": true,
-    //       });
-    //       var board  =($("#board_id").val()!="")?$("#board_id").val():" ";
-    //       var medium =($("#medium_id").val()!="")?$("#medium_id").val():" ";
-    //       var classname=($("#class_id").val()!="")?$("#class_id").val():" ";
-    //       var subject =($("#subject_id").val()!="")?$("#subject_id").val():" ";
-    //       var chapter =($("#chapter_id").val()!="")?$("#chapter_id").val():" ";
-    //       var topic   =($("#topic_id").val()!="")?$("#topic_id").val():" ";
-    //       $.ajax({
-    //           url: base_url + "/admin/getQuestionAllData",
-    //           dataType:"json",
-    //           data: {_token:_accessToken,board:board,medium:medium,classname:classname,subject:subject,chapter:chapter,topic:topic},
-    //           success:function(data) {
-    //               console.log(data);
-    //               var html = '';
-    //               for(var count=1; count < data.length; count++) {
-    //                   html +='<tr>';
-    //                   var createdAtDate = new Date(data[count].created_on);
-    //                   var options = { day: 'numeric', month: 'short', year: 'numeric' };
-    //                   var formattedCreatedAt = createdAtDate.toLocaleDateString('en-US', options);
-  
-    //                   html +='<td data-column_name="question_id" data-id="'+data[count].question_id+'"><input type="checkbox" class="selectQuestionCheckbox" data-question-id="' + data[count].question_id + '"> '+ count +' </td>';
-    //                   html +='<td data-column_name="board_name" data-id="'+data[count].question_id+'">'+data[count].board_name+'</td>';
-    //                   html +='<td data-column_name="medium_name" data-id="'+data[count].question_id+'">'+data[count].medium+'</td>';
-    //                   html +='<td data-column_name="class_name" data-id="'+data[count].question_id+'">'+data[count].class_name+'</td>';
-    //                   html +='<td data-column_name="subject_name" data-id="'+data[count].question_id+'">'+data[count].subject_name+'</td>';
-    //                   html +='<td data-column_name="chapter_name" data-id="'+data[count].question_id+'">'+data[count].chapter_name+'</td>';
-    //                   html +='<td data-column_name="marks" data-id="'+data[count].question_id+'">'+data[count].marks+'</td>';
-    //                   html +='<td data-column_name="question_type" data-id="'+data[count].question_id+'">'+data[count].question_type+'</td>';
-    //                   html +='<td data-column_name="question_type" data-id="'+data[count].question_id+'">'+data[count].question+'</td>';
-    //                   html +='<td data-column_name="created_at" data-id="' + data[count].question_id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
-    //                   html +='<td>';
-    //                   html +='<button class="btn btn-sm btn-secondary mt-1 view" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].question_id+'" data-subject-id="'+data[count].subject_id+'" data-topic-id="'+data[count].topic_id+'" data-chapter-id="'+data[count].chapter_id+'" data-questionType="'+data[count].question_type+'" data-toggle="modal" title="View Question Bank Details"><i class="fas fa-eye"></i></button>';
-    //                   html +='<button class="btn btn-sm btn-warning mt-1 ml-2 update" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].question_id+'" data-subject-id="'+data[count].subject_id+'" data-topic-id="'+data[count].topic_id+'" data-chapter-id="'+data[count].chapter_id+'" data-questionType="'+data[count].question_type+'" data-toggle="modal" title="Update Question Bank Details"><i class="fas fa-edit"></i></button>';
-    //                   html +='<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].question_id+'" data-toggle="modal"  title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
-    //                   html +='</td></tr>';
-    //               }
-    //               console.log(html);
-    //               $('#question_list_data').html(html);
-
-    //               if(filterClicked){
-    //                 // $('#question_list_data').html("");
-    //                 $('#question_list_data').html(html);
-    //                 table.rows.add(html).draw();
-    //                 // table.clear();
-    //                 // table.rows.add(html);
-    //                 // table.settings();
-    //                 // table.draw();
-    //               }
-    //           }
-    //       });
-    //     } else {
-    //       $.ajax({
-    //           url: base_url + "/admin/getQuestionAllData",
-    //           dataType:"json",
-    //           success:function(data) {
-    //               var html = '';
-    //               for(var count=1; count < data.length; count++) {
-    //                   html +='<tr>';
-    //                   var createdAtDate = new Date(data[count].created_on);
-    //                   var options = { day: 'numeric', month: 'short', year: 'numeric' };
-    //                   var formattedCreatedAt = createdAtDate.toLocaleDateString('en-US', options);
-  
-    //                   html +='<td data-column_name="question_id" data-id="'+data[count].question_id+'"><input type="checkbox" class="selectQuestionCheckbox" data-question-id="' + data[count].question_id + '"> '+ count +' </td>';
-    //                   html +='<td data-column_name="board_name" data-id="'+data[count].question_id+'">'+data[count].board_name+'</td>';
-    //                   html +='<td data-column_name="medium_name" data-id="'+data[count].question_id+'">'+data[count].medium+'</td>';
-    //                   html +='<td data-column_name="class_name" data-id="'+data[count].question_id+'">'+data[count].class_name+'</td>';
-    //                   html +='<td data-column_name="subject_name" data-id="'+data[count].question_id+'">'+data[count].subject_name+'</td>';
-    //                   html +='<td data-column_name="chapter_name" data-id="'+data[count].question_id+'">'+data[count].chapter_name+'</td>';
-    //                   html +='<td data-column_name="marks" data-id="'+data[count].question_id+'">'+data[count].marks+'</td>';
-    //                   html +='<td data-column_name="question_type" data-id="'+data[count].question_id+'">'+data[count].question_type+'</td>';
-    //                   html +='<td data-column_name="question_type" data-id="'+data[count].question_id+'">'+data[count].question+'</td>';
-    //                   html +='<td data-column_name="created_at" data-id="' + data[count].question_id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
-    //                   html +='<td>';
-    //                   html +='<button class="btn btn-sm btn-secondary mt-1 view" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].question_id+'" data-subject-id="'+data[count].subject_id+'" data-topic-id="'+data[count].topic_id+'" data-chapter-id="'+data[count].chapter_id+'" data-questionType="'+data[count].question_type+'" data-toggle="modal" title="View Question Bank Details"><i class="fas fa-eye"></i></button>';
-    //                   html +='<button class="btn btn-sm btn-warning mt-1 ml-2 update" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].question_id+'" data-subject-id="'+data[count].subject_id+'" data-topic-id="'+data[count].topic_id+'" data-chapter-id="'+data[count].chapter_id+'" data-questionType="'+data[count].question_type+'" data-toggle="modal" title="Update Question Bank Details"><i class="fas fa-edit"></i></button>';
-    //                   html +='<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].question_id+'" data-toggle="modal"  title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
-    //                   html +='</td></tr>';
-    //               }
-    //               $('#question_list_data').html(html);
-    //               var table =  $('#example1').DataTable({
-    //                   // "order": [[0, "ASC"]], 
-    //                   aaSorting: [[0, 'asc']],// Adjust the column index based on your actual table structure
-    //                   "paging": true,
-    //                   "pageLength": 50,
-    //                   "bDestroy": true,
-    //                   "autoWidth": false,
-    //                   "responsive": true,
-    //               });
-    //           }
-    //       });
-    //     }
-    //   }
+      }
   
       //Add Medium Using Ajax //
       $('#addQuestion').on('submit', function(event){ 
@@ -1040,49 +824,24 @@
   
       //Update data fetch Here//
       $(document).on('click', '.update', function(){
-        var question_id      = $(this).attr("data-id");
-        var board_id         = $(this).attr("data-board-id");
-        var medium_id        = $(this).attr("data-medium-id");
-        var class_id         = $(this).attr("data-class-id");
-        var subject_id       = $(this).attr("data-subject-id");
-        var chapter_id       = $(this).attr("data-chapter-id");
-        var topic_id         = $(this).attr("data-topic-id");
-        var marks            = $(this).attr("data-total-marks");
-        var question         = $(this).attr("data-question");
-        var question_type    = $(this).attr("data-questionType");
+          var question_id  = $(this).attr("data-id");
+          var board_id     = $(this).attr("data-board-id");
+          var medium_id    = $(this).attr("data-medium-id");
+          var class_id     = $(this).attr("data-class-id");
+          var subject_id   = $(this).attr("data-subject-id");
+          var chapter_id   = $(this).attr("data-chapter-id");
+          var topic_id     = $(this).attr("data-topic-id");
+          var question_type_id = $(this).attr("data-questionType");
            $('#form_output').html('');
            $.ajax({
               url: base_url + "/admin/updateGetQuestionData",
-              method:'get',
-              data:{question_id:question_id,board_id:board_id,medium_id:medium_id,class_id:class_id,subject_id:subject_id,chapter_id:chapter_id,topic_id:topic_id,question:question,question_type:question_type,marks:marks},
+              method:'post',
+              data:{_token:_accessToken,question_id:question_id,board_id:board_id,medium_id:medium_id,class_id:class_id,subject_id:subject_id,chapter_id:chapter_id,topic_id:topic_id,question_type_id:question_type_id},
+              // data:{_token:_accessToken,question_bank_id:question_bank_id,board_id:board_id,medium_id:medium_id,class_id:class_id,subject_id:subject_id,chapter_id:chapter_id,topic_id:topic_id,question_type_id:question_type_id},
               dataType:'json',
               success:function(data)
               {
-                console.log(data.board_id); 
-                $('#board_id').val(data.board_id);
-                //console.log(datavalue);
-                // var htmlboardString = data.board_id;
-                // var optionsboard = $(htmlboardString);
-
-                // // Iterate over the options
-                // optionsboard.each(function(index, option) {
-                //     // Use .filter() to find options containing "2" and set them as selected
-                //     if ($(option).text().indexOf("2") !== -1) {
-                //         $(option).prop('selected', true);
-                //     }
-                // });
-
-                // $('#board_id').html(optionsboard);
                   //Medium Data//
-                //   var htmlboardString = data.board_id;
-                //   var optionsboard = $(htmlboardString);
-                //   // Iterate over the options
-                //   optionsboard.each(function(index, option) {
-                //     optionsboard.filter(':contains("2")').prop('selected', true);
-                //   });
-                //   alert(optionsboard);
-                //   $('#board_id').html(optionsboard);
-                 //Medium Data//
                   var htmlString = data.medium_id;
                   var options = $(htmlString);
                   // Iterate over the options
@@ -1125,63 +884,19 @@
                   optionTopic.each(function(index,topic) {
                       optionTopic.filter(':contains("2")').prop('selected', true);
                   });
-                  $('#topic_id').html(optionTopic);  
-
-                 //Chapter Data//
-                    var htmlQuestionTypeString = data.question_type;
-                    var optionQuestionType = $(htmlQuestionTypeString);
-                    // Iterate over the options
-                    optionQuestionType.each(function(index, questionType) {
-                        // Check if the text contains "2" and set the selected property
-                        if ($(questionType).text().indexOf("2") !== -1) {
-                            $(questionType).prop('selected', true);
-                        }
-                    });
-                    // $('#question_type_id').html(optionQuestionType);
-                    // 
-                      $('#question_type_id').val(data.question_type);
-                    // $("#question_type_id").on('change', function(event){
-                     // var questionType = $(this).val();
-                      //$(this).css('border','2px solid rgba(0, 0, 0, 0.15)');
-                      var question_type = data.question_type;
-                      var selectedOptionText = $(question_type).text();
-                      $('#question_type_id').val(selectedOptionText);
-                      // // Set the value of the HTML element
-                      // $('#question_type_id').val(question_type_value);
-
-                      // // Use the variable as needed
-                      // var question_type = $('#question_type_id').val();
-                      console.log(selectedOptionText );
-                      if (question_type=="") {
-                          $("#mcqForm, #trueFalseFrom, #writtenQuestions").hide();
-                      } else if(question_type=="MCQ") {
-                          $("#mcqForm").show();
-                          $("#trueFalseFrom, #writtenQuestions").hide();
-                      } else if (question_type=="True or False") {
-                          $("#mcqForm").hide();
-                          $("#trueFalseFrom").show();
-                          $("#writtenQuestions").hide();
-                      } else{
-                          $("#mcqForm, #trueFalseFrom").hide();
-                          $("#qt").html("("+question_type+")");
-                          $("#writtenQuestions").show();
-                      }
-                  // $('#question').text(data.question);
-                  var question = data.question;
-                  var selectedOptionQuestionText = $(question).text();
-                  console.log(selectedOptionQuestionText);
-                  var data = document.getElementById("question").value;
-                  $('#question').val($('#question').val() + selectedOptionQuestionText);
-
-                  var solution = data.solution;
-                  var selectedOptionSolutionText = $(solution).text();
-                  $('#solution').val($('#solution').val() + selectedOptionSolutionText);
-
-
->>>>>>> e110f79cdf4b97ee334cbf54cd7c746c8f93e12d
+                  $('#topic_id').html(optionTopic);
+  
+                  //Chapter Data//
+                  var htmlQuestionTypeString = data.question_type;
+                  var optionQuestionType = $(htmlQuestionTypeString);
+                  // Iterate over the options
+                  optionQuestionType.each(function(index,questionType) {
+                      optionQuestionType.filter(':contains("2")').prop('selected', true);
+                  });
+                  $('#question_type_id').html(optionQuestionType);
+                  $('#board_id').val(data.board_id);
                   $('#dificultyLevel').val(data.level);
                   $('#question_status').val(data.question_status);
-                  // $('#solution').val(data.solution);
                   $('#marks').val(data.marks);
                   $('#question_id').val(question_id);
                   $('#questionModal').modal('show');
@@ -1258,6 +973,28 @@
   $("#filterBtn").on("click",function(){ 
           var filterClicked = 1;
           fetchQuestionData(filterClicked);
+          /* var board  =($("#board_id").val()!="")?$("#board_id").val():"NA";
+          var medium =($("#medium_id").val()!="")?$("#medium_id").val():"NA";
+          var classname=($("#class_id").val()!="")?$("#class_id").val():"NA";
+          var subject =($("#subject_id").val()!="")?$("#subject_id").val():"NA";
+          var chapter =($("#chapter_id").val()!="")?$("#chapter_id").val():"NA";
+          var topic   =($("#topic_id").val()!="")?$("#topic_id").val():"NA";
+
+          if (board=="NA"){
+            alert("Please select board");
+          }else{
+            $.ajax({
+              url: base_url + "/admin/getQuestionDetailsAsPerFilterVariable",
+              method: 'POST',
+              headers: {
+                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              },
+              data: {_token:_accessToken,board:board,medium:medium,classname:classname,subject:subject,chapter:chapter,topic:topic},
+              success:function(data) {
+                    $('#question_list_data').html(data);
+                }
+          });
+        } */
     });  
 });
 </script>
