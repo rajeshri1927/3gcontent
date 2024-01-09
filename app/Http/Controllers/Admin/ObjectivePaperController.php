@@ -112,11 +112,17 @@ class ObjectivePaperController extends Controller
         
         $inperms = '';
         $question_data = [];
+        $paperIds = [];
         if(!empty($question_paper->paper_question_ids)){
-            $inperms = implode("','", explode(",", $question_paper->paper_question_ids));
-            $question_data = QuestionBank::whereIn('question_id', [$inperms])->get()->toArray();
+            $inperms = explode(",", $question_paper->paper_question_ids);
+            $paperIds = [];
+            foreach($inperms as $inperm){
+                $paperIds[] = $inperm;
+            }
+            // $inperms = implode("','", explode(",", $question_paper->paper_question_ids));
         }
-        $options_data = McqOptions::select('question_id','option_sequence','option_detail','is_answer')->whereIn('question_id', [$inperms])->get()->toArray();
+        $question_data = QuestionBank::whereIn('question_id', $paperIds)->get()->toArray();
+        $options_data = McqOptions::select('question_id','option_sequence','option_detail','is_answer')->whereIn('question_id', $paperIds)->get()->toArray();
         $response = [
 			'question_paper' => $question_paper,
 			'questions' => $question_data,
@@ -127,6 +133,8 @@ class ObjectivePaperController extends Controller
         $settings_result = getPaperSettings($paper_stack->user_id);
         $this->arr_view_data['paper_stack'] = $paper_stack;
         $this->arr_view_data['settings_result'] = $settings_result;
+        $this->arr_view_data['logo_file'] = $settings_result->logo_file;
+        $this->arr_view_data['title'] = $settings_result->title;
         return view($this->module_view_folder.'.view_objective_paper', $this->arr_view_data);
     }
 
@@ -187,11 +195,16 @@ class ObjectivePaperController extends Controller
         
         $inperms = '';
         $question_data = [];
+        $paperIds = [];
+        
         if(!empty($question_paper->paper_question_ids)){
-            $inperms = implode("','", explode(",", $question_paper->paper_question_ids));
-            $question_data = QuestionBank::whereIn('question_id', [$inperms])->get()->toArray();
+            foreach($inperms as $inperm){
+                $paperIds[] = $inperm;
+            }
+            // $inperms = implode("','", explode(",", $question_paper->paper_question_ids));
+            $question_data = QuestionBank::whereIn('question_id', $paperIds)->get()->toArray();
         }
-        $options_data = McqOptions::select('question_id','option_sequence','option_detail','is_answer')->whereIn('question_id', [$inperms])->get()->toArray();
+        $options_data = McqOptions::select('question_id','option_sequence','option_detail','is_answer')->whereIn('question_id', $paperIds)->get()->toArray();
         $response = [
 			'question_paper' => $question_paper,
 			'questions' => $question_data,
@@ -202,6 +215,8 @@ class ObjectivePaperController extends Controller
         $settings_result = getPaperSettings($paper_stack->user_id);
         $this->arr_view_data['paper_stack'] = $paper_stack;
         $this->arr_view_data['settings_result'] = $settings_result;
+        $this->arr_view_data['logo_file'] = $settings_result->logo_file;
+        $this->arr_view_data['title'] = $settings_result->title;
         return view($this->module_view_folder.'.view_objective_paper_solution', $this->arr_view_data);
     }
 }

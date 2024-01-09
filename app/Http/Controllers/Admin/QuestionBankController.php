@@ -47,14 +47,14 @@ class QuestionBankController extends Controller
     }
 
     public function getQuestionBankData(Request $request){
-        $error_array    = array();
+        /* $error_array    = array();
         $success_output = '';
 
-        $board     = $request->board;
-        $medium    = $request->medium;
-        $classname = $request->classname;
-        $subject   = $request->subject;
-        $chapter   = $request->chapter;
+        $board_id     = $request->board_id;
+        $medium_id    = $request->medium_id;
+        $class_id     = $request->class_id;
+        $subject_id   = $request->subject_id;
+        $chapter_id   = $request->chapter_id;
         //\DB::enableQueryLog();
         $question = QuestionBank::select('question_list.*','topic_details.topic_name','question_list.created_on','board_details.board_name','medium_details.medium','class_details.class_name','subject_details.subject_name','chapter_details.chapter_name')
         ->join('class_details', 'class_details.class_id', '=', 'question_list.class_id')
@@ -64,20 +64,20 @@ class QuestionBankController extends Controller
         ->join('chapter_details', 'question_list.chapter_id', '=', 'chapter_details.chapter_id')
         ->join('topic_details', 'question_list.topic_id', '=', 'topic_details.topic_id');
         //->where('question_list.question_type', '=', 'MCQ')
-        if($board) {
-            $question->where('question_list.board_id', $board);
+        if($board_id) {
+            $question->where('question_list.board_id', $board_id);
         }
-        if($medium){
-            $question->where('question_list.medium_id', $medium);
+        if($medium_id){
+            $question->where('question_list.medium_id', $medium_id);
         }
-        if($classname){
-            $question->where('question_list.class_id', $classname);
+        if($class_id){
+            $question->where('question_list.class_id', $class_id);
         }
-        if($subject){
-            $question->where('question_list.subject_id', $subject);
+        if($subject_id){
+            $question->where('question_list.subject_id', $subject_id);
         }
-        if($chapter){
-            $question->where('question_list.chapter_id', $chapter);
+        if($chapter_id){
+            $question->where('question_list.chapter_id', $chapter_id);
         }
         
         $result = $question->orderBy('question_list.question_id', 'DESC')
@@ -94,12 +94,67 @@ class QuestionBankController extends Controller
             'error'     =>  $error_array,
             'success'   =>  $success_output
         );
-        echo json_encode($result);
+        echo json_encode($result); */
+        $build_result = array();
+        $question = QuestionBank::select('question_list.*','question_list.created_on','board_details.board_name','medium_details.medium','class_details.class_name','subject_details.subject_name','chapter_details.chapter_name')
+        ->join('class_details', 'class_details.class_id', '=', 'question_list.class_id')
+        ->join('board_details', 'question_list.board_id', '=', 'board_details.board_id')
+        ->join('medium_details', 'question_list.medium_id', '=', 'medium_details.medium_id')
+        ->join('subject_details', 'question_list.subject_id', '=', 'subject_details.subject_id')
+        ->join('chapter_details', 'question_list.chapter_id', '=', 'chapter_details.chapter_id');
+        if($board_id) {
+            $question->where('question_list.board_id', $board_id);
+        }
+        if($medium_id){
+            $question->where('question_list.medium_id', $medium_id);
+        }
+        if($class_id){
+            $question->where('question_list.class_id', $class_id);
+        }
+        if($subject_id){
+            $question->where('question_list.subject_id', $subject_id);
+        }
+        if($chapter_id){
+            $question->where('question_list.chapter_id', $chapter_id);
+        }
+        $question->orderBy('question_list.question_id', 'desc')
+            ->limit(500)
+            ->get();
+        $json_result = DataTables::of($question)
+        ->addColumn('built_action_btns', function ($data) {
+            $updateButton = '<button class="btn btn-sm btn-secondary mt-1 view" type="button" data-class-id =""></button><button name="button" class="btn btn-sm btn-warning mt-1 update" type="button" data-id="'.$data->question_id.'" data-toggle="modal" title="Update Medium Details"><i class="fas fa-edit"></i></button>';
+            $deleteButton = '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'.$data->question_id.'" data-toggle="modal" name="button" title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
+            return '<input type="checkbox" class="selectCheckbox" data-medium-id="'.$data->medium_id.'">' . $updateButton . $deleteButton;
+        })->make(true);
+
+        /* html +='<button class="btn btn-sm btn-secondary mt-1 view" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].question_id+'" data-subject-id="'+data[count].subject_id+'" data-topic-id="'+data[count].topic_id+'" data-chapter-id="'+data[count].chapter_id+'" data-questionType="'+data[count].question_type+'" data-toggle="modal" title="View Question Bank Details"><i class="fas fa-eye"></i></button>';
+        html +='<button class="btn btn-sm btn-warning mt-1 ml-2 update" type="button" data-class-id ="'+data[count].class_id+'" data-medium-id ="'+data[count].medium_id+'" data-board-id ="'+data[count].board_id+'" data-id="'+data[count].question_id+'" data-subject-id="'+data[count].subject_id+'" data-topic-id="'+data[count].topic_id+'" data-chapter-id="'+data[count].chapter_id+'" data-questionType="'+data[count].question_type+'" data-toggle="modal" title="Update Question Bank Details"><i class="fas fa-edit"></i></button>';
+        html +='<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].question_id+'" data-toggle="modal"  title="Delete Medium Details"><i class="fas fa-trash-alt"></i></button>';
+         */
+		$build_result = $json_result->getData();
+
+        if (isset($build_result->data) && sizeof($build_result->data) > 0) {
+            $i = 0;
+            foreach ($build_result->data as $key => $data) {
+                $i = $i + 1;
+                $delete = '<input type="checkbox" class="selectmediumCheckbox" data-medium-id="'.$data->medium_id.'">';
+                $build_result->data[$key]->delete = $delete;
+                $build_result->data[$key]->medium_id  = $data->medium_id;
+                $build_result->data[$key]->board_name = $data->board_name;
+                $build_result->data[$key]->medium = $data->medium;
+                $build_result->data[$key]->medium_status = $data->medium_status;
+                $build_result->data[$key]->created_at = date("d M Y", strtotime($data->created_on));
+                $action = '<button name="button" class="btn btn-sm btn-warning mt-1 update" type="button" data-id="'.$data->medium_id.'" data-toggle="modal"  title="Update Topic Details"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'.$data->medium_id.'" data-toggle="modal"   name="button" title="Delete Topic Details"><i class="fas fa-trash-alt"></i></button>';
+				$build_result->data[$key]->built_action_btns = $action;
+            }
+            return response()->json($build_result);
+        } else {
+            return response()->json($build_result);
+        }
     }
 
     public function addQuestionBank(Request $request){
         $user = Auth::user();
-        echo "<pre>";print_r($request->all());die;
         $validation = Validator::make($request->all(), [
             'marks'    => 'required'
         ]);
@@ -214,8 +269,8 @@ class QuestionBankController extends Controller
                 //}
             }
             if ($request->get('button_action') == 'update') {
-                $question_bank = QuestionBank::find($request->question_bank_id);
-            
+                $question_bank = QuestionBank::find($request->question_id);
+                
                 if ($question_bank) {
                     $question_bank->update([
                         'board_id'      =>  $request->board_id,
@@ -256,13 +311,13 @@ class QuestionBankController extends Controller
         $subject_id   = $request->input('subject_id');
         $chapter_id   = $request->input('chapter_id');
         $topic_id   = $request->input('topic_id');
-        $questionType_id   = $request->input('question_type');
+        $questionType_id = (isset($request->action) && $request->action == 'view') ? $request->input('question_type') : $request->input('question_type_id');
         $mediumList = Medium::where('board_id',$selectedBoardId)->get();
         $classList  = Standard::where('class_id',$class_id)->get();
         $subjectList = Subject::where('subject_id',$subject_id)->get();
         $chapterList = Chapter::where('chapter_id',$chapter_id)->get();
         $topicList = Topic::where('topic_id',$topic_id)->get();
-        $questionTypeList = QuestionType::where('qType',$questionType_id)->get();
+        $questionTypeList = QuestionType::get();
         $html = '';
         foreach ($mediumList as $mediumDet) {
             if (isset($request->action) && $request->action == 'view') {
@@ -316,14 +371,15 @@ class QuestionBankController extends Controller
         }
 
         $htmlquestiontype = '';
-        foreach ($questionTypeList as $questionTypeDet) {
+        /* foreach ($questionTypeList as $questionTypeDet) {
             if (isset($request->action) && $request->action == 'view') {
                 $htmlquestiontype = $questionTypeDet->qType;
             }else{
-                $isSelected = ($questionTypeDet->question_id == $question_type_id) ? 'selected' : '';
-                $htmlquestiontype .= '<option value="' . $questionTypeDet->question_type_id . '" ' . $isSelected . '>' . $questionTypeDet->question_type . '</option>';
+                $isSelected = ($questionTypeDet->qType == $questionType_id) ? 'selected' : '';
+                $htmlquestiontype .= '<option value="' . $questionTypeDet->qType . '" ' . $isSelected . '>' . $questionTypeDet->qType . '</option>';
             }
-        }
+        } */
+        $htmlquestiontype = $questionType_id;
 
         $question_bank_id = $request->input('question_id');
         $questionBank  = QuestionBank::where('question_id',$question_bank_id)->first();  

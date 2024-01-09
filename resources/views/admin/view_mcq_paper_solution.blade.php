@@ -35,10 +35,10 @@
                     <tbody>
                         <tr>
                             <td rowspan="4" style="width: 17%; border-right:2px solid #000;">
-                                <img src="./uploads_logo/<?= $settings_result->logo_file ?>" style="width: 100%; vertical-align: middle;" id="left_logo">
+                                <img src="{{ url('/') }}/uploads/{{ $logo_file }}" style="width: 100%; vertical-align: middle;" id="left_logo">
                             </td>
                             <td rowspan="3" style="text-align: center; width: 50%">
-                                <h4 style="margin:0px; font-size: 35px; text-transform: uppercase;"><?= $settings_result->title ?></h4>
+                                <h4 style="margin:0px; font-size: 35px; text-transform: uppercase;"><?= $title ?></h4>
                                 <h5 style="margin:0px; font-size: 18px;"><?= $paper_stack->question_paper->class_name ?> (<?= $paper_stack->question_paper->medium;?>)</h5>
                                 <label></label>
                                 <h4 style="margin:0px; font-size: 20px;background-color: #000; padding: 3px; color: #fff;"><?= strtoupper($paper_stack->question_paper->subject_name) ?></h4>
@@ -47,15 +47,15 @@
                         </tr>
                         <tr><?php
                             if(!empty($paper_stack->questions)) {
-                                if(count($paper_stack['questions']) <= 20){
+                                if(count($paper_stack->questions) <= 20){
                                     $time = "1 Hour";
-                                } elseif(count($paper_stack['questions']) > 20 && count($paper_stack['questions']) <= 30) {
+                                } elseif(count($paper_stack->questions) > 20 && count($paper_stack->questions) <= 30) {
                                     $time = "1.5 Hour";
-                                } elseif(count($paper_stack['questions']) > 30 && count($paper_stack['questions']) <= 40){
+                                } elseif(count($paper_stack->questions) > 30 && count($paper_stack->questions) <= 40){
                                     $time = "2 Hour";
-                                } elseif(count($paper_stack['questions']) > 40 && count($paper_stack['questions']) <= 80) {
+                                } elseif(count($paper_stack->questions) > 40 && count($paper_stack->questions) <= 80) {
                                     $time = "2.5 Hour";
-                                } elseif(count($paper_stack['questions']) > 80 && count($paper_stack['questions']) <= 100) {
+                                } elseif(count($paper_stack->questions) > 80 && count($paper_stack->questions) <= 100) {
                                     $time = "3 Hour";
                                 }
                             } else {
@@ -94,31 +94,31 @@
                                 <td width="5">
                                     <b>Q.<?php echo $k.'. '; ?></b>
                                 </td>
-                                <td class="line-me" style='width: 100% !important;'><?= trim($onequestion['question']) ?></td>
+                                <td class="line-me" style='width: 100% !important;'><?= trim($onequestion->question) ?></td>
                             </tr><?php
-                            if (!empty($paper_stack['options'])){
-                                foreach ($paper_stack['options'] as $one_options){
-                                    if($one_options['question_id'] == $onequestion['question_id']){ ?>
+                            if (!empty($paper_stack->options)){
+                                foreach ($paper_stack->options as $one_options){
+                                    if($one_options->question_id == $onequestion->question_id){ ?>
                                         <tr>
                                             <td width="5"></td>
-                                            <td class="line-me" style='width: 100% !important;'><?= $one_options['option_detail'];?></td><?php 
+                                            <td class="line-me" style='width: 100% !important;'><?= $one_options->option_detail;?></td><?php 
                                             if($one_options->is_answer == "Yes"){
                                                 $actual_answer =  $one_options->option_detail;
                                             } ?>
                                         </tr><?php
                                     }
-                                } 
+                                }  ?>
+                                <tr>
+                                    <td width="5"><b style="color: #20307b">Ans.</b></td>
+                                    <td class="line-me" style='width: 100% !important;'>
+                                        <?php if (!empty($actual_answer)) : ?>
+                                        <?= trim($actual_answer) ?>
+                                        <?php endif ; ?>
+                                    </td>
+                                </tr><?php
                             }
                             $k++;
                         } ?>
-                        <tr>
-                            <td width="5"><b style="color: #20307b">Ans.</b></td>
-                            <td class="line-me" style='width: 100% !important;'>
-                                <?php if (!empty($actual_answer)) : ?>
-                                <?= trim($actual_answer) ?>
-                                <?php endif ; ?>
-                            </td>
-                        </tr>
                     </tbody>
                 </table>
             </div>

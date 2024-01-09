@@ -113,9 +113,10 @@ $(document).ready(function() {
                     html +='<td data-column_name="created_by" data-id="'+data[count].id+'">'+data[count].created_by+'</td>';
                     html +='<td data-column_name="created_at" data-id="' + data[count].id + '">' + formattedCreatedAt + '</td>'; // Display formatted date
                     html +='<td>';
-                    var viewOpen = '<?php echo url("/admin/viewMCQPaper");?>';
-                    html += '<button class="btn btn-sm btn-secondary mt-1 viewQP" onclick="window.open('+"'"+viewOpen+"/"+data[count].id+"'"+')" type="button" data-id="'+data[count].id+'" title="View Question Paper"><i class="fas fa-eye"></i></button>';
-                    html += '<button class="btn btn-sm btn-primary mt-1 ml-2 viewQPS" type="button" data-id="'+data[count].id+'" title="View Answer Paper"><i class="fas fa-eye"></i></button>';
+                    var viewPaperOpen = '<?php echo url("/admin/viewMCQPaper");?>';
+                    var viewSolutionOpen = '<?php echo url("/admin/viewMCQPaperSolution");?>';
+                    html += '<button class="btn btn-sm btn-secondary mt-1 viewQP" onclick="window.open('+"'"+viewPaperOpen+"/"+data[count].id+"'"+')" type="button" data-id="'+data[count].id+'" title="View Question Paper"><i class="fas fa-eye"></i></button>';
+                    html += '<button class="btn btn-sm btn-primary mt-1 ml-2 viewQPS"  onclick="window.open('+"'"+viewSolutionOpen+"/"+data[count].id+"'"+')" type="button" data-id="'+data[count].id+'" title="View Answer Paper"><i class="fas fa-eye"></i></button>';
                     html += '<button class="btn btn-sm btn-danger mt-1 ml-2 delete" id="delete" type="button" data-id="'+data[count].id+'" data-toggle="modal"  title="Delete Question Paper"><i class="fas fa-trash-alt"></i></button>';
                     html += '</td></tr>';
                 }

@@ -39,12 +39,12 @@ class McqPaperController extends Controller
         $success_output = '';
         // SELECT mcq.id,bd.board_name, mediums.medium, cd.class_name, sd.subject_name, brdt.branch_name ,mcq.chepter_ids , mcq.question_counter, mcq.created_at, ad.admin_class FROM mcq_master mcq LEFT JOIN board_details bd ON mcq.fk_board_id = bd.board_id LEFT JOIN medium_details md ON mcq.fk_medium_id = md.medium_id LEFT JOIN class_details cd ON mcq.fk_class_id = cd.class_id LEFT JOIN subject_details sd ON mcq.fk_subject_id = sd.subject_id LEFT JOIN branch_details brdt ON mcq.fk_branch_id = brdt.branch_id LEFT JOIN admin ad ON mcq.user_id = ad.admin_id order by mcq.created_at DESC
 
-        $question = McqModel::select('mcq_master.id', 'board_details.board_name', 'medium_details.medium', 'class_details.class_name', 'subject_details.subject_name', 'mcq_master.chepter_ids', 'mcq_master.question_counter', 'mcq_master.created_at', 'mcq_master.created_by')
+        $question = McqModel::select('mcq_master.id', 'board_details.board_name', 'medium_details.medium', 'class_details.class_name', 'subject_details.subject_name', 'mcq_master.chepter_ids', 'mcq_master.question_counter', 'mcq_master.created_at', 'users.emp_name')
         ->join('board_details', 'mcq_master.fk_board_id', '=', 'board_details.board_id')
         ->join('medium_details', 'mcq_master.fk_medium_id', '=', 'medium_details.medium_id')
         ->join('class_details', 'mcq_master.fk_class_id', '=', 'class_details.class_id')
         ->join('subject_details', 'mcq_master.fk_subject_id', '=', 'subject_details.subject_id')
-        // ->join('users', 'mcq_master.user_id', '=', 'users.admin_id')
+        ->join('users', 'mcq_master.user_id', '=', 'users.admin_id', 'left')
         ->orderBy('mcq_master.id', 'asc')
         ->get();
         if($question){
@@ -195,6 +195,7 @@ class McqPaperController extends Controller
     }
 
     public function viewMCQPaper($paper_id){
+        
         $question_paper = McqModel::select('mcq_master.id', 'mcq_master.user_id', 'board_details.board_name', 'medium_details.medium', 'class_details.class_name', 'subject_details.subject_name', 'mcq_master.chepter_ids', 'mcq_master.paper_question_ids', 'mcq_master.created_at', 'mcq_master.created_by')
                 ->join('board_details', 'mcq_master.fk_board_id', '=', 'board_details.board_id')
                 ->join('medium_details', 'mcq_master.fk_medium_id', '=', 'medium_details.medium_id')
@@ -202,10 +203,14 @@ class McqPaperController extends Controller
                 ->join('subject_details', 'mcq_master.fk_subject_id', '=', 'subject_details.subject_id')
                 ->where('mcq_master.id', $paper_id)
                 ->first();
-        
-        $inperms = implode("','", explode(",", $question_paper->paper_question_ids));
-        $options_data = McqOptions::select('question_id','option_sequence','option_detail','is_answer')->whereIn('question_id', [$inperms])->get()->toArray();
-        $question_data = QuestionBank::whereIn('question_id', [$inperms])->get()->toArray();
+                
+        $inperms = explode(",", $question_paper->paper_question_ids);
+        $paperIds = [];
+        foreach($inperms as $inperm){
+            $paperIds[] = $inperm;
+        }
+        $options_data = McqOptions::select('question_id','option_sequence','option_detail','is_answer')->whereIn('question_id', $paperIds)->get()->toArray();
+        $question_data = QuestionBank::whereIn('question_id', $paperIds)->get()->toArray();
         $response = [
 			'question_paper' => $question_paper,
 			'questions' => $question_data,
@@ -215,7 +220,8 @@ class McqPaperController extends Controller
         $paper_stack = json_decode(json_encode($response));
         $settings_result = getPaperSettings($paper_stack->user_id);
         $this->arr_view_data['paper_stack'] = $paper_stack;
-        $this->arr_view_data['settings_result'] = $settings_result;
+        $this->arr_view_data['logo_file'] = $settings_result->logo_file;
+        $this->arr_view_data['title'] = $settings_result->title;
         return view($this->module_view_folder.'.view_mcq_paper', $this->arr_view_data);
     }
 
@@ -230,11 +236,17 @@ class McqPaperController extends Controller
         
         $inperms = '';
         $question_data = [];
+        $paperIds = [];
+
         if(!empty($question_paper->paper_question_ids)){
-            $inperms = implode("','", explode(",", $question_paper->paper_question_ids));
-            $question_data = QuestionBank::whereIn('question_id', [$inperms])->get()->toArray();
+            $inperms = explode(",", $question_paper->paper_question_ids);
+            foreach($inperms as $inperm){
+                $paperIds[] = $inperm;
+            }
+            // $inperms = implode("','", explode(",", $question_paper->paper_question_ids));
+            $question_data = QuestionBank::whereIn('question_id', $paperIds)->get()->toArray();
         }
-        $options_data = McqOptions::select('question_id','option_sequence','option_detail','is_answer')->whereIn('question_id', [$inperms])->get()->toArray();
+        $options_data = McqOptions::select('question_id','option_sequence','option_detail','is_answer')->whereIn('question_id', $paperIds)->get()->toArray();
         $response = [
 			'question_paper' => $question_paper,
 			'questions' => $question_data,
@@ -245,6 +257,8 @@ class McqPaperController extends Controller
         $settings_result = getPaperSettings($paper_stack->user_id);
         $this->arr_view_data['paper_stack'] = $paper_stack;
         $this->arr_view_data['settings_result'] = $settings_result;
+        $this->arr_view_data['logo_file'] = $settings_result->logo_file;
+        $this->arr_view_data['title'] = $settings_result->title;
         return view($this->module_view_folder.'.view_mcq_paper_solution', $this->arr_view_data);
     }
 }
